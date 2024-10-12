@@ -53,13 +53,14 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     ch.length;
     for(var i=0;i<ch.length;i++){
 
+
+
       xX.add(ch[i].positionCoordinates.x);
       yY.add(ch[i].positionCoordinates.y);
 
 
       list.add(ch[i].tileImage.imageInfo!.image);
       listE.add(ch[i]);
-
     }
 
     xX.sort();
@@ -80,6 +81,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
 // Предполагается, что list содержит изображения, а listE содержит информацию о позициях
     for (var img in list) {
+
       var ee = listE[list.indexOf(img)];
 
       // Рисуем изображение
@@ -136,7 +138,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Изображение успешно сохранено!'),
-        duration: Duration(seconds: 5),
+        duration: Duration(seconds: 7),
         action: SnackBarAction(
           label: 'Открыть',
           onPressed: () async {
@@ -152,20 +154,28 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
 
             // Открываем изображение в галерее
-            final pathToOpen = Uri.tryParse('file:/${imagePath.path}')??Uri.base;
-            launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
+            // final pathToOpen = Uri.tryParse('file:/${imagePath.path}')??Uri.base;
+            // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
             // if (await canLaunchUrl(pathToOpen)) {
             if (true) {
               // final result = await OpenFile.open(imagePath.path);
+              // const types = {
+              //   ".png":  "image/png",
+              // };
+
+              // OpenFile.open("/sdcard/example.txt");
 
 
-              final result = await OpenFile.open(imagePath.path);
-              if (result.type != ResultType.error) {
-                print('Не удалось открыть изображение: ${result.message}');
-                launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
-              }
+            // await  OpenFile.open("content://media/external/images/media/36");
+              // OpenFile.open("file://data/user/0/com.example.map_to_print/app_flutter/canvas_image.png");
+              // final result = await OpenFile.open(imagePath.path);
+              // if (result.type != ResultType.error) {
+              //   print('Не удалось открыть изображение: ${result.message}');
+              // "filePath" -> "content://media/external/images/media/40"
+                launchUrl(Uri.parse(result["filePath"]));
+              // }
 
-              launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
+              // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
 
               // await launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
             } else {
@@ -211,6 +221,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
               onPositionChanged: (_, __) => updatePoint(context),
               initialCenter: const LatLng(51.5, -0.09),
+              // initialCenter: const LatLng(-3, -59),
               initialZoom: 4,
               minZoom: 3,
             ),

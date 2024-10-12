@@ -34,6 +34,7 @@ part 'wms_tile_layer_options.dart';
 
 
 
+
 /// Describes the needed properties to create a tile-based layer. A tile is an
 /// image bound to a specific geographical position.
 ///
@@ -496,7 +497,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
 
 
-   // map = map.withPosition(center:LatLng(55.7558, 37.6173));
+   // map = map.withPosition(center:LatLng(-3, -59));
    // map = map.project(latlng);
    // map.project(LatLng(48.8566, 2.3522));
 
@@ -507,6 +508,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
    //  LatLng(48.8566, 2.3522),
 
    // map = map.withNonRotatedSize(Point(39.3, 73.7));
+   // map = map.withNonRotatedSize(Point(600.3, 600.7));
    // pP = map.project(LatLng(53.3498, -6.2603));
    // map.unproject(point)
 
