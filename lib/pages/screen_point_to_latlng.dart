@@ -260,13 +260,14 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
               onPositionChanged: (_, __) => updatePoint(context),
               initialCenter: const LatLng(55.386, 39.030),
               // initialCenter: const LatLng(-3, -59),
-              initialZoom: 10,
+              initialZoom: 4,
               minZoom: 3,
             ),
             children: [
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
               PolygonLayer(
+
                 // hitNotifier: _hitNotifier,
                 // simplificationTolerance: 0,
                 // polygons: [..._polygonsRaw, ...?_hoverGons],
@@ -375,12 +376,14 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     Future.delayed(Duration(seconds: 0),(){
 
-      var ppoint = mapController.camera.project(LatLng(51.5, -0.09));
+      var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
+      // var ppoint = mapController.camera.project(LatLng(55.386, 9.030));
 
       var pppp = createRectangleNew(ppoint,100,100);
       listApex.clear();
       for(Point pnew in pppp){
         listApex.add( mapController.camera.unproject(pnew));
+
       }
       setState(() {
 

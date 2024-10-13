@@ -130,7 +130,7 @@ class _PolygonLayerState<R extends Object> extends State<PolygonLayer<R>>
     var camera = MapCamera.of(context);
 
 
-    camera = camera.withPosition(center:LatLng(48.8566, 2.3522));
+    // camera = camera.withPosition(center:LatLng(48.8566, 2.3522));
     // map = map.project(latlng);
     // map.project(LatLng(48.8566, 2.3522));
 
