@@ -247,10 +247,19 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {  },
+        isExtended:true ,
+      child: Text('Fix'),),
       appBar: AppBar(title: const Text('Map to print'),centerTitle:true,actions: [
-        IconButton(
-          icon: Icon(Icons.save),
+        ElevatedButton(
           onPressed: _captureAndSave,
+         child: Row( children: [
+            Text('Save'),
+           SizedBox(width: 10,),
+           Icon(Icons.save),
+
+
+          ],),
         ),
       ],),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
