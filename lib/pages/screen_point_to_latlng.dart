@@ -118,6 +118,20 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     var pP = mapController.camera.project(LatLng(5.8, -59));
 
+    var list111 =  createRectangle(LatLng(5.8, -59),10,10);
+
+    Paint borderPaint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    canvas.drawRect(
+      Rect.fromCenter(center: ui.Offset((pP.x-minX).toDouble(), (pP.y-minY).toDouble()), width: 100,height: 100
+
+      ),
+      borderPaint,
+    );
+
     canvas.drawCircle(ui.Offset((pP.x-minX).toDouble(), (pP.y-minY).toDouble()), 15, Paint()..color = Colors.green);
 
     final picture = recorder.endRecording();
