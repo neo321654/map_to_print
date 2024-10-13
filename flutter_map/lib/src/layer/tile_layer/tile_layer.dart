@@ -508,7 +508,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
    //  LatLng(48.8566, 2.3522),
 
    // map = map.withNonRotatedSize(Point(39.3, 73.7));
-   // map = map.withNonRotatedSize(Point(600.3, 600.7));
+   // map = map.withNonRotatedSize(Point(900.3, 900.7));
    // pP = map.project(LatLng(53.3498, -6.2603));
    // map.unproject(point)
 

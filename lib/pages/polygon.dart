@@ -156,6 +156,7 @@ class _PolygonPageState extends State<PolygonPage> {
         LatLng(51.5, -0.09),
         LatLng(53.3498, -6.2603),
         LatLng(48.8566, 2.3522),
+        LatLng(42.8566, 2.3522),
       ],
       label: '(51.5, -0.09)(53.3498, -6.2603)' ,
       // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',

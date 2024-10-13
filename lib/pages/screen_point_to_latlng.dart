@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../my_functions.dart';
 import '/misc/tile_providers.dart';
 import '/widgets/drawer/menu_drawer.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -35,6 +36,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   LatLng? latLng;
 
   Future<void> _captureAndSave() async {
+
+
+
 
     var list = <ui.Image>[];
     var listE = <Tile>[];
@@ -111,6 +115,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         borderPaint,
       );
     }
+
+    var pP = mapController.camera.project(LatLng(5.8, -59));
+
     canvas.drawCircle(ui.Offset((pP.x-minX).toDouble(), (pP.y-minY).toDouble()), 15, Paint()..color = Colors.green);
 
     final picture = recorder.endRecording();
@@ -198,11 +205,17 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
   }
 
+   late List<LatLng> listApex;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => updatePoint(context));
+    listApex =createRectangle(LatLng(51.5, 5.09),10,10).toList();
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -220,13 +233,44 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             mapController: mapController,
             options: MapOptions(
               onPositionChanged: (_, __) => updatePoint(context),
-              initialCenter: const LatLng(51.5, -0.09),
-              // initialCenter: const LatLng(-3, -59),
+              // initialCenter: const LatLng(51.5, -0.09),
+              initialCenter: const LatLng(-3, -59),
               initialZoom: 4,
               minZoom: 3,
             ),
             children: [
               openStreetMapTileLayer,
+              PolygonLayer(
+                // hitNotifier: _hitNotifier,
+                // simplificationTolerance: 0,
+                // polygons: [..._polygonsRaw, ...?_hoverGons],
+                polygons: [
+                  Polygon(
+                    // points: const [
+                    //   LatLng(51.5, -0.09),
+                    //   LatLng(53.3498, -6.2603),
+                    //   LatLng(48.8566, 2.3522),
+                    //   LatLng(78.8566, 10.3522),
+                    // ],
+                    points: listApex,
+                    // points: ()sync*{yield  LatLng(51.5, -0.09); }().toList(),
+                    // label: '(51.5, -0.09)(53.3498, -6.2603)' ,
+                    // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
+                    // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
+                    labelStyle: const TextStyle(color: Colors.black,fontSize: 6,fontWeight: FontWeight.bold),
+                    labelPlacement: PolygonLabelPlacement.polylabel,
+                    borderColor: Colors.orange,
+                    borderStrokeWidth: 4,
+
+                    hitValue: (
+                    title: 'Basic Unfilled Polygon',
+                    subtitle: 'Nothing really special here...',
+                    ),
+                  ),
+                ],
+              ),
+
+
               if (latLng != null)
                 MarkerLayer(
                   markers: [
@@ -239,7 +283,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                         size: 10,
                         color: Colors.red,
                       ),
-                    )
+                    ),
                   ],
                 ),
             ],
