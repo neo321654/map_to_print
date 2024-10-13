@@ -265,17 +265,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       appBar: AppBar(
         leading: ElevatedButton(
           onPressed: (){
-            Navigator.pushNamed(context, ScreenSave.route);
+            Navigator.pushNamed(context, ScreenSave.route,arguments:  <String, dynamic>{
+                   'center': latLng,
+                   'country': 'Germany',
+                },);
           },
-          child: Row(
-            children: [
-              Text('Save'),
-              SizedBox(
-                width: 10,
-              ),
-              Icon(Icons.save),
-            ],
-          ),
+          child:Icon(Icons.save),
         ),
         title: const Text('Map to print'),
         centerTitle: true,

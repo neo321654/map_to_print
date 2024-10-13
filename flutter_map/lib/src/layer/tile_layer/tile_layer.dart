@@ -517,12 +517,12 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     // var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
     // var map6 = map.(LatLng(53.3498, -6.2603));
 
-    double indexToZoom = 3;
-    double www = 210 * indexToZoom;
-    double hhh = 297 * indexToZoom;
-
-    map = map.withNonRotatedSize(Point(www, hhh));
-    map = map.withOptions(MapOptions(initialZoom: 17));
+    // double indexToZoom = 3;
+    // double www = 210 * indexToZoom;
+    // double hhh = 297 * indexToZoom;
+    //
+    // map = map.withNonRotatedSize(Point(www, hhh));
+    // map = map.withOptions(MapOptions(initialZoom: 17));
     ch;
 
     if (_outsideZoomLimits(map.zoom.round())) return const SizedBox.shrink();

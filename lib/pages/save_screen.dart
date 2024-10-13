@@ -37,6 +37,8 @@ class ScreenSaveState extends State<ScreenSave> {
 
   LatLng? latLng;
 
+   Map<String,dynamic> args = {};
+
   Future<void> _captureAndSave() async {
     if (isFixed) {
       mapController.move(latLngFixed!, mapController.camera.zoom);
@@ -242,8 +244,15 @@ class ScreenSaveState extends State<ScreenSave> {
   void initState() {
     super.initState();
 
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       updatePoint(context);
+       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      latLng =  args["center"]??LatLng(33,33);
+      mapController.move(latLng??LatLng(33,33), 18);
+        setState(() {
+
+        });
     });
   }
 
@@ -262,7 +271,7 @@ class ScreenSaveState extends State<ScreenSave> {
         child: Text(isFixed ? 'Unfix' : 'Fix'),
       ),
       appBar: AppBar(
-        title: const Text('Map to print'),
+        title: const Text('Saving Screen'),
         centerTitle: true,
         actions: [
           ElevatedButton(
@@ -288,10 +297,11 @@ class ScreenSaveState extends State<ScreenSave> {
             mapController: mapController,
             options: MapOptions(
                 onPositionChanged: (_, __) => updatePoint(context),
-                initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 14,
-                minZoom: 14,
-                maxZoom: 14),
+                // initialCenter: const LatLng(55.386, 39.030),
+                initialCenter: LatLng(55.386, 39.030),
+                initialZoom: 18,
+                minZoom: 8,
+                maxZoom: 18),
             children: [
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
