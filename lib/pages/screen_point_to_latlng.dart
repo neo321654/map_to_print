@@ -120,15 +120,17 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     var list111 =  createRectangle(LatLng(5.8, -59),10,10);
 
+    var p1 = mapController.camera.project(list111[0]);
+    var p2 = mapController.camera.project(list111[3]);
+
+
     Paint borderPaint = Paint()
       ..color = Colors.red
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
 
     canvas.drawRect(
-      Rect.fromCenter(center: ui.Offset((pP.x-minX).toDouble(), (pP.y-minY).toDouble()), width: 100,height: 100
-
-      ),
+      Rect.fromPoints( ui.Offset((p1.x-minX).toDouble(), (p1.y-minY).toDouble()),   ui.Offset((p2.x-minX).toDouble(), (p2.y-minY).toDouble()) ),
       borderPaint,
     );
 
@@ -223,8 +225,17 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => updatePoint(context));
+
     listApex =createRectangle(LatLng(51.5, 5.09),10,10).toList();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+
+
+      updatePoint(context);
+    });
+
+
   }
 
 
@@ -356,4 +367,32 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
   double _getPointX(BuildContext context) =>
       MediaQuery.sizeOf(context).width / 2;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    Future.delayed(Duration(seconds: 2),(){
+
+      var ppoint = mapController.camera.project(LatLng(51.5, 5.09));
+
+      var pppp = createRectangleNew(ppoint,100,100);
+      listApex.clear();
+      for(Point pnew in pppp){
+        listApex.add( mapController.camera.unproject(pnew));
+      }
+      // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
+
+
+
+
+      for(var apex in listApex){
+
+        print( mapController.camera.project(apex));
+
+      }
+
+    });
+
+  }
 }

@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 LatLng getCenterPoint(List<LatLng> points) {
@@ -32,6 +35,17 @@ List<LatLng> createRectangle(LatLng center, double width, double height) {
   LatLng bottomLeft = LatLng(center.latitude - height / 2, center.longitude - width / 2);
 
   // Возвращаем список точек в порядке обхода
-  // return [topLeft, topRight,bottomRight,  bottomLeft,];
-  return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
+  return [topLeft, topRight,bottomRight,  bottomLeft,];
+  // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
+}
+List<Point> createRectangleNew(Point<double> center, double width, double height) {
+  // Вычисляем координаты углов прямоугольника
+  Point topLeft = Point(center.x + height / 2, center.y - width / 2);
+  Point topRight = Point(center.x + height / 2, center.y + width / 2);
+  Point bottomRight = Point(center.x - height / 2, center.y + width / 2);
+  Point bottomLeft = Point(center.x- height / 2, center.y - width / 2);
+
+  // Возвращаем список точек в порядке обхода
+  return [topLeft, topRight,bottomRight,  bottomLeft,];
+  // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
 }
