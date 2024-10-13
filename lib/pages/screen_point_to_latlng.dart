@@ -29,7 +29,7 @@ class ScreenPointToLatLngPage extends StatefulWidget {
 
 class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   static const double pointSize = 65;
-  static const double pointY = 250;
+  static const double pointY = 350;
 
   final mapController = MapController();
 
@@ -226,7 +226,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void initState() {
     super.initState();
 
-    listApex =createRectangle(LatLng(51.5, 5.09),10,10).toList();
+    listApex = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
@@ -258,13 +258,14 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             mapController: mapController,
             options: MapOptions(
               onPositionChanged: (_, __) => updatePoint(context),
-              // initialCenter: const LatLng(51.5, -0.09),
-              initialCenter: const LatLng(-3, -59),
+              initialCenter: const LatLng(51.5, -0.09),
+              // initialCenter: const LatLng(-3, -59),
               initialZoom: 4,
               minZoom: 3,
             ),
             children: [
               openStreetMapTileLayer,
+              if (listApex.isNotEmpty)
               PolygonLayer(
                 // hitNotifier: _hitNotifier,
                 // simplificationTolerance: 0,
@@ -372,7 +373,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Future.delayed(Duration(seconds: 2),(){
+    Future.delayed(Duration(seconds: 1),(){
 
       var ppoint = mapController.camera.project(LatLng(51.5, 5.09));
 
@@ -381,6 +382,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       for(Point pnew in pppp){
         listApex.add( mapController.camera.unproject(pnew));
       }
+      setState(() {
+
+      });
       // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
 
 
