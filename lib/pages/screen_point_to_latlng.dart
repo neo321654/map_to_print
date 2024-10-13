@@ -29,12 +29,37 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
+  bool isFixedCurcularProgress = false;
+
+  LatLng? latLngFixed;
 
   final mapController = MapController();
 
   LatLng? latLng;
 
   Future<void> _captureAndSave() async {
+
+
+    if(isFixed){
+
+      mapController.move(latLngFixed!, mapController.camera.zoom);
+      // mapController.camera.
+      setState(() {
+        latLng=latLngFixed;
+      });
+
+      isFixedCurcularProgress = true;
+
+      await Future.delayed(Duration(seconds: 2),(){});
+
+      isFixedCurcularProgress = false;
+      isFixed = false;
+      setState(() {
+
+      });
+    }
+
+
     var list = <ui.Image>[];
     var listE = <Tile>[];
 
@@ -297,6 +322,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         onPressed: () {
           setState(() {
             isFixed = !isFixed;
+            if(isFixed)latLngFixed = latLng;
             drawRect();
           });
         },
@@ -316,6 +342,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   width: 10,
                 ),
                 Icon(Icons.save),
+                if(isFixed&&isFixedCurcularProgress)CircularProgressIndicator(),
               ],
             ),
           ),
@@ -427,6 +454,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     setState(() => latLng = mapController.camera.pointToLatLng(p));
 
     if (!isFixed) {
+
       drawRect();
     }
 
