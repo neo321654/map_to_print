@@ -258,9 +258,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             mapController: mapController,
             options: MapOptions(
               onPositionChanged: (_, __) => updatePoint(context),
-              initialCenter: const LatLng(51.5, -0.09),
+              initialCenter: const LatLng(55.386, 39.030),
               // initialCenter: const LatLng(-3, -59),
-              initialZoom: 4,
+              initialZoom: 10,
               minZoom: 3,
             ),
             children: [
@@ -375,7 +375,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     Future.delayed(Duration(seconds: 0),(){
 
-      var ppoint = mapController.camera.project(LatLng(51.5, 5.09));
+      var ppoint = mapController.camera.project(LatLng(51.5, -0.09));
 
       var pppp = createRectangleNew(ppoint,100,100);
       listApex.clear();
