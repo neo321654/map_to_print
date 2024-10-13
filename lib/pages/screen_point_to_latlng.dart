@@ -245,13 +245,13 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Screen Point 🡒 Lat/Lng'),actions: [
+      appBar: AppBar(title: const Text('Map to print'),centerTitle:true,actions: [
         IconButton(
           icon: Icon(Icons.save),
           onPressed: _captureAndSave,
         ),
       ],),
-      drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
+      // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
         children: [
           FlutterMap(
@@ -260,7 +260,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
               onPositionChanged: (_, __) => updatePoint(context),
               initialCenter: const LatLng(55.386, 39.030),
               // initialCenter: const LatLng(-3, -59),
-              initialZoom: 4,
+              initialZoom: 6,
               minZoom: 3,
             ),
             children: [
@@ -359,6 +359,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     setState(() => latLng =
       mapController.camera.pointToLatLng(p));
 
+    drawRect();
+
+
     var ww1 =mapController.camera.getNewPixelOrigin(latLng!);
     // var qww1 =mapController.camera.;
 
@@ -376,18 +379,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     Future.delayed(Duration(seconds: 0),(){
 
-      var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
-      // var ppoint = mapController.camera.project(LatLng(55.386, 9.030));
+      // var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
+      drawRect();
 
-      var pppp = createRectangleNew(ppoint,100,100);
-      listApex.clear();
-      for(Point pnew in pppp){
-        listApex.add( mapController.camera.unproject(pnew));
-
-      }
-      setState(() {
-
-      });
       // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
 
 
@@ -401,5 +395,22 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     });
 
+  }
+
+  void drawRect() {
+     if(latLng!=null){
+      var ppoint = mapController.camera.project(latLng!);
+      // var ppoint = mapController.camera.project(LatLng(55.386, 9.030));
+
+      var pppp = createRectangleNew(ppoint,210,297);
+      listApex.clear();
+      for(Point pnew in pppp){
+        listApex.add( mapController.camera.unproject(pnew));
+
+      }
+      setState(() {
+
+      });
+    }
   }
 }
