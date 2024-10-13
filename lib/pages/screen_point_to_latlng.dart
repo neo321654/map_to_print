@@ -38,27 +38,21 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   LatLng? latLng;
 
   Future<void> _captureAndSave() async {
-
-
-    if(isFixed){
-
+    if (isFixed) {
       mapController.move(latLngFixed!, mapController.camera.zoom);
       // mapController.camera.
       setState(() {
-        latLng=latLngFixed;
+        latLng = latLngFixed;
       });
 
       isFixedCurcularProgress = true;
 
-      await Future.delayed(Duration(seconds: 2),(){});
+      await Future.delayed(Duration(seconds: 2), () {});
 
       isFixedCurcularProgress = false;
       isFixed = false;
-      setState(() {
-
-      });
+      setState(() {});
     }
-
 
     var list = <ui.Image>[];
     var listE = <Tile>[];
@@ -135,7 +129,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     var p2 = list111[2];
 
     Paint borderPaint = Paint()
-      ..color = Colors.yellow
+      ..color = Colors.orange
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
 
@@ -146,65 +140,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       borderPaint,
     );
 
-    canvas.drawCircle(
-        ui.Offset((pP.x - minX).toDouble(), (pP.y - minY).toDouble()),
-        15,
-        Paint()..color = Colors.green);
 
-    // canvas.clipRect(
-    //   Rect.fromPoints(
-    //       ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
-    //       ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble())),
-    // );
-    // canvas.clipRect(
-    //   Rect.fromCenter(
-    //       center: ui.Offset((pP.x - minX).toDouble(), (pP.y - minY).toDouble()),
-    //       width: 20,
-    //       height: 20),
-    // );
-
-
-    // Size size =Size(300, 300);
-    // canvas.save();
-    // canvas.clipRRect(RRect.fromRectXY(Offset.zero & (size / 2.0), 50.0, 50.0));
-    // canvas.drawPaint(Paint()..color = Colors.white);
-    // canvas.restore();
-    // canvas.save();
-    // canvas.clipRRect(RRect.fromRectXY(size.center(Offset.zero) & (size / 2.0), 50.0, 50.0));
-    // canvas.drawPaint(Paint()..color = Colors.white);
-    // canvas.restore();
-    // Rect rect = Offset.zero & size;
-    //
-    // canvas.save();
-    // canvas.clipRRect(RRect.fromRectXY(rect, 100.0, 100.0));
-    // canvas.drawPaint(Paint()..color = Colors.red);
-    // canvas.drawPaint(Paint()..color = Colors.white);
-    // canvas.restore();
-
-
-    // Size size =Size(1300, 1300);
-    //
-    // Rect clipRect = Rect.fromLTWH(20, 20, 200, 200);
-    //
-    // // Apply clipping to the canvas
-    // canvas.clipRect(clipRect);
-    //
-    // // Draw a large rectangle that will be partially clipped
-    // Paint paint = Paint()
-    //   ..color = Colors.blue;
-    //
-    // canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    //
-    // // Draw another rectangle that will be visible
-    // paint.color = Colors.red;
-    // canvas.drawRect(Rect.fromLTWH(60, 60, 150, 150), paint);
-    // canvas.skew(600, 150);
-    // canvas.scale(10);
-    // canvas.save();
-    // canvas.transform(matrix4)
-
-
-    // canvas.save();
     final picture = recorder.endRecording();
 
     int width = (((maxX - minX) * 2)).toInt();
@@ -212,7 +148,6 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     if (width == 0) width = height.toInt();
     if (height2 == 0) width = height.toInt();
 
-    pP;
 
 
     final image = await picture.toImage(width, height2);
@@ -229,18 +164,16 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     var of3 = (p2.x - minX).toDouble();
     var of4 = (p2.y - minY).toDouble();
 
-
     // canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
-    canvas1.drawImage(image, ui.Offset(-of3,-of2), Paint());
+    canvas1.drawImage(image, ui.Offset(-of3, -of2), Paint());
 
     final picture1 = recorder1.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
     final image2 = await picture1.toImage(297, 210);
 
-
-
-    ByteData? byteData = await image2.toByteData(format: ui.ImageByteFormat.png);
+    ByteData? byteData =
+        await image2.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
 // Получение пути для сохранения
@@ -302,13 +235,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     );
   }
 
-  late List<LatLng> listApex;
+  List<LatLng> listApex = [];
 
   @override
   void initState() {
     super.initState();
-
-    listApex = [];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       updatePoint(context);
@@ -322,7 +253,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         onPressed: () {
           setState(() {
             isFixed = !isFixed;
-            if(isFixed)latLngFixed = latLng;
+            if (isFixed) latLngFixed = latLng;
             drawRect();
           });
         },
@@ -342,7 +273,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   width: 10,
                 ),
                 Icon(Icons.save),
-                if(isFixed&&isFixedCurcularProgress)CircularProgressIndicator(),
+                if (isFixed && isFixedCurcularProgress)
+                  CircularProgressIndicator(),
               ],
             ),
           ),
@@ -354,13 +286,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              onPositionChanged: (_, __) => updatePoint(context),
-              initialCenter: const LatLng(55.386, 39.030),
-              // initialCenter: const LatLng(-3, -59),
-              initialZoom: 6,
-              minZoom: 6,
-              maxZoom: 6
-            ),
+                onPositionChanged: (_, __) => updatePoint(context),
+                initialCenter: const LatLng(55.386, 39.030),
+                initialZoom: 14,
+                minZoom: 14,
+                maxZoom: 14),
             children: [
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
@@ -370,6 +300,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   // polygons: [..._polygonsRaw, ...?_hoverGons],
                   polygons: [
                     Polygon(
+                      color: Colors.orange.withAlpha(95),
+
                       // points: const [
                       //   LatLng(51.5, -0.09),
                       //   LatLng(53.3498, -6.2603),
@@ -381,13 +313,13 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                       // label: '(51.5, -0.09)(53.3498, -6.2603)' ,
                       // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
                       // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
-                      labelStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 6,
-                          fontWeight: FontWeight.bold),
-                      labelPlacement: PolygonLabelPlacement.polylabel,
+                      // labelStyle: const TextStyle(
+                      //     color: Colors.black,
+                      //     fontSize: 6,
+                      //     fontWeight: FontWeight.bold),
+                      // labelPlacement: PolygonLabelPlacement.polylabel,
                       borderColor: Colors.orange,
-                      borderStrokeWidth: 4,
+                      borderStrokeWidth: 2,
 
                       hitValue: (
                         title: 'Basic Unfilled Polygon',
@@ -405,7 +337,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                       point: latLng!,
                       child: const Icon(
                         Icons.circle,
-                        size: 10,
+                        size: 5,
                         color: Colors.red,
                       ),
                     ),
@@ -413,17 +345,17 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 ),
             ],
           ),
-          Positioned(
-            top: pointY - pointSize / 2,
-            left: _getPointX(context) - pointSize / 2,
-            child: const IgnorePointer(
-              child: Icon(
-                Icons.center_focus_strong_outlined,
-                size: pointSize,
-                color: Colors.black,
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: pointY - pointSize / 2,
+          //   left: _getPointX(context) - pointSize / 2,
+          //   child: const IgnorePointer(
+          //     child: Icon(
+          //       Icons.center_focus_strong_outlined,
+          //       size: pointSize,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
           // project
           Positioned(
             top: pointY + pointSize / 2 + 6,
@@ -449,18 +381,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void updatePoint(BuildContext context) {
     var p = Point(_getPointX(context), pointY);
 
-    var s = mapController.camera.pointToLatLng(p);
-    var ww = mapController.camera.getPixelWorldBounds(5);
-
     setState(() => latLng = mapController.camera.pointToLatLng(p));
 
     if (!isFixed) {
-
       drawRect();
     }
-
-    var ww1 = mapController.camera.getNewPixelOrigin(latLng!);
-    // var qww1 =mapController.camera.;
   }
 
   double _getPointX(BuildContext context) =>
