@@ -358,7 +358,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
               initialCenter: const LatLng(55.386, 39.030),
               // initialCenter: const LatLng(-3, -59),
               initialZoom: 6,
-              minZoom: 3,
+              minZoom: 6,
+              maxZoom: 6
             ),
             children: [
               openStreetMapTileLayer,
