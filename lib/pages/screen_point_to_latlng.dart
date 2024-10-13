@@ -116,9 +116,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       );
     }
 
-    var pP = mapController.camera.project(LatLng(5.8, -59));
+    var pP = mapController.camera.project(latLng!);
 
-    var list111 =  createRectangle(LatLng(5.8, -59),10,10);
+    // var list111 =  createRectangle(LatLng(5.8, -59),10,10);
+    // var list111 =  createRectangle(latLng??LatLng(5.8, -59),10,10);
+    var list111 =  createRectangle(latLng!,10,10);
 
     var p1 = mapController.camera.project(list111[0]);
     var p2 = mapController.camera.project(list111[3]);
