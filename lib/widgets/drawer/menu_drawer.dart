@@ -86,11 +86,6 @@ class MenuDrawer extends StatelessWidget {
             currentRoute: currentRoute,
           ),
           MenuItemWidget(
-            caption: 'Polygon Layer',
-            routeName: PolygonPage.route,
-            currentRoute: currentRoute,
-          ),
-          MenuItemWidget(
             caption: 'Polyline Layer',
             routeName: PolylinePage.route,
             currentRoute: currentRoute,

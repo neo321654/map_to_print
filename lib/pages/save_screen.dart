@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:map_to_print/pages/save_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../my_functions.dart';
 import '/misc/tile_providers.dart';
@@ -17,16 +16,16 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ScreenPointToLatLngPage extends StatefulWidget {
-  static const String route = '/screen_point_to_latlng';
+class ScreenSave extends StatefulWidget {
+  static const String route = '/ScreenSave';
 
-  const ScreenPointToLatLngPage({super.key});
+  const ScreenSave({super.key});
 
   @override
-  PointToLatlngPage createState() => PointToLatlngPage();
+  ScreenSaveState createState() => ScreenSaveState();
 }
 
-class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
+class ScreenSaveState extends State<ScreenSave> {
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
@@ -263,20 +262,6 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         child: Text(isFixed ? 'Unfix' : 'Fix'),
       ),
       appBar: AppBar(
-        leading: ElevatedButton(
-          onPressed: (){
-            Navigator.pushNamed(context, ScreenSave.route);
-          },
-          child: Row(
-            children: [
-              Text('Save'),
-              SizedBox(
-                width: 10,
-              ),
-              Icon(Icons.save),
-            ],
-          ),
-        ),
         title: const Text('Map to print'),
         centerTitle: true,
         actions: [

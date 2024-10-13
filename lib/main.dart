@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:map_to_print/pages/save_screen.dart';
 import '/pages/animated_map_controller.dart';
 import '/pages/bundled_offline_map.dart';
 import '/pages/cancellable_tile_provider.dart';
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
         ManyCirclesPage.route: (context) => const ManyCirclesPage(),
         CirclePage.route: (context) => const CirclePage(),
         OverlayImagePage.route: (context) => const OverlayImagePage(),
-        PolygonPage.route: (context) => const PolygonPage(),
+        ScreenSave.route: (context) => const ScreenSave(),
         PolygonPerfStressPage.route: (context) => const PolygonPerfStressPage(),
         SlidingMapPage.route: (_) => const SlidingMapPage(),
         WMSLayerPage.route: (context) => const WMSLayerPage(),

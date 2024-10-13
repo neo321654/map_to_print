@@ -23,17 +23,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'dart:io';
 
-
 part 'retina_mode.dart';
+
 part 'tile_error_evict_callback.dart';
+
 part 'wms_tile_layer_options.dart';
 
-
-  List<Tile> ch = [];
-  Point pP = Point(0, 0);
-
-
-
+List<Tile> ch = [];
 
 /// Describes the needed properties to create a tile-based layer. A tile is an
 /// image bound to a specific geographical position.
@@ -345,7 +341,7 @@ class TileLayer extends StatefulWidget {
 class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
   bool _initializedFromMapCamera = false;
 
-  final  _tileImageManager = TileImageManager();
+  final _tileImageManager = TileImageManager();
 
   late TileBounds _tileBounds;
   late TileRangeCalculator _tileRangeCalculator;
@@ -491,47 +487,43 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-   var  map = MapCamera.of(context);
-   // map = map.withOptions(MapOptions(initialCenter: const LatLng(118.8566, 12.3522),));
-   // map = map.withRotation(3);
+    var map = MapCamera.of(context);
+    // map = map.withOptions(MapOptions(initialCenter: const LatLng(118.8566, 12.3522),));
+    // map = map.withRotation(3);
 
+    // map = map.withPosition(center:LatLng(-3, -59));
+    // map = map.project(latlng);
+    // map.project(LatLng(48.8566, 2.3522));
 
+    // var point = map.project(LatLng(53.3498, -6.2603));
 
-   // map = map.withPosition(center:LatLng(-3, -59));
-   // map = map.project(latlng);
-   // map.project(LatLng(48.8566, 2.3522));
+    // LatLng(51.5, -0.09),
+    //  LatLng(53.3498, -6.2603),
+    //  LatLng(48.8566, 2.3522),
 
-   // var point = map.project(LatLng(53.3498, -6.2603));
+    // map = map.withNonRotatedSize(Point(39.3, 73.7));
+    // map = map.withNonRotatedSize(Point(900.3, 900.7));
+    // pP = map.project(LatLng(53.3498, -6.2603));
+    // map.unproject(point)
 
-   // LatLng(51.5, -0.09),
-   //  LatLng(53.3498, -6.2603),
-   //  LatLng(48.8566, 2.3522),
+    // LatLng(53.3498, -6.2603);
 
-   // map = map.withNonRotatedSize(Point(39.3, 73.7));
-   // map = map.withNonRotatedSize(Point(900.3, 900.7));
-   // pP = map.project(LatLng(53.3498, -6.2603));
-   // map.unproject(point)
+    // pP = map.project(LatLng(53.3498, -6.2603));
 
-   // LatLng(53.3498, -6.2603);
+    // var map2 = map.getNewPixelOrigin(LatLng(53.3498, -6.2603));
+    // var map3 = map.getPixelWorldBounds(null);
+    //
+    // var map4 = map.getOffsetFromOrigin(LatLng(53.3498, -6.2603));
+    // var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
+    // var map6 = map.(LatLng(53.3498, -6.2603));
 
+    double indexToZoom = 3;
+    double www = 210 * indexToZoom;
+    double hhh = 297 * indexToZoom;
 
-    pP = map.project(LatLng(53.3498, -6.2603));
-
-
-
-   var map2 = map.getNewPixelOrigin(LatLng(53.3498, -6.2603));
-   var map3 = map.getPixelWorldBounds(null);
-
-   var map4 = map.getOffsetFromOrigin(LatLng(53.3498, -6.2603));
-   var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
-   // var map6 = map.(LatLng(53.3498, -6.2603));
-
-
-
-
-
-
-
+    map = map.withNonRotatedSize(Point(www, hhh));
+    map = map.withOptions(MapOptions(initialZoom: 17));
+    ch;
 
     if (_outsideZoomLimits(map.zoom.round())) return const SizedBox.shrink();
 
@@ -599,13 +591,12 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       return cmp;
     }
 
-    ch =  tiles..sort(renderOrder);
+    ch = tiles..sort(renderOrder);
 
-     // _captureAndSave(ch);
+    // _captureAndSave(ch);
 
     return MobileLayerTransformer(
-      child: Stack(children:ch),
-
+      child: Stack(children: ch),
     );
   }
 
@@ -627,52 +618,41 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     double maxX = 0;
     double maxY = 0;
 
-
-
     for (var e in ch) {
-      if(!isDone){
-
-        if(minX == 0 && minY==0) {
-          minX = e.positionCoordinates.x*height;
-          minY = e.positionCoordinates.y*height;
+      if (!isDone) {
+        if (minX == 0 && minY == 0) {
+          minX = e.positionCoordinates.x * height;
+          minY = e.positionCoordinates.y * height;
         }
 
-        if(maxX == 0 && maxY==0) {
-          maxX = e.positionCoordinates.x*height+height;
-          maxY = e.positionCoordinates.y*height+height;
+        if (maxX == 0 && maxY == 0) {
+          maxX = e.positionCoordinates.x * height + height;
+          maxY = e.positionCoordinates.y * height + height;
         }
 
-
-        if(e.positionCoordinates.x < minX){
-          minX = e.positionCoordinates.x*height;
+        if (e.positionCoordinates.x < minX) {
+          minX = e.positionCoordinates.x * height;
         }
-        if(e.positionCoordinates.y < minY){
-          minY = e.positionCoordinates.y*height;
-        }
-
-        if(e.positionCoordinates.x+height > maxX){
-          maxX = e.positionCoordinates.x*height+height;
-        }
-        if(e.positionCoordinates.y+height > maxY){
-          maxY = e.positionCoordinates.y*height+height;
+        if (e.positionCoordinates.y < minY) {
+          minY = e.positionCoordinates.y * height;
         }
 
+        if (e.positionCoordinates.x + height > maxX) {
+          maxX = e.positionCoordinates.x * height + height;
+        }
+        if (e.positionCoordinates.y + height > maxY) {
+          maxY = e.positionCoordinates.y * height + height;
+        }
 
         e.tileImage.addListener(() {
-
-          if(e.tileImage.readyToDisplay){
-
-
-
+          if (e.tileImage.readyToDisplay) {
             count++;
             // list.add(e.tileImage.imageInfo!.image);
             // listE.add(e);
 
-            if(count==ch.length){
+            if (count == ch.length) {
               // listE.toSet().toList();
               // list.toSet().toList();
-
-
 
               // final recorder = ui.PictureRecorder();
               // final canvas = Canvas(recorder);
@@ -697,33 +677,17 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
               // print('Image saved to gallery: $result');
               //
               // isDone = true;
-
             }
 
             // final img = first.imageInfo!.image;
-
-
-
-
           }
-
-
         });
       }
-
     }
 
     // Future.delayed(Duration(seconds: 5),() async {
 
     // });
-
-
-
-
-
-
-
-
 
     // ch.first.tileImage.addListener(() async {
     //
@@ -788,14 +752,6 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     // print('Image saved to gallery: $result');
   }
 
-
-
-
-
-
-
-
-
   TileImage _createTileImage({
     required TileCoordinates coordinates,
     required TileBoundsAtZoom tileBoundsAtZoom,
@@ -831,9 +787,6 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
   /// Load and/or prune tiles according to the visible bounds of the [event]
   /// center/zoom, or the current center/zoom if not specified.
   void _onTileUpdateEvent(TileUpdateEvent event) {
-
-
-
     final tileZoom = _clampToNativeZoom(event.zoom);
     final visibleTileRange = _tileRangeCalculator.calculate(
       camera: event.camera,
