@@ -373,7 +373,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Future.delayed(Duration(seconds: 1),(){
+    Future.delayed(Duration(seconds: 0),(){
 
       var ppoint = mapController.camera.project(LatLng(51.5, 5.09));
 
