@@ -211,7 +211,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     final picture1 = recorder1.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
-    final image2 = await picture1.toImage(600, 600);
+    final image2 = await picture1.toImage(297, 210);
 
 
 
