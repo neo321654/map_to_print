@@ -30,6 +30,7 @@ class ScreenPointToLatLngPage extends StatefulWidget {
 class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   static const double pointSize = 65;
   static const double pointY = 350;
+  bool isFixed = false;
 
   final mapController = MapController();
 
@@ -247,9 +248,15 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {  },
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        setState(() {
+
+          isFixed = !isFixed;
+          drawRect();
+        });
+      },
         isExtended:true ,
-      child: Text('Fix'),),
+      child: Text(isFixed? 'Unfix':'Fix'),),
       appBar: AppBar(title: const Text('Map to print'),centerTitle:true,actions: [
         ElevatedButton(
           onPressed: _captureAndSave,
@@ -370,7 +377,10 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     setState(() => latLng =
       mapController.camera.pointToLatLng(p));
 
-    drawRect();
+    if(!isFixed){
+      drawRect();
+
+    }
 
 
     var ww1 =mapController.camera.getNewPixelOrigin(latLng!);
