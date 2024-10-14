@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../misc/tile_providers_save.dart';
 import '../my_functions.dart';
 import '/misc/tile_providers.dart';
 import '/widgets/drawer/menu_drawer.dart';
@@ -246,13 +247,18 @@ class ScreenSaveState extends State<ScreenSave> {
 
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+
       updatePoint(context);
-       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      latLng =  args["center"]??LatLng(33,33);
-      mapController.move(latLng??LatLng(33,33), 18);
+
+        args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        latLng =  args["center"]??LatLng(33,33);
+        mapController.move(latLng??LatLng(33,33), 18);
         setState(() {
 
         });
+
+
+
     });
   }
 
@@ -303,7 +309,7 @@ class ScreenSaveState extends State<ScreenSave> {
                 minZoom: 8,
                 maxZoom: 18),
             children: [
-              openStreetMapTileLayer,
+              openStreetMapTileLayerSave,
               if (listApex.isNotEmpty)
                 PolygonLayer(
                   // hitNotifier: _hitNotifier,
@@ -392,11 +398,14 @@ class ScreenSaveState extends State<ScreenSave> {
   void updatePoint(BuildContext context) {
     var p = Point(_getPointX(context), pointY);
 
-    setState(() => latLng = mapController.camera.pointToLatLng(p));
 
-    if (!isFixed) {
-      drawRect();
-    }
+      setState(() => latLng = mapController.camera.pointToLatLng(p));
+
+      if (!isFixed) {
+        drawRect();
+      }
+
+
   }
 
   double _getPointX(BuildContext context) =>

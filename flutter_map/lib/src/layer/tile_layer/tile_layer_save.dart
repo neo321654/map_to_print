@@ -23,13 +23,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'dart:io';
 
-part 'retina_mode.dart';
+// part 'retina_mode.dart';
+//
+// part 'tile_error_evict_callback.dart';
+//
+// part 'wms_tile_layer_options.dart';
 
-part 'tile_error_evict_callback.dart';
-
-part 'wms_tile_layer_options.dart';
-
-List<Tile> ch = [];
+// List<Tile> ch = [];
 
 /// Describes the needed properties to create a tile-based layer. A tile is an
 /// image bound to a specific geographical position.
@@ -38,7 +38,7 @@ List<Tile> ch = [];
 /// https://docs.fleaflet.dev/usage/layers/tile-layer. Some are important to
 /// avoid issues.
 @immutable
-class TileLayer extends StatefulWidget {
+class TileLayerSave extends TileLayer{
   /// The URL template is a string that contains placeholders, which, when filled
   /// in, create a URL/URI to a specific tile.
   ///
@@ -65,7 +65,7 @@ class TileLayer extends StatefulWidget {
   final bool tms;
 
   /// If not `null`, then tiles will pull's WMS protocol requests
-  final WMSTileLayerOptions? wmsOptions;
+  final WMSTileLayerOptionsSave? wmsOptionsSave;
 
   /// Size for the tile.
   /// Default is 256
@@ -222,10 +222,8 @@ class TileLayer extends StatefulWidget {
   /// the [key].
   final TileUpdateTransformer tileUpdateTransformer;
 
-  bool isSave;
-
   /// Create a new [TileLayer] for the [FlutterMap] widget.
-  TileLayer({
+  TileLayerSave({
     super.key,
     this.urlTemplate,
     this.fallbackUrl,
@@ -243,7 +241,7 @@ class TileLayer extends StatefulWidget {
     this.errorImage,
     final TileProvider? tileProvider,
     this.tms = false,
-    this.wmsOptions,
+    this.wmsOptionsSave,
     this.tileDisplay = const TileDisplay.fadeIn(),
 
     /// See [RetinaMode] for more information
@@ -256,18 +254,18 @@ class TileLayer extends StatefulWidget {
     this.reset,
     this.tileBounds,
     TileUpdateTransformer? tileUpdateTransformer,
-    String userAgentPackageName = 'unknown',  this.isSave = false,
+    String userAgentPackageName = 'unknown',
   })  : assert(
-          tileDisplay.when(
-            instantaneous: (_) => true,
-            fadeIn: (fadeIn) => fadeIn.duration > Duration.zero,
-          )!,
-          'The tile fade in duration needs to be bigger than zero',
-        ),
-        assert(
-          urlTemplate == null || wmsOptions == null,
-          'Cannot specify both `urlTemplate` and `wmsOptions`',
-        ),
+  tileDisplay.when(
+    instantaneous: (_) => true,
+    fadeIn: (fadeIn) => fadeIn.duration > Duration.zero,
+  )!,
+  'The tile fade in duration needs to be bigger than zero',
+  ),
+        // assert(
+        // urlTemplate == null || wmsOptionsSave == null,
+        // 'Cannot specify both `urlTemplate` and `wmsOptions`',
+        // ),
         tileProvider = tileProvider ?? NetworkTileProvider(),
         tileUpdateTransformer =
             tileUpdateTransformer ?? TileUpdateTransformers.ignoreTapEvents {
@@ -277,8 +275,8 @@ class TileLayer extends StatefulWidget {
         urlTemplate!.contains('{s}.tile.openstreetmap.org')) {
       Logger(printer: PrettyPrinter(methodCount: 0)).w(
         '\x1B[1m\x1B[3mflutter_map\x1B[0m\nAvoid using subdomains with OSM\'s tile '
-        'server. Support may be become slow or be removed in future.\nSee '
-        'https://github.com/openstreetmap/operations/issues/737 for more info.',
+            'server. Support may be become slow or be removed in future.\nSee '
+            'https://github.com/openstreetmap/operations/issues/737 for more info.',
       );
     }
     if (kDebugMode &&
@@ -287,23 +285,23 @@ class TileLayer extends StatefulWidget {
         urlTemplate!.contains('{r}')) {
       Logger(printer: PrettyPrinter(methodCount: 0)).w(
         '\x1B[1m\x1B[3mflutter_map\x1B[0m\nThe URL template includes a retina '
-        "mode placeholder ('{r}') to retrieve native high-resolution\ntiles, "
-        'which improve appearance especially on high-density displays.\n'
-        'However, `TileLayer.retinaMode` was left unset, meaning flutter_map '
-        'will never retrieve these tiles.\nConsider using '
-        '`RetinaMode.isHighDensity` to toggle this property automatically, '
-        'otherwise ensure\nit is set appropriately.\n'
-        'See https://docs.fleaflet.dev/layers/tile-layer#retina-mode for '
-        'more info.',
+            "mode placeholder ('{r}') to retrieve native high-resolution\ntiles, "
+            'which improve appearance especially on high-density displays.\n'
+            'However, `TileLayer.retinaMode` was left unset, meaning flutter_map '
+            'will never retrieve these tiles.\nConsider using '
+            '`RetinaMode.isHighDensity` to toggle this property automatically, '
+            'otherwise ensure\nit is set appropriately.\n'
+            'See https://docs.fleaflet.dev/layers/tile-layer#retina-mode for '
+            'more info.',
       );
     }
     if (kDebugMode && kIsWeb && tileProvider is NetworkTileProvider?) {
       Logger(printer: PrettyPrinter(methodCount: 0)).i(
         '\x1B[1m\x1B[3mflutter_map\x1B[0m\nConsider installing the official '
-        "'flutter_map_cancellable_tile_provider' plugin for improved\n"
-        'performance on the web.\nSee '
-        'https://pub.dev/packages/flutter_map_cancellable_tile_provider for '
-        'more info.',
+            "'flutter_map_cancellable_tile_provider' plugin for improved\n"
+            'performance on the web.\nSee '
+            'https://pub.dev/packages/flutter_map_cancellable_tile_provider for '
+            'more info.',
       );
     }
 
@@ -316,16 +314,16 @@ class TileLayer extends StatefulWidget {
     // Retina Mode Setup
     resolvedRetinaMode = (retinaMode ?? false)
         ? wmsOptions == null && (urlTemplate?.contains('{r}') ?? false)
-            ? RetinaMode.server
-            : RetinaMode.simulation
+        ? RetinaMode.server
+        : RetinaMode.simulation
         : RetinaMode.disabled;
     final useSimulatedRetina = resolvedRetinaMode == RetinaMode.simulation;
 
     this.maxZoom = useSimulatedRetina && !zoomReverse ? maxZoom - 1 : maxZoom;
     this.maxNativeZoom =
-        useSimulatedRetina && !zoomReverse ? maxNativeZoom - 1 : maxNativeZoom;
+    useSimulatedRetina && !zoomReverse ? maxNativeZoom - 1 : maxNativeZoom;
     this.minZoom =
-        useSimulatedRetina && zoomReverse ? max(minZoom + 1.0, 0) : minZoom;
+    useSimulatedRetina && zoomReverse ? max(minZoom + 1.0, 0) : minZoom;
     this.minNativeZoom = useSimulatedRetina && zoomReverse
         ? max(minNativeZoom + 1, 0)
         : minNativeZoom;
@@ -333,14 +331,14 @@ class TileLayer extends StatefulWidget {
         ? (zoomReverse ? zoomOffset - 1.0 : zoomOffset + 1.0)
         : zoomOffset;
     this.tileSize =
-        useSimulatedRetina ? (tileSize / 2.0).floorToDouble() : tileSize;
+    useSimulatedRetina ? (tileSize / 2.0).floorToDouble() : tileSize;
   }
 
   @override
-  State<StatefulWidget> createState() => _TileLayerState();
+  State<StatefulWidget> createState() => _TileLayerStateSave();
 }
 
-class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
+class _TileLayerStateSave extends State<TileLayerSave> with TickerProviderStateMixin {
   bool _initializedFromMapCamera = false;
 
   final _tileImageManager = TileImageManager();
@@ -414,7 +412,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(TileLayer oldWidget) {
+  void didUpdateWidget(TileLayerSave oldWidget) {
     super.didUpdateWidget(oldWidget);
     var reloadTiles = false;
 
@@ -446,13 +444,13 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     if (oldWidget.minZoom != widget.minZoom ||
         oldWidget.maxZoom != widget.maxZoom) {
       reloadTiles |=
-          !_tileImageManager.allWithinZoom(widget.minZoom, widget.maxZoom);
+      !_tileImageManager.allWithinZoom(widget.minZoom, widget.maxZoom);
     }
 
     if (!reloadTiles) {
       final oldUrl =
-          oldWidget.wmsOptions?._encodedBaseUrl ?? oldWidget.urlTemplate;
-      final newUrl = widget.wmsOptions?._encodedBaseUrl ?? widget.urlTemplate;
+          oldWidget.wmsOptionsSave?._encodedBaseUrl ?? oldWidget.urlTemplate;
+      final newUrl = widget.wmsOptionsSave?._encodedBaseUrl ?? widget.urlTemplate;
 
       final oldOptions = oldWidget.additionalOptions;
       final newOptions = widget.additionalOptions;
@@ -460,7 +458,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       if (oldUrl != newUrl ||
           !(const MapEquality<String, String>())
               .equals(oldOptions, newOptions)) {
-        _tileImageManager.reloadImages(widget, _tileBounds);
+        _tileImageManager.reloadImages(widget as TileLayer, _tileBounds);
       }
     }
 
@@ -490,45 +488,41 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     var map = MapCamera.of(context);
+    // map = map.withOptions(MapOptions(initialCenter: const LatLng(118.8566, 12.3522),));
+    // map = map.withRotation(3);
 
-    if(widget.isSave) {
-      // map = map.withOptions(MapOptions(initialCenter: const LatLng(118.8566, 12.3522),));
-      // map = map.withRotation(3);
+    // map = map.withPosition(center:LatLng(-3, -59));
+    // map = map.project(latlng);
+    // map.project(LatLng(48.8566, 2.3522));
 
-      // map = map.withPosition(center:LatLng(-3, -59));
-      // map = map.project(latlng);
-      // map.project(LatLng(48.8566, 2.3522));
+    // var point = map.project(LatLng(53.3498, -6.2603));
 
-      // var point = map.project(LatLng(53.3498, -6.2603));
+    // LatLng(51.5, -0.09),
+    //  LatLng(53.3498, -6.2603),
+    //  LatLng(48.8566, 2.3522),
 
-      // LatLng(51.5, -0.09),
-      //  LatLng(53.3498, -6.2603),
-      //  LatLng(48.8566, 2.3522),
+    // map = map.withNonRotatedSize(Point(39.3, 73.7));
+    // map = map.withNonRotatedSize(Point(900.3, 900.7));
+    // pP = map.project(LatLng(53.3498, -6.2603));
+    // map.unproject(point)
 
-      // map = map.withNonRotatedSize(Point(39.3, 73.7));
-      // map = map.withNonRotatedSize(Point(900.3, 900.7));
-      // pP = map.project(LatLng(53.3498, -6.2603));
-      // map.unproject(point)
+    // LatLng(53.3498, -6.2603);
 
-      // LatLng(53.3498, -6.2603);
+    // pP = map.project(LatLng(53.3498, -6.2603));
 
-      // pP = map.project(LatLng(53.3498, -6.2603));
+    // var map2 = map.getNewPixelOrigin(LatLng(53.3498, -6.2603));
+    // var map3 = map.getPixelWorldBounds(null);
+    //
+    // var map4 = map.getOffsetFromOrigin(LatLng(53.3498, -6.2603));
+    // var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
+    // var map6 = map.(LatLng(53.3498, -6.2603));
 
-      // var map2 = map.getNewPixelOrigin(LatLng(53.3498, -6.2603));
-      // var map3 = map.getPixelWorldBounds(null);
-      //
-      // var map4 = map.getOffsetFromOrigin(LatLng(53.3498, -6.2603));
-      // var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
-      // var map6 = map.(LatLng(53.3498, -6.2603));
-
-      double indexToZoom = 5;
-      double www = 210 * indexToZoom;
-      double hhh = 297 * indexToZoom;
-
-      map = map.withNonRotatedSize(Point(www, hhh));
-      map = map.withOptions(MapOptions(initialZoom: 17));
-
-    }
+    // double indexToZoom = 3;
+    // double www = 210 * indexToZoom;
+    // double hhh = 297 * indexToZoom;
+    //
+    // map = map.withNonRotatedSize(Point(www, hhh));
+    // map = map.withOptions(MapOptions(initialZoom: 17));
     ch;
 
     if (_outsideZoomLimits(map.zoom.round())) return const SizedBox.shrink();
@@ -568,18 +562,18 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     final tiles = _tileImageManager
         .getTilesToRender(visibleRange: visibleTileRange)
         .map((tileRenderer) => Tile(
-              // Must be an ObjectKey, not a ValueKey using the coordinates, in
-              // case we remove and replace the TileImage with a different one.
-              key: ObjectKey(tileRenderer),
-              scaledTileSize: _tileScaleCalculator.scaledTileSize(
-                map.zoom,
-                tileRenderer.positionCoordinates.z,
-              ),
-              currentPixelOrigin: map.pixelOrigin,
-              tileImage: tileRenderer.tileImage,
-              positionCoordinates: tileRenderer.positionCoordinates,
-              tileBuilder: widget.tileBuilder,
-            ))
+      // Must be an ObjectKey, not a ValueKey using the coordinates, in
+      // case we remove and replace the TileImage with a different one.
+      key: ObjectKey(tileRenderer),
+      scaledTileSize: _tileScaleCalculator.scaledTileSize(
+        map.zoom,
+        tileRenderer.positionCoordinates.z,
+      ),
+      currentPixelOrigin: map.pixelOrigin,
+      tileImage: tileRenderer.tileImage,
+      positionCoordinates: tileRenderer.positionCoordinates,
+      tileBuilder: widget.tileBuilder,
+    ))
         .toList();
 
     // Sort in render order. In reverse:
@@ -767,14 +761,14 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
     final imageProvider = widget.tileProvider.supportsCancelLoading
         ? widget.tileProvider.getImageWithCancelLoadingSupport(
-            tileBoundsAtZoom.wrap(coordinates),
-            widget,
-            cancelLoading.future,
-          )
+      tileBoundsAtZoom.wrap(coordinates),
+      widget as TileLayer,
+      cancelLoading.future,
+    )
         : widget.tileProvider.getImage(
-            tileBoundsAtZoom.wrap(coordinates),
-            widget,
-          );
+      tileBoundsAtZoom.wrap(coordinates),
+      widget as TileLayer,
+    );
 
     return TileImage(
       vsync: this,
@@ -848,9 +842,9 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
   // expanded by the [TileLayer.panBuffer] + [TileLayer.keepBuffer], are marked
   // as not current.
   void _loadTiles(
-    DiscreteTileRange tileLoadRange, {
-    required bool pruneAfterLoad,
-  }) {
+      DiscreteTileRange tileLoadRange, {
+        required bool pruneAfterLoad,
+      }) {
     final tileZoom = tileLoadRange.zoom;
     final expandedTileLoadRange = tileLoadRange.expand(widget.panBuffer);
 
@@ -870,7 +864,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     // Re-order the tiles by their distance to the center of the range.
     final tileCenter = expandedTileLoadRange.center;
     tilesToLoad.sort(
-      (a, b) => _distanceSq(a.coordinates, tileCenter)
+          (a, b) => _distanceSq(a.coordinates, tileCenter)
           .compareTo(_distanceSq(b.coordinates, tileCenter)),
     );
 
@@ -937,4 +931,93 @@ double _distanceSq(TileCoordinates coord, Point<double> center) {
   final dx = center.x - coord.x;
   final dy = center.y - coord.y;
   return dx * dx + dy * dy;
+}
+
+
+/// Options for the []
+@immutable
+class WMSTileLayerOptionsSave {
+  /// WMS service's URL, for example 'http://ows.mundialis.de/services/service?'
+  final String baseUrl;
+
+  /// List of WMS layers to show
+  final List<String> layers;
+
+  /// List of WMS styles
+  final List<String> styles;
+
+  /// WMS image format (use 'image/png' for layers with transparency)
+  final String format;
+
+  /// Version of the WMS service to use
+  final String version;
+
+  /// Whether to make tiles transparent
+  final bool transparent;
+
+  /// Encode boolean values as uppercase in request
+  final bool uppercaseBoolValue;
+
+  /// Sets map projection standard
+  final Crs crs;
+
+  /// Other request parameters
+  final Map<String, String> otherParameters;
+
+  late final String _encodedBaseUrl;
+
+  late final double _versionNumber;
+
+  /// Create a new [WMSTileLayerOptions] instance.
+  WMSTileLayerOptionsSave({
+    required this.baseUrl,
+    this.layers = const [],
+    this.styles = const [],
+    this.format = 'image/png',
+    this.version = '1.1.1',
+    this.transparent = true,
+    this.uppercaseBoolValue = false,
+    this.crs = const Epsg3857(),
+    this.otherParameters = const {},
+  }) {
+    _versionNumber = double.tryParse(version.split('.').take(2).join('.')) ?? 0;
+    _encodedBaseUrl = _buildEncodedBaseUrl();
+  }
+
+  String _buildEncodedBaseUrl() {
+    final projectionKey = _versionNumber >= 1.3 ? 'crs' : 'srs';
+    final buffer = StringBuffer(baseUrl)
+      ..write('&service=WMS')
+      ..write('&request=GetMap')
+      ..write('&layers=${layers.map(Uri.encodeComponent).join(',')}')
+      ..write('&styles=${styles.map(Uri.encodeComponent).join(',')}')
+      ..write('&format=${Uri.encodeComponent(format)}')
+      ..write('&$projectionKey=${Uri.encodeComponent(crs.code)}')
+      ..write('&version=${Uri.encodeComponent(version)}')
+      ..write(
+          '&transparent=${uppercaseBoolValue ? transparent.toString().toUpperCase() : transparent}');
+    otherParameters
+        .forEach((k, v) => buffer.write('&$k=${Uri.encodeComponent(v)}'));
+    return buffer.toString();
+  }
+
+  /// Build the URL for a tile
+  String getUrl(TileCoordinates coords, int tileSize, bool retinaMode) {
+    final nwPoint = coords * tileSize;
+    final sePoint = nwPoint + Point<int>(tileSize, tileSize);
+    final nwCoords = crs.pointToLatLng(nwPoint, coords.z.toDouble());
+    final seCoords = crs.pointToLatLng(sePoint, coords.z.toDouble());
+    final nw = crs.projection.project(nwCoords);
+    final se = crs.projection.project(seCoords);
+    final bounds = Bounds(nw, se);
+    final bbox = (_versionNumber >= 1.3 && crs is Epsg4326)
+        ? [bounds.min.y, bounds.min.x, bounds.max.y, bounds.max.x]
+        : [bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y];
+
+    final buffer = StringBuffer(_encodedBaseUrl);
+    buffer.write('&width=${retinaMode ? tileSize * 2 : tileSize}');
+    buffer.write('&height=${retinaMode ? tileSize * 2 : tileSize}');
+    buffer.write('&bbox=${bbox.join(',')}');
+    return buffer.toString();
+  }
 }

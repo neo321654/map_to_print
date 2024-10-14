@@ -43,6 +43,7 @@ export 'package:flutter_map/src/layer/tile_layer/tile_coordinates.dart';
 export 'package:flutter_map/src/layer/tile_layer/tile_display.dart';
 export 'package:flutter_map/src/layer/tile_layer/tile_image.dart';
 export 'package:flutter_map/src/layer/tile_layer/tile_layer.dart';
+export 'package:flutter_map/src/layer/tile_layer/tile_layer_save.dart';
 export 'package:flutter_map/src/layer/tile_layer/tile_provider/asset_tile_provider.dart';
 export 'package:flutter_map/src/layer/tile_layer/tile_provider/base_tile_provider.dart';
 export 'package:flutter_map/src/layer/tile_layer/tile_provider/file_providers/tile_provider_stub.dart'
