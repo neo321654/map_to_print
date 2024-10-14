@@ -70,6 +70,8 @@ class ScreenSaveState extends State<ScreenSave> {
     double maxX = 0;
     double maxY = 0;
 
+
+
 //todo избавиться от глобальной переменной
     ch.length;
     for (var i = 0; i < ch.length; i++) {
@@ -90,9 +92,16 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
+
+    int wwwWith = 0;
+    int hhhHeigth = 0;
+
 // Предполагается, что list содержит изображения, а listE содержит информацию о позициях
     for (var img in list) {
       var ee = listE[list.indexOf(img)];
+
+      wwwWith+=height.toInt();
+      hhhHeigth += height.toInt();
 
       // Рисуем изображение
       canvas.drawImage(
@@ -127,7 +136,12 @@ class ScreenSaveState extends State<ScreenSave> {
 
     // var list111 =  createRectangle(LatLng(5.8, -59),10,10);
     // var list111 =  createRectangle(latLng??LatLng(5.8, -59),10,10);
-    var list111 = createRectangleNew(pP, 210, 297);
+
+    double coeficient = 3;
+    double wA4 = 210*coeficient;
+    double hA4 = 297*coeficient;
+
+    var list111 = createRectangleNew(pP, wA4, hA4);
 
     var p1 = list111[0];
     var p2 = list111[2];
@@ -173,8 +187,10 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final picture1 = recorder1.endRecording();
 
+
     // final image2 = await picture1.toImage(210, 297);
-    final image2 = await picture1.toImage(297, 210);
+    final image2 = await picture1.toImage( hA4.toInt(),wA4.toInt(),);
+    // final image2 = await picture1.toImage( 900,900,);
 
     ByteData? byteData =
         await image2.toByteData(format: ui.ImageByteFormat.png);

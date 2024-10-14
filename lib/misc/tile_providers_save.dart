@@ -6,7 +6,10 @@ import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_ti
 
 import 'package:latlong2/latlong.dart';
 
-TileLayer get openStreetMapTileLayerSave => TileLayer(
+TileLayer get openStreetMapTileLayerSave {
+
+  int countTiles = 0;
+  return TileLayer(
   isSave:true,
   key: UniqueKey(),
 
@@ -34,6 +37,8 @@ TileLayer get openStreetMapTileLayerSave => TileLayer(
       // }),
       tileBuilder: (context, widget, tileImage){
         tileImage.addListener((){
+          countTiles++;
+          print(countTiles);
           print(tileImage);
         });
           return Center(child: widget,);
@@ -46,4 +51,5 @@ TileLayer get openStreetMapTileLayerSave => TileLayer(
       // support the cancellation of loading tiles.
       tileProvider: CancellableNetworkTileProvider(),
     );
+}
 
