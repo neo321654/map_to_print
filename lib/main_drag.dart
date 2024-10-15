@@ -15,8 +15,6 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Dock<IconData>(
-            key: UniqueKey(),
-
             items: const [
               Icons.person,
               Icons.message,
@@ -25,11 +23,7 @@ class MyApp extends StatelessWidget {
               Icons.photo,
             ],
             builder: (e) {
-
               return Container(
-                key: UniqueKey(),
-
-
                 constraints: const BoxConstraints(minWidth: 48),
                 height: 48,
                 margin: const EdgeInsets.all(8),
@@ -37,9 +31,7 @@ class MyApp extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.primaries[e.hashCode % Colors.primaries.length],
                 ),
-                child: Center(                key: UniqueKey(),
-                    child: Icon(                key: UniqueKey(),
-                        e, color: Colors.white)),
+                child: Center(child: Icon(e, color: Colors.white)),
               );
             },
           ),
@@ -64,7 +56,7 @@ class Dock<T extends Object> extends StatefulWidget {
   final Widget Function(T) builder;
 
   @override
-  State<Dock<T >> createState() => _DockState<T>();
+  State<Dock<T>> createState() => _DockState<T>();
 }
 
 /// State of the [Dock] used to manipulate the [_items].
@@ -78,24 +70,20 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   @override
   void initState() {
     super.initState();
-    _tempItems =_items;
+    _tempItems = _items;
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Container(
       key: UniqueKey(),
-
       decoration: BoxDecoration(
-
         borderRadius: BorderRadius.circular(8),
         color: Colors.black12,
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
         key: UniqueKey(),
-
         mainAxisSize: MainAxisSize.min,
         children: buildList(),
       ),
@@ -113,18 +101,12 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
     _tempList = _tempItems.map((e) {
       return Draggable<T>(
-        key: UniqueKey(),
-
         data: e,
-
         feedback: widget.builder(e),
         child: DragTarget<T>(
-          key: UniqueKey(),
-
-          builder: (BuildContext context,candidateData,
-              rejectedData) {
-              return widget.builder(e);
-            },
+          builder: (BuildContext context, candidateData, rejectedData) {
+            return widget.builder(e);
+          },
           onAcceptWithDetails: (data) {
             //   var d = data;
 
@@ -140,10 +122,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               _tempItems[oldIndex] = _tempItems[curIndex];
               _tempItems[curIndex] = temp;
 
-
               // _tempList=_tempList..shuffle();
-
-
             });
           },
         ),
