@@ -143,10 +143,12 @@ class _DockState<T extends Object> extends State<Dock<T>> {
             BoxParentData parentData = renderObject.parentData! as BoxParentData;
             _offSet = parentData.offset;
 
-            // print('_offSet === $_offSet') ;
+            print('_offSet!!!! === $_offSet') ;
 
             if (_globalDragPositions == Offset.zero){
-              _globalDragPositions = renderObject.localToGlobal(_offSet);
+              // _globalDragPositions = renderObject.localToGlobal(_offSet);
+              _globalDragPositions = _offSet;
+
               print('_globalDragPositions === $_globalDragPositions') ;
             }
 
@@ -196,13 +198,16 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-              Offset localPosition =
-                  renderBox.globalToLocal(_globalDragPositions);
+              BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+              _globalDragPositions = _globalDragPositions -vvv.offset;
+              // Offset localPosition =
+              //     renderBox.globalToLocal(_globalDragPositions);
+              // print('localPosition == $localPosition');
               // renderBox.localToGlobal(renderBox.)
               // renderBox.
               return Transform.translate(
                 // transformHitTests: false,
-                offset: Offset(localPosition.dx, 0),
+                offset: Offset(_globalDragPositions.dx, 0),
                 child: wid,
               );
               // offset: Offset( 60, 0),child:wid,);
