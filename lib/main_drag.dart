@@ -56,11 +56,11 @@ class Dock<T> extends StatefulWidget {
   final Widget Function(T) builder;
 
   @override
-  State<Dock<T>> createState() => _DockState<T>();
+  State<Dock<T >> createState() => _DockState<T>();
 }
 
 /// State of the [Dock] used to manipulate the [_items].
-class _DockState<T extends Object> extends State<Dock<T>> {
+class _DockState<T> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
@@ -80,7 +80,9 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   }
 
   List<Widget> buildList() {
-    var _tempList  = [];
+    var _tempList = _items.map(widget.builder).toList();
+
+    // var _tempList  = [];
 
 
     _tempList = _items.map((e) {
@@ -88,19 +90,19 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
         data: e.hashCode,
 
-        feedback: e,
-        child: DragTarget<Widget>(
+        feedback: widget.builder(e),
+        child: DragTarget<int>(
             builder: (BuildContext context,candidateData,
               rejectedData) {
-              return e;
+              return widget.builder(e);
             },
           onAcceptWithDetails: (data) {
             //   var d = data;
 
             setState(() {
-              int oldIndex = _items.indexOf(data.data);
+              int oldIndex = _items.indexOf(e);
               // Меняем местами иконки
-              var curIndex = _tempList.indexOf(e);
+              var curIndex = _items.indexOf(data.data as T);
 
               var temp = _tempList[oldIndex];
 
