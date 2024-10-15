@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 /// Entrypoint of the application.
 void main() {
@@ -97,34 +98,74 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
     _tempList;
 
-    print('before $_tempList');
+    // print('before $_tempList');
 
     _tempList = _tempItems.map((e) {
       Widget wid = widget.builder(e);
 
       return Draggable<T>(
+        // hitTestBehavior: HitTestBehavior.opaque ,
+        // ignoringFeedbackPointer: false,
         onDragCompleted: () {
           _globalDragPositions = Offset.zero;
         },
         onDragUpdate: (details) {
-          print(details);
-          if (_globalDragPositions == Offset.zero)
-            _globalDragPositions = details.globalPosition - details.delta;
+          // print('details $details');
+
+          // if (_globalDragPositions == Offset.zero){
+          //   RenderBox rb = context.findRenderObject() as RenderBox;
+          //   // print(rb.localToGlobal(Offset(0,0)));
+          //
+          //    // var xx = rb.parentData.offset;
+          //
+          //   _globalDragPositions = details.globalPosition;
+          //   // _globalDragPositions = xx;
+          //  var _globalDragPositions11 = details.localPosition-details.delta;
+          //   details;
+          //
+          //
+          // }
+
         },
         // dragAnchorStrategy:pointerDragAnchorStrategy,
-        dragAnchorStrategy: childDragAnchorStrategy,
-        // dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
-        //     Offset position) {
-        //   final RenderBox renderObject =
-        //       context.findRenderObject()! as RenderBox;
-        //   _sizeSizedBox = renderObject.size;
-        //
-        //   return renderObject.globalToLocal(position);
-        // },
+        // dragAnchorStrategy: childDragAnchorStrategy,
+        dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
+            Offset position) {
+
+
+          final RenderBox renderObject =
+              context.findRenderObject()! as RenderBox;
+          _sizeSizedBox = renderObject.size;
+
+          Offset _offSet = Offset(0, 0);
+
+          if(renderObject.parentData is BoxParentData){
+            BoxParentData parentData = renderObject.parentData! as BoxParentData;
+            _offSet = parentData.offset;
+
+            // print('_offSet === $_offSet') ;
+
+            if (_globalDragPositions == Offset.zero){
+              _globalDragPositions = renderObject.localToGlobal(_offSet);
+              print('_globalDragPositions === $_globalDragPositions') ;
+            }
+
+          }
+        // print(runtimeType(  ));
+
+         //print(renderObject.parentData) ;
+
+          Offset xxx =renderObject.globalToLocal(position);
+
+          return xxx;
+
+        },
 
         onDragEnd: (DraggableDetails details) {},
         onDragStarted: () {
-          print('onDragStarted');
+         RenderBox rb = context.findRenderObject() as RenderBox;
+
+          // print('onDragStarted');
         },
         // feedbackOffset: Offset(22, 33),
         // childWhenDragging:widget.builder(e) ,
@@ -154,8 +195,10 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               _globalDragPositions;
 
               RenderBox renderBox = context.findRenderObject() as RenderBox;
+
               Offset localPosition =
                   renderBox.globalToLocal(_globalDragPositions);
+              // renderBox.localToGlobal(renderBox.)
               // renderBox.
               return Transform.translate(
                 // transformHitTests: false,
@@ -190,7 +233,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     }).toList();
 
     _tempList;
-    print('after $_tempList');
+    // print('after $_tempList');
 
     return _tempList;
   }
