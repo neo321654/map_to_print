@@ -73,6 +73,14 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   late final List<T> _items = widget.items.toList();
 
   List<Widget> _tempList = [];
+  late List<T> _tempItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _tempItems =_items;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,9 +108,10 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     // var _tempList  = [];
 
     _tempList;
+
     print('before $_tempList');
 
-    _tempList = _items.map((e) {
+    _tempList = _tempItems.map((e) {
       return Draggable<T>(
         key: UniqueKey(),
 
@@ -120,14 +129,17 @@ class _DockState<T extends Object> extends State<Dock<T>> {
             //   var d = data;
 
             setState(() {
-              int oldIndex = _items.indexOf(e);
+              int oldIndex = _tempItems.indexOf(e);
               // Меняем местами иконки
-              var curIndex = _items.indexOf(data.data);
+              var curIndex = _tempItems.indexOf(data.data);
+
+              _tempItems.shuffle();
 
               var temp = _tempList[oldIndex];
 
               _tempList[oldIndex] = _tempList[curIndex];
               _tempList[curIndex] = temp;
+              _tempList=_tempList..shuffle();
 
 
             });
@@ -139,6 +151,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     _tempList;
     print('after $_tempList');
 
-    return _tempList..shuffle();
+    return _tempList;
   }
 }
