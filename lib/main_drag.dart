@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Dock<IconData>(
+            key: UniqueKey(),
+
             items: const [
               Icons.person,
               Icons.message,
@@ -23,7 +25,11 @@ class MyApp extends StatelessWidget {
               Icons.photo,
             ],
             builder: (e) {
+
               return Container(
+                key: UniqueKey(),
+
+
                 constraints: const BoxConstraints(minWidth: 48),
                 height: 48,
                 margin: const EdgeInsets.all(8),
@@ -31,7 +37,9 @@ class MyApp extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.primaries[e.hashCode % Colors.primaries.length],
                 ),
-                child: Center(child: Icon(e, color: Colors.white)),
+                child: Center(                key: UniqueKey(),
+                    child: Icon(                key: UniqueKey(),
+                        e, color: Colors.white)),
               );
             },
           ),
@@ -64,15 +72,22 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
+  List<Widget> _tempList = [];
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: UniqueKey(),
+
       decoration: BoxDecoration(
+
         borderRadius: BorderRadius.circular(8),
         color: Colors.black12,
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
+        key: UniqueKey(),
+
         mainAxisSize: MainAxisSize.min,
         children: buildList(),
       ),
@@ -80,19 +95,24 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   }
 
   List<Widget> buildList() {
-    var _tempList = _items.map(widget.builder).toList();
+    // var _tempList = _items.map(widget.builder).toList();
 
     // var _tempList  = [];
 
+    _tempList;
+    print('before $_tempList');
 
     _tempList = _items.map((e) {
       return Draggable<T>(
+        key: UniqueKey(),
 
         data: e,
 
         feedback: widget.builder(e),
         child: DragTarget<T>(
-            builder: (BuildContext context,candidateData,
+          key: UniqueKey(),
+
+          builder: (BuildContext context,candidateData,
               rejectedData) {
               return widget.builder(e);
             },
@@ -108,12 +128,17 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
               _tempList[oldIndex] = _tempList[curIndex];
               _tempList[curIndex] = temp;
+
+
             });
           },
         ),
       );
     }).toList();
 
-    return _tempList;
+    _tempList;
+    print('after $_tempList');
+
+    return _tempList..shuffle();
   }
 }
