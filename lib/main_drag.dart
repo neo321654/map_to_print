@@ -133,13 +133,15 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               // Меняем местами иконки
               var curIndex = _tempItems.indexOf(data.data);
 
-              _tempItems.shuffle();
+              // _tempItems.shuffle();
 
-              var temp = _tempList[oldIndex];
+              var temp = _tempItems[oldIndex];
 
-              _tempList[oldIndex] = _tempList[curIndex];
-              _tempList[curIndex] = temp;
-              _tempList=_tempList..shuffle();
+              _tempItems[oldIndex] = _tempItems[curIndex];
+              _tempItems[curIndex] = temp;
+
+
+              // _tempList=_tempList..shuffle();
 
 
             });
