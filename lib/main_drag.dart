@@ -125,7 +125,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           print('onDragStarted');
         },
         // feedbackOffset: Offset(22, 33),
-        key: ValueKey(e),
         // childWhenDragging:widget.builder(e) ,
         childWhenDragging:
             // SizedBox(width: _sizeSizedBox.width, height: _sizeSizedBox.height,),
@@ -139,15 +138,27 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         data: e,
         feedback: wid,
         child: DragTarget<T>(
+          // onMove: (details){
+          //   details;
+          //
+          // },
           builder: (BuildContext context, candidateData, rejectedData) {
             candidateData;
+
+
 
             // if (candidateData.isNotEmpty) {
             //   return Align(child: wid, alignment: Alignment.topRight);
             // }
             if (candidateData.isNotEmpty) {
+              _globalDragPositions;
+
+              RenderBox renderBox = context.findRenderObject() as RenderBox;
+              Offset localPosition = renderBox.globalToLocal(_globalDragPositions);
+              // renderBox.
                 return Transform.translate(
-                    offset: Offset( 60, 0),child:wid,);
+                    offset: Offset(localPosition.dx, 0),child:wid,);
+                    // offset: Offset( 60, 0),child:wid,);
 
             }
 
