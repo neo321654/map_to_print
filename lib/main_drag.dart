@@ -103,22 +103,24 @@ class _DockState<T extends Object> extends State<Dock<T>> {
       Widget wid = widget.builder(e);
 
       return Draggable<T>(
-        onDragCompleted: (){
+        onDragCompleted: () {
           _globalDragPositions = Offset.zero;
         },
         onDragUpdate: (details) {
-         print(details) ;
-        if(_globalDragPositions== Offset.zero)_globalDragPositions =details.globalPosition-details.delta;
-
+          print(details);
+          if (_globalDragPositions == Offset.zero)
+            _globalDragPositions = details.globalPosition - details.delta;
         },
-        dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
-            Offset position) {
-          final RenderBox renderObject =
-              context.findRenderObject()! as RenderBox;
-          _sizeSizedBox = renderObject.size;
-
-          return renderObject.globalToLocal(position);
-        },
+        // dragAnchorStrategy:pointerDragAnchorStrategy,
+        dragAnchorStrategy: childDragAnchorStrategy,
+        // dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
+        //     Offset position) {
+        //   final RenderBox renderObject =
+        //       context.findRenderObject()! as RenderBox;
+        //   _sizeSizedBox = renderObject.size;
+        //
+        //   return renderObject.globalToLocal(position);
+        // },
 
         onDragEnd: (DraggableDetails details) {},
         onDragStarted: () {
@@ -145,8 +147,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           builder: (BuildContext context, candidateData, rejectedData) {
             candidateData;
 
-
-
             // if (candidateData.isNotEmpty) {
             //   return Align(child: wid, alignment: Alignment.topRight);
             // }
@@ -154,12 +154,15 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               _globalDragPositions;
 
               RenderBox renderBox = context.findRenderObject() as RenderBox;
-              Offset localPosition = renderBox.globalToLocal(_globalDragPositions);
+              Offset localPosition =
+                  renderBox.globalToLocal(_globalDragPositions);
               // renderBox.
-                return Transform.translate(
-                    offset: Offset(localPosition.dx, 0),child:wid,);
-                    // offset: Offset( 60, 0),child:wid,);
-
+              return Transform.translate(
+                // transformHitTests: false,
+                offset: Offset(localPosition.dx, 0),
+                child: wid,
+              );
+              // offset: Offset( 60, 0),child:wid,);
             }
 
             return wid;
