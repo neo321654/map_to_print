@@ -66,6 +66,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
   List<Widget> _tempList = [];
   late List<T> _tempItems;
+  Size _sizeSizedBox = const Size(0, 0);
 
   @override
   void initState() {
@@ -76,21 +77,19 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      key: UniqueKey(),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Colors.black12,
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
-        key: UniqueKey(),
         mainAxisSize: MainAxisSize.min,
-        children: buildList(),
+        children: buildList(context),
       ),
     );
   }
 
-  List<Widget> buildList() {
+  List<Widget> buildList(BuildContext context) {
     // var _tempList = _items.map(widget.builder).toList();
 
     // var _tempList  = [];
@@ -100,12 +99,48 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     print('before $_tempList');
 
     _tempList = _tempItems.map((e) {
+      Widget wid = widget.builder(e);
+
       return Draggable<T>(
+        onDragUpdate: (details) {},
+        dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
+            Offset position) {
+          final RenderBox renderObject =
+              context.findRenderObject()! as RenderBox;
+          _sizeSizedBox = renderObject.size;
+
+          return renderObject.globalToLocal(position);
+        },
+
+        onDragEnd: (DraggableDetails details) {},
+        onDragStarted: () {
+          print('onDragStarted');
+        },
+        // feedbackOffset: Offset(22, 33),
+        key: ValueKey(e),
+        // childWhenDragging:widget.builder(e) ,
+        childWhenDragging:
+            // SizedBox(width: _sizeSizedBox.width, height: _sizeSizedBox.height,),
+            Visibility(
+          child: wid,
+          visible: false,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+        ),
         data: e,
-        feedback: widget.builder(e),
+        feedback: wid,
         child: DragTarget<T>(
           builder: (BuildContext context, candidateData, rejectedData) {
-            return widget.builder(e);
+            candidateData;
+
+            if (candidateData.isNotEmpty) {
+              return Center(
+                child: Align(child: wid, alignment: Alignment.topRight),
+              );
+            }
+
+            return wid;
           },
           onAcceptWithDetails: (data) {
             //   var d = data;

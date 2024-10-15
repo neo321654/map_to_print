@@ -10,130 +10,64 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Dock(),
-      ),
+      title: 'Positioned Transition Demo',
+      home: const PositionedTransitionWidget(),
     );
   }
 }
 
-class Dock extends StatefulWidget {
+class PositionedTransitionWidget extends StatefulWidget {
+  const PositionedTransitionWidget({super.key});
+
   @override
-  _DockState createState() => _DockState();
+  _PositionedTransitionWidgetState createState() => _PositionedTransitionWidgetState();
 }
 
-class _DockState extends State<Dock> {
-  List<IconData> items = [
-    Icons.home,
-    Icons.search,
-    Icons.notifications,
-    Icons.person,
-  ];
-
-  int? draggedIndex;
+class _PositionedTransitionWidgetState extends State<PositionedTransitionWidget> {
+  bool _isMoved = false;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Column(
+    return Scaffold(
+      appBar: AppBar(title: const Text('Positioned Transition Sample')),
+      body: Center(
+        child: Stack(
           children: [
-            Draggable(feedback: Text('1'),
-            child: Text('1')),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(items.length, (index) {
-                return Draggable<IconData>(
-                  onDragStarted: () {
-                    print('onDragStarted');
-                  },
-                  onDragEnd: (details) {
-                    print('onDragEnd $details');
-                  },
-                  // affinity: ,
-                  // dragAnchorStrategy: ,
-                  // feedbackOffset: ,
-                  // dragAnchorStrategy: ,
-
-                  // data: Icon(Icons.import_contacts),
-                  data: items[index],
-                  feedback: Material(
-                    color: Colors.transparent,
-                    child: Icon(
-                      items[index],
-                      size: 50,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  childWhenDragging: Container(width: 50,height: 50,color: Colors.red,),
-                  child: DragTarget<IconData>(
-                    onMove:(m){
-
-                    m;
-
-                    } ,
-                    onLeave: (l){
-
-                      l;
-
-                    },
-                    onAcceptWithDetails: (data) {
-                      //   var d = data;
-
-                      setState(() {
-                        int oldIndex = items.indexOf(data.data);
-                        // Меняем местами иконки
-                        IconData temp = items[oldIndex];
-                        items[oldIndex] = items[index];
-                        items[index] = temp;
-                      });
-                    },
-                    builder: (context, candidateData, rejectedData) {
-
-
-
-                      print('candidateData $candidateData');
-                      print('rejectedData $rejectedData');
-
-
-                      if( candidateData.isNotEmpty)return
-                        Positioned(
-                          left:120,
-                          right: 100,
-                          child: Container(
-                            color: Colors.blue,
-                          // duration: const Duration(milliseconds: 5300),
-                          height: draggedIndex == index ? 70 : 50,
-                          width: draggedIndex == index ? 70 : 50,
-                          child: IconButton(
-                            icon: Icon(items[index]),
-                            iconSize: 40,
-                            onPressed: () {},
-                          ),
-                                                ),
-                        );
-
-                      return Container(
-                        // duration: const Duration(milliseconds: 5300),
-                        height: draggedIndex == index ? 70 : 50,
-                        width: draggedIndex == index ? 70 : 50,
-                        child: IconButton(
-                          icon: Icon(items[index]),
-                          iconSize: 40,
-                          onPressed: () {},
-                        ),
-                      );
-                    },
+            TweenAnimationBuilder<Offset>(
+              tween: Tween<Offset>(
+                begin: Offset(0.0, 0.0), // Начальная позиция
+                end: _isMoved ? Offset(1.0, 1.0) : Offset(0.0, 0.0), // Конечная позиция
+              ),
+              duration: const Duration(seconds: 1),
+              builder: (context, offset, child) {
+                return Transform.translate(
+                  offset: Offset(offset.dx * 200, offset.dy * 200), // Умножаем на 200 для перемещения
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.blue,
+                    alignment: Alignment.center,
+                    child: const Text('Slide Me', style: TextStyle(color: Colors.white)),
                   ),
                 );
-              }),
+              },
+            ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isMoved = !_isMoved; // Переключаем состояние перемещения
+                    });
+                  },
+                  child: const Text('Toggle Position'),
+                ),
+              ),
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
