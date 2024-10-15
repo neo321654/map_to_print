@@ -10,63 +10,59 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Positioned Transition Demo',
-      home: const PositionedTransitionWidget(),
+      title: 'Move Widget Demo',
+      home: const MoveWidgetExample(),
     );
   }
 }
 
-class PositionedTransitionWidget extends StatefulWidget {
-  const PositionedTransitionWidget({super.key});
+class MoveWidgetExample extends StatefulWidget {
+  const MoveWidgetExample({super.key});
 
   @override
-  _PositionedTransitionWidgetState createState() => _PositionedTransitionWidgetState();
+  _MoveWidgetExampleState createState() => _MoveWidgetExampleState();
 }
 
-class _PositionedTransitionWidgetState extends State<PositionedTransitionWidget> {
+class _MoveWidgetExampleState extends State<MoveWidgetExample> {
   bool _isMoved = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Positioned Transition Sample')),
+      appBar: AppBar(title: const Text('Move Widget Example')),
       body: Center(
-        child: Stack(
+        child: Row(
           children: [
+            Container(width: 50, height: 50, color: Colors.red),
+            Container(width: 50, height: 50, color: Colors.green),
             TweenAnimationBuilder<Offset>(
               tween: Tween<Offset>(
-                begin: Offset(0.0, 0.0), // Начальная позиция
-                end: _isMoved ? Offset(1.0, 1.0) : Offset(0.0, 0.0), // Конечная позиция
+                begin: Offset.zero,
+                end: _isMoved ? Offset(0.1, 0.4) : Offset.zero, // Изменяем смещение
               ),
-              duration: const Duration(seconds: 1),
+              duration: const Duration(milliseconds: 300),
               builder: (context, offset, child) {
                 return Transform.translate(
-                  offset: Offset(offset.dx * 200, offset.dy * 200), // Умножаем на 200 для перемещения
+                  offset: Offset(offset.dx * 300, 0), // Умножаем на 300 для перемещения
                   child: Container(
-                    width: 100,
-                    height: 100,
+                    width: 50,
+                    height: 50,
                     color: Colors.blue,
-                    alignment: Alignment.center,
-                    child: const Text('Slide Me', style: TextStyle(color: Colors.white)),
                   ),
                 );
               },
             ),
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isMoved = !_isMoved; // Переключаем состояние перемещения
-                    });
-                  },
-                  child: const Text('Toggle Position'),
-                ),
-              ),
-            ),
+            Container(width: 50, height: 50, color: Colors.yellow),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _isMoved = !_isMoved; // Переключаем состояние перемещения
+          });
+        },
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }

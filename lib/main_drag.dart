@@ -67,6 +67,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   List<Widget> _tempList = [];
   late List<T> _tempItems;
   Size _sizeSizedBox = const Size(0, 0);
+  Offset _globalDragPositions = Offset.zero;
 
   @override
   void initState() {
@@ -102,7 +103,14 @@ class _DockState<T extends Object> extends State<Dock<T>> {
       Widget wid = widget.builder(e);
 
       return Draggable<T>(
-        onDragUpdate: (details) {},
+        onDragCompleted: (){
+          _globalDragPositions = Offset.zero;
+        },
+        onDragUpdate: (details) {
+         print(details) ;
+        if(_globalDragPositions== Offset.zero)_globalDragPositions =details.globalPosition-details.delta;
+
+        },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
           final RenderBox renderObject =
@@ -134,10 +142,13 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           builder: (BuildContext context, candidateData, rejectedData) {
             candidateData;
 
+            // if (candidateData.isNotEmpty) {
+            //   return Align(child: wid, alignment: Alignment.topRight);
+            // }
             if (candidateData.isNotEmpty) {
-              return Center(
-                child: Align(child: wid, alignment: Alignment.topRight),
-              );
+                return Transform.translate(
+                    offset: Offset( 60, 0),child:wid,);
+
             }
 
             return wid;
