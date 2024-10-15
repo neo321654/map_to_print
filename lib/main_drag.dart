@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
 }
 
 /// Dock of the reorderable [items].
-class Dock<T> extends StatefulWidget {
+class Dock<T extends Object> extends StatefulWidget {
   const Dock({
     super.key,
     this.items = const [],
@@ -60,7 +60,7 @@ class Dock<T> extends StatefulWidget {
 }
 
 /// State of the [Dock] used to manipulate the [_items].
-class _DockState<T> extends State<Dock<T>> {
+class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
@@ -86,12 +86,12 @@ class _DockState<T> extends State<Dock<T>> {
 
 
     _tempList = _items.map((e) {
-      return Draggable<int>(
+      return Draggable<T>(
 
-        data: e.hashCode,
+        data: e,
 
         feedback: widget.builder(e),
-        child: DragTarget<int>(
+        child: DragTarget<T>(
             builder: (BuildContext context,candidateData,
               rejectedData) {
               return widget.builder(e);
@@ -102,7 +102,7 @@ class _DockState<T> extends State<Dock<T>> {
             setState(() {
               int oldIndex = _items.indexOf(e);
               // Меняем местами иконки
-              var curIndex = _items.indexOf(data.data as T);
+              var curIndex = _items.indexOf(data.data);
 
               var temp = _tempList[oldIndex];
 
