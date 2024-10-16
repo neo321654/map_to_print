@@ -164,6 +164,15 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               //     ),
               //     duration: const Duration(milliseconds: 1300),
               //     builder: (context, offset, child) {
+
+              // setState(
+              //       () {
+                  int curIndex = _items.indexOf(candidateData.first!);
+                  _items[curIndex] = _items[i];
+                  _items[i] = candidateData.first!;
+              //   },
+              // );
+
               return Transform.translate(
                 offset: Offset(posTarget.dx, 0),
                 child: widgetFromBuilder,
@@ -185,16 +194,22 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           },
           onLeave: (data){
 
-            setState(
-
-                  () {
-                int oldIndex = i;
-                int curIndex = _items.indexOf(data!);
-                T temp = _items[oldIndex];
-                _items[oldIndex] = _items[curIndex];
-                _items[curIndex] = temp;
-              },
-            );
+            // setState(
+            //
+            //       () {
+            //         // _items[i-1] = data!;
+            //     // int oldIndex = i;
+            //     // int curIndex = _items.indexOf(data!);
+            //     // T temp = _items[oldIndex];
+            //     // _items[oldIndex] = _items[curIndex];
+            //     // _items[curIndex] = temp;
+            //     // int oldIndex = i;
+            //     // int curIndex = _items.indexOf(data!);
+            //     // T temp = _items[oldIndex];
+            //     // _items[oldIndex] = _items[curIndex];
+            //     // _items[curIndex] = temp;
+            //   },
+            // );
 
             // posTarget = Offset.zero;
             // setState(() {
