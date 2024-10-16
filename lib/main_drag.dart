@@ -65,10 +65,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
-
-  Offset _globalDragPositions = Offset.zero;
-
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -85,88 +81,53 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   }
 
   List<Widget> buildList() {
-
-    final List<Widget> tempList = [];
-
-
+    Offset globalDragPositions = Offset.zero;
+    final List<Widget> tempListWidgets = [];
 
     for (int i = 0; i < _items.length; i++) {
-      Widget widgetFromBuilder = widget.builder(_items[i]);
+      final Widget widgetFromBuilder = widget.builder(_items[i]);
 
-      Draggable<T> finalWidget = Draggable(
+      Draggable finalWidget = Draggable(
         onDragCompleted: () {
-          _globalDragPositions = Offset.zero;
+          globalDragPositions = Offset.zero;
         },
-        onDraggableCanceled: (_,__){
-          _globalDragPositions = Offset.zero;
+        onDraggableCanceled: (_, __) {
+          globalDragPositions = Offset.zero;
         },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
-
           final RenderBox renderObject =
-          context.findRenderObject()! as RenderBox;
+              context.findRenderObject()! as RenderBox;
 
+          if (renderObject.parentData is BoxParentData &&
+              globalDragPositions == Offset.zero) {
+            BoxParentData parentData =
+                renderObject.parentData! as BoxParentData;
+            Offset offSet = parentData.offset;
 
-          if (renderObject.parentData is BoxParentData && _globalDragPositions == Offset.zero)  {
-
-
-              BoxParentData parentData = renderObject
-                  .parentData! as BoxParentData;
-              Offset offSet = parentData.offset;
-
-              print('_offSet!!!! === $offSet');
-              // _globalDragPositions = renderObject.localToGlobal(_offSet);
-              _globalDragPositions = offSet;
-
-              print('_globalDragPositions === $_globalDragPositions');
-
+            print('_offSet!!!! === $offSet');
+            globalDragPositions = offSet;
+            print('_globalDragPositions === $globalDragPositions');
           }
-          // print(runtimeType(  ));
-
-          //print(renderObject.parentData) ;
-
-          Offset xxx = renderObject.globalToLocal(position);
-
-          return xxx;
+          return renderObject.globalToLocal(position);
         },
-
-        onDragEnd: (DraggableDetails details) {},
-        onDragStarted: () {
-          RenderBox rb = context.findRenderObject() as RenderBox;
-
-          // print('onDragStarted');
-        },
-        // feedbackOffset: Offset(22, 33),
-        // childWhenDragging:widget.builder(e) ,
-        childWhenDragging:
-        // SizedBox(width: _sizeSizedBox.width, height: _sizeSizedBox.height,),
-        Visibility(
-          child: widgetFromBuilder,
+        childWhenDragging: Visibility(
           visible: false,
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
+          child: widgetFromBuilder,
         ),
         data: _items[i],
         feedback: widgetFromBuilder,
         child: DragTarget<T>(
-          // onMove: (details){
-          //   details;
-          //
-          // },
           builder: (BuildContext context, candidateData, rejectedData) {
-            candidateData;
 
-            // if (candidateData.isNotEmpty) {
-            //   return Align(child: wid, alignment: Alignment.topRight);
-            // }
             if (candidateData.isNotEmpty) {
-              _globalDragPositions;
-
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
               BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-              _globalDragPositions = _globalDragPositions - vvv.offset;
+              globalDragPositions = globalDragPositions - vvv.offset;
               // Offset localPosition =
               //     renderBox.globalToLocal(_globalDragPositions);
               // print('localPosition == $localPosition');
@@ -181,184 +142,42 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               //     duration: const Duration(milliseconds: 1300),
               //     builder: (context, offset, child) {
               return Transform.translate(
-                // transformHitTests: false,
-                // offset: Offset(offset.dx, 0),
-                offset: Offset(_globalDragPositions.dx, 0),
+                offset: Offset(globalDragPositions.dx, 0),
                 child: widgetFromBuilder,
               );
-              //   }
-              // );
-              // offset: Offset( 60, 0),child:wid,);
             }
 
             return widgetFromBuilder;
           },
           onAcceptWithDetails: (data) {
-            //   var d = data;
-
-            setState(() {
-              int oldIndex = i;
-              // Меняем местами иконки
-              int curIndex = _items.indexOf(data.data);
-
-               T temp = _items[oldIndex];
-
-              _items[oldIndex] = _items[curIndex];
-              _items[curIndex] = temp;
-
-              // _tempList=_tempList..shuffle();
-            });
+            setState(
+              () {
+                int oldIndex = i;
+                int curIndex = _items.indexOf(data.data);
+                T temp = _items[oldIndex];
+                _items[oldIndex] = _items[curIndex];
+                _items[curIndex] = temp;
+              },
+            );
+          },
+          onLeave: (data){
+            globalDragPositions = Offset.zero;
           },
         ),
       );
 
-      tempList.add(finalWidget);
+      tempListWidgets.add(finalWidget);
     }
 
+    return tempListWidgets;
+  }
+}
 
-    // _tempList = _tempItems.map((e) {
-    //
-    // // _tempItems.forEach((element)async {
-    // //   // Действия с элементом
-    // // });
-    //
-    // Widget widgetFromBuilder = widget.builder(e);
-    //
-    // return Draggable<T>(
-    //
-    // onDragCompleted: () {
-    // _globalDragPositions = Offset.zero;
-    // //todo check need or not
-    // // setState(() {
-    // //
-    // // });
-    // },
-    // onDragUpdate: (details) {},
-    //
-    // // dragAnchorStrategy:pointerDragAnchorStrategy,
-    // //  dragAnchorStrategy: childDragAnchorStrategy,
-    // //   final RenderBox renderObject = context.findRenderObject()! as RenderBox;
-    // // return renderObject.globalToLocal(position);
-    // dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
-    // Offset position) {
-    //
-    // final RenderBox renderObject =
-    // context.findRenderObject()! as RenderBox;
-    //
-    // Offset _offSet = Offset(0, 0);
-    //
-    // if(renderObject.parentData is BoxParentData){
-    // BoxParentData parentData = renderObject.parentData! as BoxParentData;
-    // _offSet = parentData.offset;
-    //
-    // print('_offSet!!!! === $_offSet') ;
-    //
-    // if (_globalDragPositions == Offset.zero){
-    // // _globalDragPositions = renderObject.localToGlobal(_offSet);
-    // _globalDragPositions = _offSet;
-    //
-    // print('_globalDragPositions === $_globalDragPositions') ;
-    // }
-    //
-    // }
-    // // print(runtimeType(  ));
-    //
-    // //print(renderObject.parentData) ;
-    //
-    // Offset xxx =renderObject.globalToLocal(position);
-    //
-    // return xxx;
-    //
-    // },
-    //
-    // onDragEnd: (DraggableDetails details) {},
-    // onDragStarted: () {
-    // RenderBox rb = context.findRenderObject() as RenderBox;
-    //
-    // // print('onDragStarted');
-    // },
-    // // feedbackOffset: Offset(22, 33),
-    // // childWhenDragging:widget.builder(e) ,
-    // childWhenDragging:
-    // // SizedBox(width: _sizeSizedBox.width, height: _sizeSizedBox.height,),
-    // Visibility(
-    // child: widgetFromBuilder,
-    // visible: false,
-    // maintainSize: true,
-    // maintainAnimation: true,
-    // maintainState: true,
-    // ),
-    // data: e,
-    // feedback: widgetFromBuilder,
-    // child: DragTarget<T>(
-    // // onMove: (details){
-    // //   details;
-    // //
-    // // },
-    // builder: (BuildContext context, candidateData, rejectedData) {
-    // candidateData;
-    //
-    // // if (candidateData.isNotEmpty) {
-    // //   return Align(child: wid, alignment: Alignment.topRight);
-    // // }
-    // if (candidateData.isNotEmpty) {
-    // _globalDragPositions;
-    //
-    // RenderBox renderBox = context.findRenderObject() as RenderBox;
-    //
-    // BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-    // _globalDragPositions = _globalDragPositions -vvv.offset;
-    // // Offset localPosition =
-    // //     renderBox.globalToLocal(_globalDragPositions);
-    // // print('localPosition == $localPosition');
-    // // renderBox.localToGlobal(renderBox.)
-    // // renderBox.
-    // // return  TweenAnimationBuilder<Offset>(
-    // //   curve: Curves.fastLinearToSlowEaseIn ,
-    // //     tween: Tween<Offset>(
-    // //       begin: Offset.zero,
-    // //       end: candidateData.isNotEmpty ? _globalDragPositions : Offset.zero, // Изменяем смещение
-    // //     ),
-    // //     duration: const Duration(milliseconds: 1300),
-    // //     builder: (context, offset, child) {
-    // return Transform.translate(
-    // // transformHitTests: false,
-    // // offset: Offset(offset.dx, 0),
-    // offset: Offset(_globalDragPositions.dx, 0),
-    // child: widgetFromBuilder,
-    // );
-    // //   }
-    // // );
-    // // offset: Offset( 60, 0),child:wid,);
-    // }
-    //
-    // return widgetFromBuilder;
-    // },
-    // onAcceptWithDetails: (data) {
-    // //   var d = data;
-    //
-    // setState(() {
-    // int oldIndex = _tempItems.indexOf(e);
-    // // Меняем местами иконки
-    // var curIndex = _tempItems.indexOf(data.data);
-    //
-    // // _tempItems.shuffle();
-    //
-    // var temp = _tempItems[oldIndex];
-    //
-    // _tempItems[oldIndex] = _tempItems[curIndex];
-    // _tempItems[curIndex] = temp;
-    //
-    // // _tempList=_tempList..shuffle();
-    // });
-    // },
-    // ),
-    // );
-    // }).toList();
-    //
-    // _tempList;
-    // print('after $_tempList');
+class DockListWidgets extends StatelessWidget {
+  const DockListWidgets({super.key});
 
-    return tempList;
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
