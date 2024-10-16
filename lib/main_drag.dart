@@ -67,7 +67,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
   List<Widget> _tempList = [];
   late List<T> _tempItems;
-  Size _sizeSizedBox = const Size(0, 0);
   Offset _globalDragPositions = Offset.zero;
 
   @override
@@ -96,7 +95,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
     // var _tempList  = [];
 
-    _tempList;
 
     // print('before $_tempList');
 
@@ -135,7 +133,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
           final RenderBox renderObject =
               context.findRenderObject()! as RenderBox;
-          _sizeSizedBox = renderObject.size;
+          // _sizeSizedBox = renderObject.size;
 
           Offset _offSet = Offset(0, 0);
 
@@ -205,10 +203,20 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               // print('localPosition == $localPosition');
               // renderBox.localToGlobal(renderBox.)
               // renderBox.
-              return Transform.translate(
-                // transformHitTests: false,
-                offset: Offset(_globalDragPositions.dx, 0),
-                child: wid,
+              return  TweenAnimationBuilder<Offset>(
+                curve: Curves.fastLinearToSlowEaseIn ,
+                  tween: Tween<Offset>(
+                    begin: Offset.zero,
+                    end: candidateData.isNotEmpty ? _globalDragPositions : Offset.zero, // Изменяем смещение
+                  ),
+                  duration: const Duration(milliseconds: 1300),
+                  builder: (context, offset, child) {
+                  return Transform.translate(
+                    // transformHitTests: false,
+                    offset: Offset(offset.dx, 0),
+                    child: wid,
+                  );
+                }
               );
               // offset: Offset( 60, 0),child:wid,);
             }
