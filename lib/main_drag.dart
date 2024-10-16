@@ -84,6 +84,8 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     Offset globalDragPositions = Offset.infinite;
     final List<Widget> tempListWidgets = [];
     bool isDragging = false;
+    Offset posTarget = Offset.zero;
+
 
     for (int i = 0; i < _items.length; i++) {
       final Widget widgetFromBuilder = widget.builder(_items[i]);
@@ -133,14 +135,14 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         feedback: widgetFromBuilder,
         child: DragTarget<T>(
           builder: (BuildContext context, candidateData, rejectedData) {
-
             if (candidateData.isNotEmpty) {
 
               if(isDragging){
                 RenderBox renderBox = context.findRenderObject() as RenderBox;
 
                 BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-                globalDragPositions = globalDragPositions - vvv.offset;
+                posTarget = globalDragPositions - vvv.offset;
+
               }
 
 
@@ -163,7 +165,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               //     duration: const Duration(milliseconds: 1300),
               //     builder: (context, offset, child) {
               return Transform.translate(
-                offset: Offset(globalDragPositions.dx, 0),
+                offset: Offset(posTarget.dx, 0),
                 child: widgetFromBuilder,
               );
             }
