@@ -65,15 +65,9 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
-  List<Widget> _tempList = [];
-  late List<T> _tempItems;
+
   Offset _globalDragPositions = Offset.zero;
 
-  @override
-  void initState() {
-    super.initState();
-    _tempItems = _items;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +86,12 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 
   List<Widget> buildList() {
 
-     _tempList.clear();
+    final List<Widget> tempList = [];
 
 
-    for (int i = 0; i < _tempItems.length; i++) {
-      Widget widgetFromBuilder = widget.builder(_tempItems[i]);
+
+    for (int i = 0; i < _items.length; i++) {
+      Widget widgetFromBuilder = widget.builder(_items[i]);
 
       Draggable<T> finalWidget = Draggable(
         onDragCompleted: () {
@@ -152,7 +147,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           maintainAnimation: true,
           maintainState: true,
         ),
-        data: _tempItems[i],
+        data: _items[i],
         feedback: widgetFromBuilder,
         child: DragTarget<T>(
           // onMove: (details){
@@ -204,12 +199,12 @@ class _DockState<T extends Object> extends State<Dock<T>> {
             setState(() {
               int oldIndex = i;
               // Меняем местами иконки
-              int curIndex = _tempItems.indexOf(data.data);
+              int curIndex = _items.indexOf(data.data);
 
-               T temp = _tempItems[oldIndex];
+               T temp = _items[oldIndex];
 
-              _tempItems[oldIndex] = _tempItems[curIndex];
-              _tempItems[curIndex] = temp;
+              _items[oldIndex] = _items[curIndex];
+              _items[curIndex] = temp;
 
               // _tempList=_tempList..shuffle();
             });
@@ -217,7 +212,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         ),
       );
 
-      _tempList.add(finalWidget);
+      tempList.add(finalWidget);
     }
 
 
@@ -364,6 +359,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     // _tempList;
     // print('after $_tempList');
 
-    return _tempList;
+    return tempList;
   }
 }
