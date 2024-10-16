@@ -101,37 +101,32 @@ class _DockState<T extends Object> extends State<Dock<T>> {
       Draggable<T> finalWidget = Draggable(
         onDragCompleted: () {
           _globalDragPositions = Offset.zero;
-          //todo check need or not
-          // setState(() {
-          //
-          // });
         },
-        onDragUpdate: (details) {},
-
-        // dragAnchorStrategy:pointerDragAnchorStrategy,
-        //  dragAnchorStrategy: childDragAnchorStrategy,
-        //   final RenderBox renderObject = context.findRenderObject()! as RenderBox;
-        // return renderObject.globalToLocal(position);
+        onDraggableCanceled: (_,__){
+          _globalDragPositions = Offset.zero;
+        },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
+
           final RenderBox renderObject =
           context.findRenderObject()! as RenderBox;
 
-          Offset _offSet = Offset(0, 0);
 
-          if (renderObject.parentData is BoxParentData) {
-            BoxParentData parentData = renderObject
-                .parentData! as BoxParentData;
-            _offSet = parentData.offset;
+          if (renderObject.parentData is BoxParentData && _globalDragPositions == Offset.zero)  {
 
-            print('_offSet!!!! === $_offSet');
 
-            if (_globalDragPositions == Offset.zero) {
+              Offset offSet = Offset.zero;
+
+              BoxParentData parentData = renderObject
+                  .parentData! as BoxParentData;
+              offSet = parentData.offset;
+
+              print('_offSet!!!! === $offSet');
               // _globalDragPositions = renderObject.localToGlobal(_offSet);
-              _globalDragPositions = _offSet;
+              _globalDragPositions = offSet;
 
               print('_globalDragPositions === $_globalDragPositions');
-            }
+
           }
           // print(runtimeType(  ));
 
