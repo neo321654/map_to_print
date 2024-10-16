@@ -185,6 +185,22 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           },
           onLeave: (data){
 
+            setState(
+
+                  () {
+                int oldIndex = i;
+                int curIndex = _items.indexOf(data!);
+                T temp = _items[oldIndex];
+                _items[oldIndex] = _items[curIndex];
+                _items[curIndex] = temp;
+              },
+            );
+
+            // posTarget = Offset.zero;
+            // setState(() {
+            //
+            // });
+
             //todo need check
             if(!isDragging){
 
