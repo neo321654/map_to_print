@@ -136,7 +136,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         child: DragTarget<T>(
           builder: (BuildContext context, candidateData, rejectedData) {
             if (candidateData.isNotEmpty) {
-//
+/////
               if(isDragging){
                 RenderBox renderBox = context.findRenderObject() as RenderBox;
 
