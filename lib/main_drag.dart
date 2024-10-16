@@ -81,18 +81,29 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   }
 
   List<Widget> buildList() {
-    Offset globalDragPositions = Offset.zero;
+    Offset globalDragPositions = Offset.infinite;
     final List<Widget> tempListWidgets = [];
+    bool isDragging = false;
 
     for (int i = 0; i < _items.length; i++) {
       final Widget widgetFromBuilder = widget.builder(_items[i]);
 
       Draggable finalWidget = Draggable(
+        onDragStarted: (){
+          isDragging = true;
+        },
+        onDragEnd: (_){
+          isDragging = false;
+          globalDragPositions = Offset.infinite;
+        },
+
         onDragCompleted: () {
-          globalDragPositions = Offset.zero;
+          isDragging = false;
+          globalDragPositions = Offset.infinite;
         },
         onDraggableCanceled: (_, __) {
-          globalDragPositions = Offset.zero;
+          isDragging = false;
+          globalDragPositions = Offset.infinite;
         },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
@@ -100,7 +111,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               context.findRenderObject()! as RenderBox;
 
           if (renderObject.parentData is BoxParentData &&
-              globalDragPositions == Offset.zero) {
+              globalDragPositions == Offset.infinite) {
             BoxParentData parentData =
                 renderObject.parentData! as BoxParentData;
             Offset offSet = parentData.offset;
@@ -124,10 +135,20 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           builder: (BuildContext context, candidateData, rejectedData) {
 
             if (candidateData.isNotEmpty) {
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-              BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-              globalDragPositions = globalDragPositions - vvv.offset;
+              if(isDragging){
+                RenderBox renderBox = context.findRenderObject() as RenderBox;
+
+                BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+                globalDragPositions = globalDragPositions - vvv.offset;
+              }
+
+
+
+
+
+
+
               // Offset localPosition =
               //     renderBox.globalToLocal(_globalDragPositions);
               // print('localPosition == $localPosition');
@@ -161,8 +182,16 @@ class _DockState<T extends Object> extends State<Dock<T>> {
             );
           },
           onLeave: (data){
-            globalDragPositions = Offset.zero;
+
+            //todo need check
+            if(!isDragging){
+
+              globalDragPositions = Offset.infinite;
+
+            }
+
           },
+
         ),
       );
 
