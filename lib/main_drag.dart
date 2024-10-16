@@ -115,11 +115,9 @@ class _DockState<T extends Object> extends State<Dock<T>> {
           if (renderObject.parentData is BoxParentData && _globalDragPositions == Offset.zero)  {
 
 
-              Offset offSet = Offset.zero;
-
               BoxParentData parentData = renderObject
                   .parentData! as BoxParentData;
-              offSet = parentData.offset;
+              Offset offSet = parentData.offset;
 
               print('_offSet!!!! === $offSet');
               // _globalDragPositions = renderObject.localToGlobal(_offSet);
