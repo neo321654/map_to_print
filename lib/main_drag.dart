@@ -85,55 +85,38 @@ class _DockState<T extends Object> extends State<Dock<T>> {
       padding: const EdgeInsets.all(4),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: buildList(context),
+        children: buildList(),
       ),
     );
   }
 
-  List<Widget> buildList(BuildContext context) {
-    // var _tempList = _items.map(widget.builder).toList();
+  List<Widget> buildList() {
 
-    // var _tempList  = [];
-
-
-    // print('before $_tempList');
 
     _tempList = _tempItems.map((e) {
-      Widget wid = widget.builder(e);
+
+      Widget widgetFromBuilder = widget.builder(e);
 
       return Draggable<T>(
-        // hitTestBehavior: HitTestBehavior.opaque ,
-        // ignoringFeedbackPointer: false,
+
         onDragCompleted: () {
           _globalDragPositions = Offset.zero;
+          //todo check need or not
+          // setState(() {
+          //
+          // });
         },
-        onDragUpdate: (details) {
-          // print('details $details');
+        onDragUpdate: (details) {},
 
-          // if (_globalDragPositions == Offset.zero){
-          //   RenderBox rb = context.findRenderObject() as RenderBox;
-          //   // print(rb.localToGlobal(Offset(0,0)));
-          //
-          //    // var xx = rb.parentData.offset;
-          //
-          //   _globalDragPositions = details.globalPosition;
-          //   // _globalDragPositions = xx;
-          //  var _globalDragPositions11 = details.localPosition-details.delta;
-          //   details;
-          //
-          //
-          // }
-
-        },
         // dragAnchorStrategy:pointerDragAnchorStrategy,
-        // dragAnchorStrategy: childDragAnchorStrategy,
+        //  dragAnchorStrategy: childDragAnchorStrategy,
+        //   final RenderBox renderObject = context.findRenderObject()! as RenderBox;
+        // return renderObject.globalToLocal(position);
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
 
-
           final RenderBox renderObject =
               context.findRenderObject()! as RenderBox;
-          // _sizeSizedBox = renderObject.size;
 
           Offset _offSet = Offset(0, 0);
 
@@ -172,14 +155,14 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         childWhenDragging:
             // SizedBox(width: _sizeSizedBox.width, height: _sizeSizedBox.height,),
             Visibility(
-          child: wid,
+          child: widgetFromBuilder,
           visible: false,
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
         ),
         data: e,
-        feedback: wid,
+        feedback: widgetFromBuilder,
         child: DragTarget<T>(
           // onMove: (details){
           //   details;
@@ -203,25 +186,26 @@ class _DockState<T extends Object> extends State<Dock<T>> {
               // print('localPosition == $localPosition');
               // renderBox.localToGlobal(renderBox.)
               // renderBox.
-              return  TweenAnimationBuilder<Offset>(
-                curve: Curves.fastLinearToSlowEaseIn ,
-                  tween: Tween<Offset>(
-                    begin: Offset.zero,
-                    end: candidateData.isNotEmpty ? _globalDragPositions : Offset.zero, // Изменяем смещение
-                  ),
-                  duration: const Duration(milliseconds: 1300),
-                  builder: (context, offset, child) {
+              // return  TweenAnimationBuilder<Offset>(
+              //   curve: Curves.fastLinearToSlowEaseIn ,
+              //     tween: Tween<Offset>(
+              //       begin: Offset.zero,
+              //       end: candidateData.isNotEmpty ? _globalDragPositions : Offset.zero, // Изменяем смещение
+              //     ),
+              //     duration: const Duration(milliseconds: 1300),
+              //     builder: (context, offset, child) {
                   return Transform.translate(
                     // transformHitTests: false,
-                    offset: Offset(offset.dx, 0),
-                    child: wid,
+                    // offset: Offset(offset.dx, 0),
+                    offset: Offset(_globalDragPositions.dx, 0),
+                    child: widgetFromBuilder,
                   );
-                }
-              );
+              //   }
+              // );
               // offset: Offset( 60, 0),child:wid,);
             }
 
-            return wid;
+            return widgetFromBuilder;
           },
           onAcceptWithDetails: (data) {
             //   var d = data;
