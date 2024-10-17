@@ -349,29 +349,13 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
               BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
                offset = widget.globalDeltaOffset - vvv.offset;
+               if(offset.dx>=0){
+                 offset = Offset(renderBox.size.width, 0);
 
+               }else{
+                 offset = Offset(-renderBox.size.width, 0);
 
-            // Offset localPosition =
-            //     renderBox.globalToLocal(_globalDragPositions);
-            // print('localPosition == $localPosition');
-            // renderBox.localToGlobal(renderBox.)
-            // renderBox.
-            // return  TweenAnimationBuilder<Offset>(
-            //   curve: Curves.fastLinearToSlowEaseIn ,
-            //     tween: Tween<Offset>(
-            //       begin: Offset.zero,
-            //       end: candidateData.isNotEmpty ? _globalDragPositions : Offset.zero, // Изменяем смещение
-            //     ),
-            //     duration: const Duration(milliseconds: 1300),
-            //     builder: (context, offset, child) {
-
-            // setState(
-            //       () {
-            // int curIndex = _items.indexOf(candidateData.first!);
-            // _items[curIndex] = _items[i];
-            // _items[i] = candidateData.first!;
-            //   },
-            // );
+               }
 
             return Transform.translate(
               offset: offset,
