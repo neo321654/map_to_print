@@ -342,26 +342,54 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
       feedback: widgetFromBuilder,
       child: DragTarget<T>(
         builder: (BuildContext context, candidateData, rejectedData) {
+
+
           if (candidateData.isNotEmpty) {
+            var renderBox = context.findRenderObject();
+           if (renderBox is RenderBox){
+             RenderBox renderBox = context.findRenderObject() as RenderBox;
+
+             BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
 
 
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
+             offset = widget.globalDeltaOffset - vvv.offset;
+             if(offset.dx>=0){
+               offset = Offset(renderBox.size.width, 0);
+             }else{
+               offset = Offset(-renderBox.size.width, 0);
+             }
+             return Transform.translate(
+               offset: offset,
+               child: widgetFromBuilder,
+             );
+          }
 
-              BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-               offset = widget.globalDeltaOffset - vvv.offset;
-               if(offset.dx>=0){
-                 offset = Offset(renderBox.size.width, 0);
 
-               }else{
-                 offset = Offset(-renderBox.size.width, 0);
+          }
 
-               }
+          if(widget.globalDeltaOffset!=Offset.infinite){
+            var  offset1;
+            var renderBox = context.findRenderObject();
+            if (renderBox is RenderBox){
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+
+            BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+            offset1 = widget.globalDeltaOffset - vvv.offset;
+
+            if(offset1.dx>=0&&offset1.dx<70){
+              offset1 = Offset(-renderBox.size.width, 0);
+            }else if(offset1.dx<0 && offset1.dx>-70){
+              offset1 = Offset(renderBox.size.width, 0);
+            }else{
+              offset1 = offset;
+            }
 
             return Transform.translate(
-              offset: offset,
+              offset: offset1,
               child: widgetFromBuilder,
-            );
+            );}
           }
+
 
           return widgetFromBuilder;
         },
@@ -387,6 +415,18 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           // );
 
           // posTarget = Offset.zero;
+          // setState(() {
+          //
+          // });
+          RenderBox renderBox = context.findRenderObject() as RenderBox;
+
+          BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+          offset = widget.globalDeltaOffset;
+          // if(offset.dx>=0){
+          //   offset = Offset(renderBox.size.width, 0);
+          // }else{
+          //   offset = Offset(-renderBox.size.width, 0);
+          // }
           // setState(() {
           //
           // });
