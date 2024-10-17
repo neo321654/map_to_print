@@ -172,7 +172,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           (Draggable<Object> draggable, BuildContext context, Offset position) {
         final RenderBox renderObject = context.findRenderObject()! as RenderBox;
 
-
+//
           BoxParentData parentData = renderObject.parentData! as BoxParentData;
           Offset offSet = parentData.offset;
 
