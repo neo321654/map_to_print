@@ -210,9 +210,19 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
              }else{
                offset = Offset(-renderBox.size.width, 0);
              }
-             return Transform.translate(
-               offset: offset,
-               child: widgetFromBuilder,
+             return TweenAnimationBuilder<Offset>(
+                curve: Curves.easeInOutExpo ,
+                  tween: Tween<Offset>(
+                    begin: Offset.zero,
+                    end: candidateData.isNotEmpty ? offset : Offset.zero, // Изменяем смещение
+                  ),
+                  duration: const Duration(milliseconds: 600),
+                  builder: (context, offset, child) {
+                 return Transform.translate(
+                   offset: offset,
+                   child: widgetFromBuilder,
+                 );
+               }
              );
 
            }
