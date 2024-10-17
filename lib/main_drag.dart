@@ -471,7 +471,7 @@ class CustomTickerProvider extends TickerProvider {
       // Определение Tween для анимации
       _animation = Tween<Offset>(
         begin: Offset.zero,
-        end: dragStartPoint,
+        end: Offset(-1,-1),
       ).animate(CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
@@ -526,6 +526,7 @@ class CustomTickerProvider extends TickerProvider {
     }
 
     void updateDrag(Offset globalPosition) {
+      print('dfdfdf $dragStartPoint');
       _lastOffset = globalPosition - dragStartPoint;
       if (overlayState.mounted) {
         final RenderBox box = overlayState.context.findRenderObject()! as RenderBox;
@@ -614,12 +615,18 @@ class CustomTickerProvider extends TickerProvider {
 
       // Устанавливаем конечное значение для анимации
       _animation = Tween<Offset>(
-        begin: _overlayOffset,
+        begin: _lastOffset,
         end: dragStartPoint, // Возвращаем на исходную позицию
       ).animate(CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOut,
       ));
+
+      print('qq $_lastOffset');
+      print('qqqqww $_overlayOffset');
+      print('qqwww $dragStartPoint');
+      print('qq $_lastOffset');
+      print('qssasasqwq $_position');
 
       // Запускаем анимацию
       _animationController.forward().then((_) {
