@@ -303,13 +303,14 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
       onDragStarted: () {
         isDragging = true;
         isVisible = false;
-        setState(() {});
+        // setState(() {});
       },
       onDragEnd: (_) {
         isDragging = false;
         isVisible = true;
         // offset = Offset.zero;
         widget.setGlobalDeltaOffset(Offset.infinite);
+        offset = Offset.zero;
         // setState(() {
         //
         // });
@@ -319,11 +320,17 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
       onDragCompleted: () {
         isDragging = false;
         isVisible = true;
+        widget.setGlobalDeltaOffset(Offset.infinite);
+        offset = Offset.zero;
+
+
         // globalDragPositions = Offset.infinite;
       },
       onDraggableCanceled: (_, __) {
         isDragging = false;
         isVisible = true;
+        widget.setGlobalDeltaOffset(Offset.infinite);
+
       },
       dragAnchorStrategy:
           (Draggable<Object> draggable, BuildContext context, Offset position) {
@@ -372,28 +379,30 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
           }
 
-          if(widget.globalDeltaOffset!=Offset.infinite){
-            var  offset1;
-            var renderBox = context.findRenderObject();
-            if (renderBox is RenderBox){
-            RenderBox renderBox = context.findRenderObject() as RenderBox;
-
-            BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-            offset1 = widget.globalDeltaOffset - vvv.offset;
-
-            if(offset1.dx>=0&&offset1.dx<70){
-              offset1 = Offset(renderBox.size.width, 0);
-            }else if(offset1.dx<0 && offset1.dx>-70){
-              offset1 = Offset(-renderBox.size.width, 0);
-            }else{
-              offset1 = offset;
-            }
-
-            return Transform.translate(
-              offset: offset1,
-              child: widgetFromBuilder,
-            );}
-          }
+          // if(widget.globalDeltaOffset!=Offset.infinite){
+          //   offset = Offset.zero;
+          //
+          //   var  offset1;
+          //   var renderBox = context.findRenderObject();
+          //   if (renderBox is RenderBox){
+          //   RenderBox renderBox = context.findRenderObject() as RenderBox;
+          //
+          //   BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+          //   offset1 = widget.globalDeltaOffset - vvv.offset;
+          //
+          //   if(offset1.dx>=0&&offset1.dx<70){
+          //     offset1 = Offset(renderBox.size.width, 0);
+          //   }else if(offset1.dx<0 && offset1.dx>-70){
+          //     offset1 = Offset(-renderBox.size.width, 0);
+          //   }else{
+          //     offset1 = offset;
+          //   }
+          //
+          //   return Transform.translate(
+          //     offset: offset1,
+          //     child: widgetFromBuilder,
+          //   );}
+          // }
 
 
           return widgetFromBuilder;
@@ -402,6 +411,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           widget.onDrop(data.data, widget.item);
         },
         onLeave: (data) {
+          widget.onDrop(data!, widget.item);
+
           // setState(
           //
           //       () {
