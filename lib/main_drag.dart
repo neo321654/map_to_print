@@ -65,6 +65,7 @@ class _DockState<T> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,14 +77,19 @@ class _DockState<T> extends State<Dock<T>> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children:
-
-        [DockItem<T>(_items.first,widget.builder)],
-        // _items.map((e){
-        //  return DockItem<T>(e,widget.builder);
-        // }).toList(),
+        _items.map((e){
+         return DockItem<T>(item: e, builder:widget.builder,onDrop: onDrop,);
+        }).toList(),
       ),
     );
   }
+  void onDrop(T item, int index){
+    setState(() {
+      _items.remove(item);
+      _items.insert(index, item);
+    });
+  }
+}
 
 //   List<Widget> buildList() {
 //     Offset globalDragPositions = Offset.infinite;
@@ -243,12 +249,13 @@ class _DockState<T> extends State<Dock<T>> {
 //
 //     return tempListWidgets;
 //   }
-}
+
 
 class DockItem<T> extends StatefulWidget {
-  const DockItem(this.item, this.builder, {super.key});
+  const DockItem({required this.item, required this.builder,required this.onDrop, super.key});
   final T item;
   final Widget Function(T) builder;
+  final Function(T item, int index) onDrop;
 
 
   @override
@@ -258,6 +265,7 @@ class DockItem<T> extends StatefulWidget {
 class _DockItemState<T> extends State<DockItem<T>> {
 
   bool isDragging = false;
+  bool isVisible = true;
   late Widget widgetFromBuilder;
   Offset offset = Offset.zero;
 
@@ -279,20 +287,28 @@ class _DockItemState<T> extends State<DockItem<T>> {
 
       onDragStarted: (){
         isDragging = true;
+        isVisible = false;
+        setState(() {
+
+        });
       },
       onDragEnd: (_){
         isDragging = false;
+        isVisible = true;
+
         // globalDragPositions = Offset.infinite;
       },
 
       onDragCompleted: () {
         isDragging = false;
+        isVisible = true;
         // globalDragPositions = Offset.infinite;
       },
       onDraggableCanceled: (_, __) {
         isDragging = false;
-        // globalDragPositions = Offset.infinite;
+        isVisible = true;
       },
+
       dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
           Offset position) {
         final RenderBox renderObject =
@@ -311,7 +327,7 @@ class _DockItemState<T> extends State<DockItem<T>> {
         return renderObject.globalToLocal(position);
       },
       childWhenDragging: Visibility(
-        visible: false,
+        visible: isVisible,
         maintainSize: true,
         maintainAnimation: true,
         maintainState: true,
@@ -320,10 +336,10 @@ class _DockItemState<T> extends State<DockItem<T>> {
       feedback: widgetFromBuilder,
       child: DragTarget(
         builder: (BuildContext context, candidateData, rejectedData) {
-          print('injjjjjjj');
 
           if (candidateData.isNotEmpty) {
 
+            print('injjjjjjj');
 
 
 /////sxsxdd
