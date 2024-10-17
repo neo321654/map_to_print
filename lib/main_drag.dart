@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'main_drag1.dart';
+
 /// Entrypoint of the application.
 void main() {
   runApp(const MyApp());
@@ -78,7 +80,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         mainAxisSize: MainAxisSize.min,
         children: _items.map((e) {
           return DockItem<T>(
-            globalDeltaOffset:globalDeltaOffset,
+            globalDeltaOffset: globalDeltaOffset,
             item: e,
             builder: widget.builder,
             onDrop: onDrop,
@@ -104,7 +106,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
     });
   }
 }
-
 
 class DockItem<T extends Object> extends StatefulWidget {
   const DockItem(
@@ -140,7 +141,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return Draggable<T>(
+    return MyDraggable<T>(
       data: widget.item,
       onDragStarted: () {
         isDragging = true;
@@ -159,24 +160,21 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         widget.setGlobalDeltaOffset(Offset.infinite);
         offset = Offset.zero;
 
-
         // globalDragPositions = Offset.infinite;
       },
       onDraggableCanceled: (_, __) {
         isDragging = false;
         isVisible = true;
         widget.setGlobalDeltaOffset(Offset.infinite);
-
       },
       dragAnchorStrategy:
-          (Draggable<Object> draggable, BuildContext context, Offset position) {
+          (MyDraggable<Object> draggable, BuildContext context, Offset position) {
         final RenderBox renderObject = context.findRenderObject()! as RenderBox;
 
+        BoxParentData parentData = renderObject.parentData! as BoxParentData;
+        Offset offSet = parentData.offset;
 
-          BoxParentData parentData = renderObject.parentData! as BoxParentData;
-          Offset offSet = parentData.offset;
-
-          widget.setGlobalDeltaOffset(offSet);
+        widget.setGlobalDeltaOffset(offSet);
 
         return renderObject.globalToLocal(position);
       },
@@ -188,46 +186,43 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         child: widgetFromBuilder,
       ),
       feedback: widgetFromBuilder,
-      child: DragTarget<T>(
+      child: MyDragTarget<T>(
+        onMove: (details) {
+          print(details.offset);
+        },
         builder: (BuildContext context, candidateData, rejectedData) {
-
-
           if (candidateData.isNotEmpty) {
             var renderBox = context.findRenderObject();
-           if (renderBox is RenderBox){
-             RenderBox renderBox = context.findRenderObject() as RenderBox;
+            if (renderBox is RenderBox) {
+              RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-             BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+              BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
 
-             offset2 = vvv.offset;
+              offset2 = vvv.offset;
 
-             offset = widget.globalDeltaOffset - vvv.offset;
+              offset = widget.globalDeltaOffset - vvv.offset;
 
-             print('_offSet!!!! === $offset');
-
-             if(offset.dx>=0){
-               offset = Offset(renderBox.size.width, 0);
-             }else{
-               offset = Offset(-renderBox.size.width, 0);
-             }
-             return TweenAnimationBuilder<Offset>(
-                curve: Curves.easeInOutExpo ,
+              if (offset.dx >= 0) {
+                offset = Offset(renderBox.size.width, 0);
+              } else {
+                offset = Offset(-renderBox.size.width, 0);
+              }
+              return TweenAnimationBuilder<Offset>(
+                  curve: Curves.easeInOutExpo,
                   tween: Tween<Offset>(
                     begin: Offset.zero,
-                    end: candidateData.isNotEmpty ? offset : Offset.zero, // Изменяем смещение
+                    end: candidateData.isNotEmpty
+                        ? offset
+                        : Offset.zero, // Изменяем смещение
                   ),
                   duration: const Duration(milliseconds: 600),
                   builder: (context, offset, child) {
-                 return Transform.translate(
-                   offset: offset,
-                   child: widgetFromBuilder,
-                 );
-               }
-             );
-
-           }
-
-
+                    return Transform.translate(
+                      offset: offset,
+                      child: widgetFromBuilder,
+                    );
+                  });
+            }
           }
 
           return widgetFromBuilder;
