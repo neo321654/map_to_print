@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 
-// import 'main_drag1.dart';
 
 /// Entrypoint of the application.
 void main() {
@@ -433,190 +433,242 @@ class _MyDraggableState<T extends Object> extends State<MyDraggable<T>> {
   }
 }
 
-class _DragAvatar<T extends Object> extends Drag {
-  _DragAvatar({
-    required this.overlayState,
-    this.data,
-    this.axis,
-    required Offset initialPosition,
-    this.dragStartPoint = Offset.zero,
-    this.feedback,
-    this.feedbackOffset = Offset.zero,
-    this.onDragUpdate,
-    this.onDragEnd,
-    required this.ignoringFeedbackSemantics,
-    required this.ignoringFeedbackPointer,
-    required this.viewId,
-  }) : _position = initialPosition {
-    _entry = OverlayEntry(builder: _build);
-    overlayState.insert(_entry!);
-    updateDrag(initialPosition);
-  }
-
-  final T? data;
-  final Axis? axis;
-  final Offset dragStartPoint;
-  final Widget? feedback;
-  final Offset feedbackOffset;
-  final DragUpdateCallback? onDragUpdate;
-  final _OnDragEnd? onDragEnd;
-  final OverlayState overlayState;
-  final bool ignoringFeedbackSemantics;
-  final bool ignoringFeedbackPointer;
-  final int viewId;
-
-  _MyDragTargetState<Object>? _activeTarget;
-  final List<_MyDragTargetState<Object>> _enteredTargets = <_MyDragTargetState<Object>>[];
-  Offset _position;
-  Offset? _lastOffset;
-  late Offset _overlayOffset;
-  OverlayEntry? _entry;
-
+class CustomTickerProvider extends TickerProvider {
   @override
-  void update(DragUpdateDetails details) {
-    final Offset oldPosition = _position;
-    _position += _restrictAxis(details.delta);
-    updateDrag(_position);
-    if (onDragUpdate != null && _position != oldPosition) {
-      onDragUpdate!(details);
-    }
+  Ticker createTicker(TickerCallback onTick) {
+    return Ticker(onTick);
   }
-
-  @override
-  void end(DragEndDetails details) {
-    finishDrag(_DragEndKind.dropped, _restrictVelocityAxis(details.velocity));
-  }
+}
 
 
-  @override
-  void cancel() {
-    finishDrag(_DragEndKind.canceled);
-  }
+  class _DragAvatar<T extends Object> extends Drag  {
+    _DragAvatar({
+      required this.overlayState,
+      this.data,
+      this.axis,
+      required Offset initialPosition,
+      this.dragStartPoint = Offset.zero,
+      this.feedback,
+      this.feedbackOffset = Offset.zero,
+      this.onDragUpdate,
+      this.onDragEnd,
+      required this.ignoringFeedbackSemantics,
+      required this.ignoringFeedbackPointer,
+      required this.viewId,
+    }) : _position = initialPosition {
+      _entry = OverlayEntry(builder: _build);
+      overlayState.insert(_entry!);
+      updateDrag(initialPosition);
 
-  void updateDrag(Offset globalPosition) {
-    _lastOffset = globalPosition - dragStartPoint;
-    if (overlayState.mounted) {
-      final RenderBox box = overlayState.context.findRenderObject()! as RenderBox;
-      final Offset overlaySpaceOffset = box.globalToLocal(globalPosition);
-      _overlayOffset = overlaySpaceOffset - dragStartPoint;
 
-      _entry!.markNeedsBuild();
+      // Инициализация AnimationController
+      _animationController = AnimationController(
+        duration: const Duration(milliseconds: 1300),
+        // vsync: overlayState.context as TickerProvider,
+        vsync: CustomTickerProvider(),
+      );
+
+      // Определение Tween для анимации
+      _animation = Tween<Offset>(
+        begin: Offset.zero,
+        end: dragStartPoint,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ));
+
+
     }
 
-    final HitTestResult result = HitTestResult();
-    WidgetsBinding.instance.hitTestInView(result, globalPosition + feedbackOffset, viewId);
+    final T? data;
+    final Axis? axis;
+    final Offset dragStartPoint;
+    final Widget? feedback;
+    final Offset feedbackOffset;
+    final DragUpdateCallback? onDragUpdate;
+    final _OnDragEnd? onDragEnd;
+    final OverlayState overlayState;
+    final bool ignoringFeedbackSemantics;
+    final bool ignoringFeedbackPointer;
+    final int viewId;
 
-    final List<_MyDragTargetState<Object>> targets = _getDragTargets(result.path).toList();
+    late AnimationController _animationController;
+    late Animation<Offset> _animation;
 
-    bool listsMatch = false;
-    if (targets.length >= _enteredTargets.length && _enteredTargets.isNotEmpty) {
-      listsMatch = true;
-      final Iterator<_MyDragTargetState<Object>> iterator = targets.iterator;
-      for (int i = 0; i < _enteredTargets.length; i += 1) {
-        iterator.moveNext();
-        if (iterator.current != _enteredTargets[i]) {
-          listsMatch = false;
-          break;
-        }
+
+
+    _MyDragTargetState<Object>? _activeTarget;
+    final List<_MyDragTargetState<Object>> _enteredTargets = <_MyDragTargetState<Object>>[];
+    Offset _position;
+    Offset? _lastOffset;
+    late Offset _overlayOffset;
+    OverlayEntry? _entry;
+
+    @override
+    void update(DragUpdateDetails details) {
+      final Offset oldPosition = _position;
+      _position += _restrictAxis(details.delta);
+      updateDrag(_position);
+      if (onDragUpdate != null && _position != oldPosition) {
+        onDragUpdate!(details);
       }
     }
 
-    // If everything's the same, report moves, and bail early.
-    if (listsMatch) {
+    @override
+    void end(DragEndDetails details) {
+      finishDrag(_DragEndKind.dropped, _restrictVelocityAxis(details.velocity));
+    }
+
+
+    @override
+    void cancel() {
+      finishDrag(_DragEndKind.canceled);
+    }
+
+    void updateDrag(Offset globalPosition) {
+      _lastOffset = globalPosition - dragStartPoint;
+      if (overlayState.mounted) {
+        final RenderBox box = overlayState.context.findRenderObject()! as RenderBox;
+        final Offset overlaySpaceOffset = box.globalToLocal(globalPosition);
+        _overlayOffset = overlaySpaceOffset - dragStartPoint;
+
+        _entry!.markNeedsBuild();
+      }
+
+      final HitTestResult result = HitTestResult();
+      WidgetsBinding.instance.hitTestInView(result, globalPosition + feedbackOffset, viewId);
+
+      final List<_MyDragTargetState<Object>> targets = _getDragTargets(result.path).toList();
+
+      bool listsMatch = false;
+      if (targets.length >= _enteredTargets.length && _enteredTargets.isNotEmpty) {
+        listsMatch = true;
+        final Iterator<_MyDragTargetState<Object>> iterator = targets.iterator;
+        for (int i = 0; i < _enteredTargets.length; i += 1) {
+          iterator.moveNext();
+          if (iterator.current != _enteredTargets[i]) {
+            listsMatch = false;
+            break;
+          }
+        }
+      }
+
+      // If everything's the same, report moves, and bail early.
+      if (listsMatch) {
+        for (final _MyDragTargetState<Object> target in _enteredTargets) {
+          target.didMove(this);
+        }
+        return;
+      }
+
+      // Leave old targets.
+      _leaveAllEntered();
+
+      // Enter new targets.
+      final _MyDragTargetState<Object>? newTarget = targets.cast<_MyDragTargetState<Object>?>().firstWhere(
+            (_MyDragTargetState<Object>? target) {
+          if (target == null) {
+            return false;
+          }
+          _enteredTargets.add(target);
+          return target.didEnter(this);
+        },
+        orElse: () => null,
+      );
+
+      // Report moves to the targets.
       for (final _MyDragTargetState<Object> target in _enteredTargets) {
         target.didMove(this);
       }
-      return;
+
+      _activeTarget = newTarget;
     }
 
-    // Leave old targets.
-    _leaveAllEntered();
-
-    // Enter new targets.
-    final _MyDragTargetState<Object>? newTarget = targets.cast<_MyDragTargetState<Object>?>().firstWhere(
-          (_MyDragTargetState<Object>? target) {
-        if (target == null) {
-          return false;
-        }
-        _enteredTargets.add(target);
-        return target.didEnter(this);
-      },
-      orElse: () => null,
-    );
-
-    // Report moves to the targets.
-    for (final _MyDragTargetState<Object> target in _enteredTargets) {
-      target.didMove(this);
+    Iterable<_MyDragTargetState<Object>> _getDragTargets(Iterable<HitTestEntry> path) {
+      // Look for the RenderBoxes that corresponds to the hit target (the hit target
+      // widgets build RenderMetaData boxes for us for this purpose).
+      return <_MyDragTargetState<Object>>[
+        for (final HitTestEntry entry in path)
+          if (entry.target case final RenderMetaData target)
+            if (target.metaData case final _MyDragTargetState<Object> metaData)
+              if (metaData.isExpectedDataType(data, T)) metaData,
+      ];
     }
 
-    _activeTarget = newTarget;
-  }
-
-  Iterable<_MyDragTargetState<Object>> _getDragTargets(Iterable<HitTestEntry> path) {
-    // Look for the RenderBoxes that corresponds to the hit target (the hit target
-    // widgets build RenderMetaData boxes for us for this purpose).
-    return <_MyDragTargetState<Object>>[
-      for (final HitTestEntry entry in path)
-        if (entry.target case final RenderMetaData target)
-          if (target.metaData case final _MyDragTargetState<Object> metaData)
-            if (metaData.isExpectedDataType(data, T)) metaData,
-    ];
-  }
-
-  void _leaveAllEntered() {
-    for (int i = 0; i < _enteredTargets.length; i += 1) {
-      _enteredTargets[i].didLeave(this);
+    void _leaveAllEntered() {
+      for (int i = 0; i < _enteredTargets.length; i += 1) {
+        _enteredTargets[i].didLeave(this);
+      }
+      _enteredTargets.clear();
     }
-    _enteredTargets.clear();
-  }
 
-  void finishDrag(_DragEndKind endKind, [ Velocity? velocity ]) {
-    bool wasAccepted = false;
-    if (endKind == _DragEndKind.dropped && _activeTarget != null) {
-      _activeTarget!.didDrop(this);
-      wasAccepted = true;
-      _enteredTargets.remove(_activeTarget);
+    void finishDrag(_DragEndKind endKind, [ Velocity? velocity ]) {
+      bool wasAccepted = false;
+      if (endKind == _DragEndKind.dropped && _activeTarget != null) {
+        _activeTarget!.didDrop(this);
+        wasAccepted = true;
+        _enteredTargets.remove(_activeTarget);
+      }
+      _leaveAllEntered();
+      _activeTarget = null;
+
+      // Устанавливаем конечное значение для анимации
+      _animation = Tween<Offset>(
+        begin: _overlayOffset,
+        end: dragStartPoint, // Возвращаем на исходную позицию
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ));
+
+      // Запускаем анимацию
+      _animationController.forward().then((_) {
+        // Удаляем entry после завершения анимации
+        _entry!.remove();
+        _entry!.dispose();
+        _entry = null;
+
+        onDragEnd?.call(velocity ?? Velocity.zero, _lastOffset!, wasAccepted);
+
+        // Останавливаем контроллер анимации
+        _animationController.dispose();  });
+
     }
-    _leaveAllEntered();
-    _activeTarget = null;
-    _entry!.remove();
-    _entry!.dispose();
-    _entry = null;
-    // TODO(ianh): consider passing _entry as well so the client can perform an animation.
-    onDragEnd?.call(velocity ?? Velocity.zero, _lastOffset!, wasAccepted);
-  }
 
-  Widget _build(BuildContext context) {
-    return Positioned(
-      left: _overlayOffset.dx,
-      top: _overlayOffset.dy,
-      child: ExcludeSemantics(
-        excluding: ignoringFeedbackSemantics,
-        child: IgnorePointer(
-          ignoring: ignoringFeedbackPointer,
-          child: feedback,
+    Widget _build(BuildContext context) {
+     return Positioned(
+       left: _overlayOffset.dx,
+       top: _overlayOffset.dy,
+       child: SlideTransition(
+          position: _animation,
+          child: ExcludeSemantics(
+            excluding: ignoringFeedbackSemantics,
+            child: IgnorePointer(
+              ignoring: ignoringFeedbackPointer,
+              child: feedback,
+            ),
+          ),
         ),
-      ),
-    );
-  }
-
-  Velocity _restrictVelocityAxis(Velocity velocity) {
-    if (axis == null) {
-      return velocity;
+     );
     }
-    return Velocity(
-      pixelsPerSecond: _restrictAxis(velocity.pixelsPerSecond),
-    );
-  }
 
-  Offset _restrictAxis(Offset offset) {
-    return switch (axis) {
-      Axis.horizontal => Offset(offset.dx, 0.0),
-      Axis.vertical   => Offset(0.0, offset.dy),
-      null => offset,
-    };
+    Velocity _restrictVelocityAxis(Velocity velocity) {
+      if (axis == null) {
+        return velocity;
+      }
+      return Velocity(
+        pixelsPerSecond: _restrictAxis(velocity.pixelsPerSecond),
+      );
+    }
+
+    Offset _restrictAxis(Offset offset) {
+      return switch (axis) {
+        Axis.horizontal => Offset(offset.dx, 0.0),
+        Axis.vertical   => Offset(0.0, offset.dy),
+        null => offset,
+      };
+    }
   }
-}
 
 enum _DragEndKind { dropped, canceled }
 
