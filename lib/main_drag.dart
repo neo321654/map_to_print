@@ -382,9 +382,9 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
             offset1 = widget.globalDeltaOffset - vvv.offset;
 
             if(offset1.dx>=0&&offset1.dx<70){
-              offset1 = Offset(-renderBox.size.width, 0);
-            }else if(offset1.dx<0 && offset1.dx>-70){
               offset1 = Offset(renderBox.size.width, 0);
+            }else if(offset1.dx<0 && offset1.dx>-70){
+              offset1 = Offset(-renderBox.size.width, 0);
             }else{
               offset1 = offset;
             }
@@ -423,10 +423,10 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           // setState(() {
           //
           // });
-          RenderBox renderBox = context.findRenderObject() as RenderBox;
-
-          BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-          offset = widget.globalDeltaOffset;
+          // RenderBox renderBox = context.findRenderObject() as RenderBox;
+          //
+          // BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
+          // offset = widget.globalDeltaOffset;
           // if(offset.dx>=0){
           //   offset = Offset(renderBox.size.width, 0);
           // }else{
