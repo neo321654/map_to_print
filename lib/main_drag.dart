@@ -64,7 +64,7 @@ class Dock<T extends Object> extends StatefulWidget {
 class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
-
+  Offset globalDeltaOffset = Offset.infinite;
 
   @override
   Widget build(BuildContext context) {
@@ -76,24 +76,32 @@ class _DockState<T extends Object> extends State<Dock<T>> {
       padding: const EdgeInsets.all(4),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children:
-        _items.map((e){
-         return DockItem<T>(item: e, builder:widget.builder,onDrop: onDrop,key: ValueKey(e),);
+        children: _items.map((e) {
+          return DockItem<T>(
+            item: e,
+            builder: widget.builder,
+            onDrop: onDrop,
+            setGlobalDeltaOffset: setGlobalDeltaOffset,
+            key: ValueKey(e),
+          );
         }).toList(),
       ),
     );
   }
-  void onDrop(T itemToReplace, T item){
+
+  void onDrop(T itemToReplace, T item) {
     setState(() {
-       int index = _items.indexOf(item);
-
-
+      int index = _items.indexOf(item);
       _items.remove(itemToReplace);
-
-
       _items.insert(index, itemToReplace);
+    });
+  }
 
+  void setGlobalDeltaOffset(Offset offset) {
+    setState(() {
+      print('_offSet!!!! === $offset');
 
+      globalDeltaOffset = offset;
     });
   }
 }
@@ -257,55 +265,50 @@ class _DockState<T extends Object> extends State<Dock<T>> {
 //     return tempListWidgets;
 //   }
 
-
 class DockItem<T extends Object> extends StatefulWidget {
-  const DockItem({required this.item, required this.builder,required this.onDrop, super.key});
+  const DockItem(
+      {required this.item,
+      required this.builder,
+      required this.onDrop,
+      required this.setGlobalDeltaOffset,
+      super.key});
+
   final T item;
   final Widget Function(T) builder;
   final Function(T itemToRemove, T item) onDrop;
-
+  final Function(Offset offset) setGlobalDeltaOffset;
 
   @override
-  State<DockItem<T>> createState() => _DockItemState<T> ();
+  State<DockItem<T>> createState() => _DockItemState<T>();
 }
 
 class _DockItemState<T extends Object> extends State<DockItem<T>> {
-
   bool isDragging = false;
   bool isVisible = true;
   late Widget widgetFromBuilder;
   Offset offset = Offset.zero;
 
-
-@override
+  @override
   void initState() {
     super.initState();
     widgetFromBuilder = widget.builder(widget.item);
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Draggable<T>(
       data: widget.item,
-
-
-      onDragStarted: (){
+      onDragStarted: () {
         isDragging = true;
         isVisible = false;
-        setState(() {
-
-        });
+        setState(() {});
       },
-      onDragEnd: (_){
+      onDragEnd: (_) {
         isDragging = false;
         isVisible = true;
 
         // globalDragPositions = Offset.infinite;
       },
-
       onDragCompleted: () {
         isDragging = false;
         isVisible = true;
@@ -315,22 +318,16 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         isDragging = false;
         isVisible = true;
       },
+      dragAnchorStrategy:
+          (Draggable<Object> draggable, BuildContext context, Offset position) {
+        final RenderBox renderObject = context.findRenderObject()! as RenderBox;
 
-      dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
-          Offset position) {
-        final RenderBox renderObject =
-        context.findRenderObject()! as RenderBox;
 
-        // if (renderObject.parentData is BoxParentData &&
-        //     globalDragPositions == Offset.infinite) {
-        //   BoxParentData parentData =
-        //   renderObject.parentData! as BoxParentData;
-        //   Offset offSet = parentData.offset;
-        //
-        //   print('_offSet!!!! === $offSet');
-        //   globalDragPositions = offSet;
-        //   print('_globalDragPositions === $globalDragPositions');
-        // }
+          BoxParentData parentData = renderObject.parentData! as BoxParentData;
+          Offset offSet = parentData.offset;
+
+          widget.setGlobalDeltaOffset(offSet);
+
         return renderObject.globalToLocal(position);
       },
       childWhenDragging: Visibility(
@@ -343,30 +340,14 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
       feedback: widgetFromBuilder,
       child: DragTarget<T>(
         builder: (BuildContext context, candidateData, rejectedData) {
-
           if (candidateData.isNotEmpty) {
 
-
-
-
-
-            print('injjjjjjj');
-
-
-/////sxsxdd
-            if(isDragging){
+            if (isDragging) {
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
               BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
               // posTarget = globalDragPositions - vvv.offset;
-
             }
-
-
-
-
-
-
 
             // Offset localPosition =
             //     renderBox.globalToLocal(_globalDragPositions);
@@ -399,22 +380,9 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           return widgetFromBuilder;
         },
         onAcceptWithDetails: (data) {
-
-
-        //   setState(
-        //         () {
-        //       int oldIndex = i;
-        //       int curIndex = widget._items.indexOf(data.data);
-              // T temp = _items[oldIndex];
-              // _items[oldIndex] = _items[curIndex];
-              // _items[curIndex] = temp;
-
-              widget.onDrop(data.data, widget.item);
-        //     },
-        //   );
+          widget.onDrop(data.data, widget.item);
         },
-        onLeave: (data){
-
+        onLeave: (data) {
           // setState(
           //
           //       () {
@@ -438,13 +406,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           // });
 
           //todo need check
-
-
         },
-
       ),
     );
   }
 }
-
-
