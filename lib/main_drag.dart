@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
 }
 
 /// Dock of the reorderable [items].
-class Dock<T> extends StatefulWidget {
+class Dock<T extends Object> extends StatefulWidget {
   const Dock({
     super.key,
     this.items = const [],
@@ -61,7 +61,7 @@ class Dock<T> extends StatefulWidget {
 }
 
 /// State of the [Dock] used to manipulate the [_items].
-class _DockState<T> extends State<Dock<T>> {
+class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
 
@@ -78,15 +78,22 @@ class _DockState<T> extends State<Dock<T>> {
         mainAxisSize: MainAxisSize.min,
         children:
         _items.map((e){
-         return DockItem<T>(item: e, builder:widget.builder,onDrop: onDrop,);
+         return DockItem<T>(item: e, builder:widget.builder,onDrop: onDrop,key: ValueKey(e),);
         }).toList(),
       ),
     );
   }
-  void onDrop(T item, int index){
+  void onDrop(T itemToReplace, T item){
     setState(() {
-      _items.remove(item);
-      _items.insert(index, item);
+       int index = _items.indexOf(item);
+
+
+      _items.remove(itemToReplace);
+
+
+      _items.insert(index, itemToReplace);
+
+
     });
   }
 }
@@ -251,18 +258,18 @@ class _DockState<T> extends State<Dock<T>> {
 //   }
 
 
-class DockItem<T> extends StatefulWidget {
+class DockItem<T extends Object> extends StatefulWidget {
   const DockItem({required this.item, required this.builder,required this.onDrop, super.key});
   final T item;
   final Widget Function(T) builder;
-  final Function(T item, int index) onDrop;
+  final Function(T itemToRemove, T item) onDrop;
 
 
   @override
   State<DockItem<T>> createState() => _DockItemState<T> ();
 }
 
-class _DockItemState<T> extends State<DockItem<T>> {
+class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
   bool isDragging = false;
   bool isVisible = true;
@@ -281,8 +288,8 @@ class _DockItemState<T> extends State<DockItem<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return Draggable(
-      data: widget.item.hashCode,
+    return Draggable<T>(
+      data: widget.item,
 
 
       onDragStarted: (){
@@ -334,10 +341,14 @@ class _DockItemState<T> extends State<DockItem<T>> {
         child: widgetFromBuilder,
       ),
       feedback: widgetFromBuilder,
-      child: DragTarget(
+      child: DragTarget<T>(
         builder: (BuildContext context, candidateData, rejectedData) {
 
           if (candidateData.isNotEmpty) {
+
+
+
+
 
             print('injjjjjjj');
 
@@ -388,13 +399,17 @@ class _DockItemState<T> extends State<DockItem<T>> {
           return widgetFromBuilder;
         },
         onAcceptWithDetails: (data) {
+
+
         //   setState(
         //         () {
         //       int oldIndex = i;
-        //       int curIndex = _items.indexOf(data.data);
-        //       T temp = _items[oldIndex];
-        //       _items[oldIndex] = _items[curIndex];
-        //       _items[curIndex] = temp;
+        //       int curIndex = widget._items.indexOf(data.data);
+              // T temp = _items[oldIndex];
+              // _items[oldIndex] = _items[curIndex];
+              // _items[curIndex] = temp;
+
+              widget.onDrop(data.data, widget.item);
         //     },
         //   );
         },
