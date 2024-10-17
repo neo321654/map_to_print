@@ -1,69 +1,79 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+class TransitionExample extends StatefulWidget {
+  @override
+  _TransitionExampleState createState() => _TransitionExampleState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _TransitionExampleState extends State<TransitionExample> with SingleTickerProviderStateMixin {
+  List<String> _items = ["Item 1", "Item 2", "Item 3"];
+  late AnimationController _controller;
+  String? _currentItem;
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Move Widget Demo',
-      home: const MoveWidgetExample(),
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
     );
   }
-}
 
-class MoveWidgetExample extends StatefulWidget {
-  const MoveWidgetExample({super.key});
+  void onDrop(String itemToReplace, String newItem) {
+    setState(() {
+      int index = _items.indexOf(itemToReplace);
+      if (index != -1) {
+        _currentItem = itemToReplace; // Сохраняем текущий элемент для анимации
+        Future.delayed(Duration(milliseconds: 300), () {
+          setState(() {
+            _items[index] = newItem; // Заменяем элемент
+            _currentItem = null; // Сбрасываем текущий элемент
+          });
+        });
+      }
+    });
+  }
 
   @override
-  _MoveWidgetExampleState createState() => _MoveWidgetExampleState();
-}
-
-class _MoveWidgetExampleState extends State<MoveWidgetExample> {
-  bool _isMoved = false;
+  void dispose() {
+    _controller.dispose(); // Не забывайте освобождать ресурсы
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Move Widget Example')),
-      body: Center(
-        child: Row(
-          children: [
-            Container(width: 50, height: 50, color: Colors.red),
-            Container(width: 50, height: 50, color: Colors.green),
-            TweenAnimationBuilder<Offset>(
-              tween: Tween<Offset>(
-                begin: Offset.zero,
-                end: _isMoved ? Offset(0.1, 0.4) : Offset.zero, // Изменяем смещение
+      appBar: AppBar(title: Text("Transition Example")),
+      body: ListView.builder(
+        itemCount: _items.length,
+        itemBuilder: (context, index) {
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: Offset(0.0, 1.0), // Начальная позиция (снизу)
+                end: Offset.zero, // Конечная позиция (по центру)
+              ).animate(CurvedAnimation(
+                parent: _controller,
+                curve: Curves.easeInOut,
+              )),
+              child: ListTile(
+                key: ValueKey<String>(_items[index]), // Уникальный ключ для анимации
+                title: Text(_items[index]),
               ),
-              duration: const Duration(milliseconds: 300),
-              builder: (context, offset, child) {
-                return Transform.translate(
-                  offset: Offset(offset.dx * 300, 0), // Умножаем на 300 для перемещения
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    color: Colors.blue,
-                  ),
-                );
-              },
             ),
-            Container(width: 50, height: 50, color: Colors.yellow),
-          ],
-        ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() {
-            _isMoved = !_isMoved; // Переключаем состояние перемещения
-          });
+          // Пример замены элемента
+          onDrop("Item 2", "New Item");
         },
-        child: const Icon(Icons.play_arrow),
+        child: Icon(Icons.swap_horiz),
       ),
     );
   }
 }
+
+void main() => runApp(MaterialApp(home: TransitionExample()));

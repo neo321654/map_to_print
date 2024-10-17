@@ -78,6 +78,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         mainAxisSize: MainAxisSize.min,
         children: _items.map((e) {
           return DockItem<T>(
+            globalDeltaOffset:globalDeltaOffset,
             item: e,
             builder: widget.builder,
             onDrop: onDrop,
@@ -100,7 +101,6 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   void setGlobalDeltaOffset(Offset offset) {
     setState(() {
       print('_offSet!!!! === $offset');
-
       globalDeltaOffset = offset;
     });
   }
@@ -271,12 +271,14 @@ class DockItem<T extends Object> extends StatefulWidget {
       required this.builder,
       required this.onDrop,
       required this.setGlobalDeltaOffset,
+      required this.globalDeltaOffset,
       super.key});
 
   final T item;
   final Widget Function(T) builder;
   final Function(T itemToRemove, T item) onDrop;
   final Function(Offset offset) setGlobalDeltaOffset;
+  final Offset globalDeltaOffset;
 
   @override
   State<DockItem<T>> createState() => _DockItemState<T>();
@@ -342,12 +344,12 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         builder: (BuildContext context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
 
-            if (isDragging) {
+
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
               BoxParentData vvv = renderBox.parent?.parentData as BoxParentData;
-              // posTarget = globalDragPositions - vvv.offset;
-            }
+               offset = widget.globalDeltaOffset - vvv.offset;
+
 
             // Offset localPosition =
             //     renderBox.globalToLocal(_globalDragPositions);
