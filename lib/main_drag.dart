@@ -308,6 +308,11 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
       onDragEnd: (_) {
         isDragging = false;
         isVisible = true;
+        // offset = Offset.zero;
+        widget.setGlobalDeltaOffset(Offset.infinite);
+        // setState(() {
+        //
+        // });
 
         // globalDragPositions = Offset.infinite;
       },
