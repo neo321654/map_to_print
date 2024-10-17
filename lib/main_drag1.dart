@@ -386,10 +386,7 @@ class _MyDragTargetState<T extends Object> extends State<MyDragTarget<T>> {
   final List<_DragAvatar<Object>> _candidateAvatars = <_DragAvatar<Object>>[];
   final List<_DragAvatar<Object>> _rejectedAvatars = <_DragAvatar<Object>>[];
 
-  // On non-web platforms, checks if data Object is equal to type[T] or subtype of [T].
-  // On web, it does the same, but requires a check for ints and doubles
-  // because dart doubles and ints are backed by the same kind of object on web.
-  // JavaScript does not support integers.
+
   bool isExpectedDataType(Object? data, Type type) {
     if (kIsWeb && ((type == int && T == double) || (type == double && T == int))) {
       return false;
@@ -469,22 +466,11 @@ List<T?> _mapAvatarsToData<T extends Object>(List<_DragAvatar<Object>> avatars) 
 }
 
 class MyDragTarget<T extends Object> extends StatefulWidget {
-  /// Creates a widget that receives drags.
   const MyDragTarget({
     super.key,
     required this.builder,
-    @Deprecated(
-        'Use onWillAcceptWithDetails instead. '
-            'This callback is similar to onWillAcceptWithDetails but does not provide drag details. '
-            'This feature was deprecated after v3.14.0-0.2.pre.'
-    )
     this.onWillAccept,
     this.onWillAcceptWithDetails,
-    @Deprecated(
-        'Use onAcceptWithDetails instead. '
-            'This callback is similar to onAcceptWithDetails but does not provide drag details. '
-            'This feature was deprecated after v3.14.0-0.2.pre.'
-    )
     this.onAccept,
     this.onAcceptWithDetails,
     this.onLeave,
@@ -492,73 +478,23 @@ class MyDragTarget<T extends Object> extends StatefulWidget {
     this.hitTestBehavior = HitTestBehavior.translucent,
   }) : assert(onWillAccept == null || onWillAcceptWithDetails == null, "Don't pass both onWillAccept and onWillAcceptWithDetails.");
 
-  /// Called to build the contents of this widget.
-  ///
-  /// The builder can build different widgets depending on what is being dragged
-  /// into this drag target.
   final DragTargetBuilder<T> builder;
 
-  /// Called to determine whether this widget is interested in receiving a given
-  /// piece of data being dragged over this drag target.
-  ///
-  /// Called when a piece of data enters the target. This will be followed by
-  /// either [onAccept] and [onAcceptWithDetails], if the data is dropped, or
-  /// [onLeave], if the drag leaves the target.
-  ///
-  /// Equivalent to [onWillAcceptWithDetails], but only includes the data.
-  ///
-  /// Must not be provided if [onWillAcceptWithDetails] is provided.
-  @Deprecated(
-      'Use onWillAcceptWithDetails instead. '
-          'This callback is similar to onWillAcceptWithDetails but does not provide drag details. '
-          'This feature was deprecated after v3.14.0-0.2.pre.'
-  )
+
   final DragTargetWillAccept<T>? onWillAccept;
 
-  /// Called to determine whether this widget is interested in receiving a given
-  /// piece of data being dragged over this drag target.
-  ///
-  /// Called when a piece of data enters the target. This will be followed by
-  /// either [onAccept] and [onAcceptWithDetails], if the data is dropped, or
-  /// [onLeave], if the drag leaves the target.
-  ///
-  /// Equivalent to [onWillAccept], but with information, including the data,
-  /// in a [DragTargetDetails].
-  ///
-  /// Must not be provided if [onWillAccept] is provided.
   final DragTargetWillAcceptWithDetails<T>? onWillAcceptWithDetails;
 
-  /// Called when an acceptable piece of data was dropped over this drag target.
-  /// It will not be called if `data` is `null`.
-  ///
-  /// Equivalent to [onAcceptWithDetails], but only includes the data.
-  @Deprecated(
-      'Use onAcceptWithDetails instead. '
-          'This callback is similar to onAcceptWithDetails but does not provide drag details. '
-          'This feature was deprecated after v3.14.0-0.2.pre.'
-  )
+
   final DragTargetAccept<T>? onAccept;
 
-  /// Called when an acceptable piece of data was dropped over this drag target.
-  /// It will not be called if `data` is `null`.
-  ///
-  /// Equivalent to [onAccept], but with information, including the data, in a
-  /// [DragTargetDetails].
   final DragTargetAcceptWithDetails<T>? onAcceptWithDetails;
 
-  /// Called when a given piece of data being dragged over this target leaves
-  /// the target.
+
   final DragTargetLeave<T>? onLeave;
 
-  /// Called when a [Draggable] moves within this [MyDragTarget]. It will not be
-  /// called if `data` is `null`.
-  ///
-  /// This includes entering and leaving the target.
   final DragTargetMove<T>? onMove;
 
-  /// How to behave during hit testing.
-  ///
-  /// Defaults to [HitTestBehavior.translucent].
   final HitTestBehavior hitTestBehavior;
 
   @override
