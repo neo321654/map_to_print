@@ -69,6 +69,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   /// [T] items being manipulated.
   late final List<T> _items = widget.items.toList();
   Offset globalDeltaOffset = Offset.infinite;
+  Offset globalOffset = Offset.infinite;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +84,8 @@ class _DockState<T extends Object> extends State<Dock<T>> {
         children: _items.map((e) {
           return DockItem<T>(
             globalDeltaOffset: globalDeltaOffset,
+            globalOffset: globalOffset,
+            setGlobalOffset:setGlobalOffset,
             item: e,
             builder: widget.builder,
             onDrop: onDrop,
@@ -107,6 +110,11 @@ class _DockState<T extends Object> extends State<Dock<T>> {
       globalDeltaOffset = offset;
     });
   }
+  void setGlobalOffset(Offset offset) {
+    setState(() {
+      globalOffset = offset;
+    });
+  }
 }
 
 class DockItem<T extends Object> extends StatefulWidget {
@@ -115,14 +123,18 @@ class DockItem<T extends Object> extends StatefulWidget {
       required this.builder,
       required this.onDrop,
       required this.setGlobalDeltaOffset,
+      required this.setGlobalOffset,
       required this.globalDeltaOffset,
+      required this.globalOffset,
       super.key});
 
   final T item;
   final Widget Function(T) builder;
   final Function(T itemToRemove, T item) onDrop;
   final Function(Offset offset) setGlobalDeltaOffset;
+  final Function(Offset offset) setGlobalOffset;
   final Offset globalDeltaOffset;
+  final Offset globalOffset;
 
   @override
   State<DockItem<T>> createState() => _DockItemState<T>();
@@ -180,37 +192,39 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Positioned(
-                    top: offset.dy,
-                    left: offset.dx,
-                    child: DefaultTextStyle(
-                      style: const TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
+
+                  TweenAnimationBuilder<Offset>(
+                      curve: Curves.easeInOutExpo,
+                      tween: Tween<Offset>(
+                        begin: offset,
+                        end: widget.globalOffset,
+
+                        // end: candidateData.isNotEmpty
+                        //     ? offset
+                        //     : Offset.zero, // Изменяем смещение
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          const Text('Tap here for'),
-                          SizedBox(
-                            // width: MediaQuery.of(context).size.width / 3,
-                            width: 10,
-                            height: 10.0,
-                            child: Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.red,
-                                    width: 4.0,
-                                  ),
+                      duration: const Duration(milliseconds: 2600),
+                      builder: (context, offset, child) {
+                      return Positioned(
+                        top: offset.dy,
+                        left: offset.dx,
+                        child: SizedBox(
+                          // width: MediaQuery.of(context).size.width / 3,
+                          width: 10,
+                          height: 10.0,
+                          child: Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.red,
+                                  width: 4.0,
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    }
                   ),
                 ],
               ),
@@ -230,6 +244,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         Offset offSet = parentData.offset;
 
         widget.setGlobalDeltaOffset(offSet);
+        widget.setGlobalOffset(position);
+
 
         return renderObject.globalToLocal(position);
       },
