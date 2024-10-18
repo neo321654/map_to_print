@@ -156,108 +156,139 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return Draggable<T>(
-      data: widget.item,
-      onDragStarted: () {
-        isDragging = true;
-        isVisible = false;
-      },
-      onDragEnd: (details) {
-        isDragging = false;
-        isVisible = true;
-        resetGlobalDelta();
-        showOverlayAnimation(details.offset, context);
-      },
-      onDragCompleted: () {
-        isDragging = false;
-        isVisible = true;
-        resetGlobalDelta();
-      },
-      onDraggableCanceled: (vel, offset) {
-        isDragging = false;
-        isVisible = true;
-        resetGlobalDelta();
-      },
-      dragAnchorStrategy:
-          (Draggable<Object> draggable, BuildContext context, Offset position) {
-        final RenderBox renderObject = context.findRenderObject()! as RenderBox;
+    print(context);
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            child: Draggable<T>(
+              data: widget.item,
+              onDragStarted: () {
+                isDragging = true;
+                isVisible = false;
+              },
+              onDragEnd: (details) {
+                isDragging = false;
+                isVisible = true;
+                resetGlobalDelta();
+                showOverlayAnimation(details.offset, context);
+              },
+              onDragCompleted: () {
+                isDragging = false;
+                isVisible = true;
+                resetGlobalDelta();
+              },
+              onDraggableCanceled: (vel, offset) {
+                isDragging = false;
+                isVisible = true;
+                resetGlobalDelta();
+              },
+              dragAnchorStrategy: (Draggable<Object> draggable,
+                  BuildContext context, Offset position) {
+                print(context);
 
-        BoxParentData parentData = renderObject.parentData! as BoxParentData;
-        Offset offSet = parentData.offset;
+                RenderBox? renderObject = getRenderBoxObject(context);
 
-        Offset ofToGlobal = renderObject.localToGlobal(offSet) - offSet;
-        widget.setGlobalDeltaOffset(offSet);
-        widget.setGlobalOffset(ofToGlobal);
+                /// get parent offset
+                Offset? offSet = getParentOffset(renderObject);
 
-        return renderObject.globalToLocal(position);
-      },
-      childWhenDragging: Visibility(
-        visible: isVisible,
-        maintainSize: true,
-        maintainAnimation: true,
-        maintainState: true,
-        child: widgetFromBuilder,
-      ),
-      feedback: widgetFromBuilder,
-      child: DragTarget<T>(
-        onMove: (details) {
-          // print(details.offset);
-        },
-        builder: (BuildContext context, candidateData, rejectedData) {
-          if (candidateData.isNotEmpty) {
-            var renderBox = context.findRenderObject();
-            if (renderBox is RenderBox) {
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
-
-              if (renderBox.parent != null) {
-                // if(renderBox.parent is BoxParentData){
-
-                BoxParentData vvv =
-                    renderBox.parent?.parentData as BoxParentData;
-
-                offsetToLeave = vvv.offset;
-
-                offsetToDelta = widget.globalDeltaOffset - vvv.offset;
-
-                if (offsetToDelta.dx >= 0) {
-                  offsetToDelta = Offset(renderBox.size.width, 0);
-                } else {
-                  offsetToDelta = Offset(-renderBox.size.width, 0);
+                if (offSet != null) {
+                  Offset ofToGlobal =
+                      renderObject.localToGlobal(offSet) - offSet;
+                  widget.setGlobalDeltaOffset(offSet);
+                  widget.setGlobalOffset(ofToGlobal);
                 }
-                return TweenAnimationBuilder<Offset>(
-                    curve: Curves.easeInOutExpo,
-                    tween: Tween<Offset>(
-                      begin: Offset.zero,
-                      end: candidateData.isNotEmpty
-                          ? offsetToDelta
-                          : Offset.zero,
-                      // end: candidateData.isNotEmpty
-                      //     ? offset
-                      //     : Offset.zero, // Изменяем смещение
-                    ),
-                    duration: const Duration(milliseconds: 600),
-                    builder: (context, offset, child) {
-                      return Transform.translate(
-                        offset: offset,
-                        child: widgetFromBuilder,
-                      );
-                    });
-              }
-            }
-          }
 
-          return widgetFromBuilder;
-        },
-        onAcceptWithDetails: (data) {
-          widget.onDrop(data.data, widget.item);
-        },
-        onLeave: (data) {
-          widget.setGlobalDeltaOffset(offsetToLeave);
-          // widget.setGlobalOffset(offset);
-          widget.onDrop(data!, widget.item);
-        },
-      ),
+                return renderObject.globalToLocal(position);
+              },
+              childWhenDragging: Visibility(
+                visible: isVisible,
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainState: true,
+                child: widgetFromBuilder,
+              ),
+              feedback: widgetFromBuilder,
+              child: DragTarget<T>(
+                onMove: (details) {
+                  // print(details.offset);
+                },
+                builder: (BuildContext context, candidateData, rejectedData) {
+                  if (candidateData.isNotEmpty) {
+                    var renderBox = context.findRenderObject();
+                    if (renderBox is RenderBox) {
+                      RenderBox renderBox =
+                          context.findRenderObject() as RenderBox;
+
+                      if (renderBox.parent != null) {
+                        // if(renderBox.parent is BoxParentData){
+
+                        BoxParentData vvv =
+                            renderBox.parent?.parentData as BoxParentData;
+
+                        offsetToLeave = vvv.offset;
+
+                        offsetToDelta = widget.globalDeltaOffset - vvv.offset;
+
+                        if (offsetToDelta.dx >= 0) {
+                          offsetToDelta = Offset(renderBox.size.width, 0);
+                        } else {
+                          offsetToDelta = Offset(-renderBox.size.width, 0);
+                        }
+                        return TweenAnimationBuilder<Offset>(
+                            curve: Curves.easeInOutExpo,
+                            tween: Tween<Offset>(
+                              begin: Offset.zero,
+                              end: candidateData.isNotEmpty
+                                  ? offsetToDelta
+                                  : Offset.zero,
+                              // end: candidateData.isNotEmpty
+                              //     ? offset
+                              //     : Offset.zero, // Изменяем смещение
+                            ),
+                            duration: const Duration(milliseconds: 600),
+                            builder: (context, offset, child) {
+                              return Transform.translate(
+                                offset: offset,
+                                child: widgetFromBuilder,
+                              );
+                            });
+                      }
+                    }
+                  }
+
+                  return widgetFromBuilder;
+                },
+                onAcceptWithDetails: (data) {
+                  widget.onDrop(data.data, widget.item);
+                },
+                onLeave: (data) {
+                  widget.setGlobalDeltaOffset(offsetToLeave);
+                  // widget.setGlobalOffset(offset);
+                  widget.onDrop(data!, widget.item);
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  Offset? getParentOffset(RenderBox? renderObject) {
+    if (renderObject == null) return null;
+    if (renderObject.parent != null) {
+      return (renderObject.parent?.parentData as BoxParentData).offset;
+    }
+    return null;
+  }
+
+  RenderBox? getRenderBoxObject(BuildContext context) {
+    if (context.findRenderObject() != null) {
+      return context.findRenderObject()! as RenderBox;
+    }
+    return null;
   }
 
   void resetGlobalDelta() {
