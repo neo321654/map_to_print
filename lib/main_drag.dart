@@ -188,51 +188,37 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
             // context.size;
             // Align is used to position the highlight overlay
             // relative to the NavigationBar destination.
-            return SafeArea(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-
-                  TweenAnimationBuilder<Offset>(
-                      curve: Curves.easeInOutExpo,
-                      tween: Tween<Offset>(
-                        begin: offset,
-                        end: widget.globalOffset,
-
-                        // end: candidateData.isNotEmpty
-                        //     ? offset
-                        //     : Offset.zero, // Изменяем смещение
-                      ),
-                      duration: const Duration(milliseconds: 2600),
-                      builder: (context, offset, child) {
-                      return Positioned(
-                        top: offset.dy,
-                        left: offset.dx,
-                        child: SizedBox(
-                          // width: MediaQuery.of(context).size.width / 3,
-                          width: 10,
-                          height: 10.0,
-                          child: Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.red,
-                                  width: 4.0,
-                                ),
-                              ),
-                            ),
+            return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                  
+                      TweenAnimationBuilder<Offset>(
+                          curve: Curves.easeInOutExpo,
+                          tween: Tween<Offset>(
+                            begin: offset,
+                            end: widget.globalOffset,
+                  
+                            // end: candidateData.isNotEmpty
+                            //     ? offset
+                            //     : Offset.zero, // Изменяем смещение
                           ),
-                        ),
-                      );
-                    }
-                  ),
-                ],
-              ),
-            );
+                          duration: const Duration(milliseconds: 1000),
+                          builder: (context, offset, child) {
+                          return Positioned(
+                            top: offset.dy,
+                            left: offset.dx,
+                            child: widgetFromBuilder,
+                          );
+                        }
+                      ),
+                    ],
+
+
+              );
           },
         );
 
-        isVisible = false;
+        // isVisible = false;
 
         Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
       },
