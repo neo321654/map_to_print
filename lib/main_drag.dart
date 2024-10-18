@@ -186,6 +186,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
+
+          /// не может быть null , из-за  Draggable ->Listener extends SingleChildRenderObjectWidget
           RenderBox renderObject = getRenderBoxObject(context)!;
 
           /// офсет для
@@ -262,36 +264,37 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
   Offset? getParentOffset(RenderBox? renderObject) {
     if (renderObject == null) return null;
 
-    BoxParentData? pData = findParentData(renderObject);
+    BoxParentData? pData = findBoxParentData(renderObject);
 
     if (pData != null) return pData.offset;
 
     return null;
   }
 
-  BoxParentData? findParentData(RenderBox? renderBox) {
-    if (renderBox is RenderBox) {
-      var parent = renderBox.parent;
+  BoxParentData? findBoxParentData(RenderBox? renderBox) {
+    if (renderBox == null) return null;
 
-      while (parent != null) {
-        if (parent is RenderBox) {
+    RenderObject? parent = renderBox.parent;
+
+    if (parent == null) return null;
+
+    while (parent != null) {
+
           var parentData = parent.parentData;
           if (parentData is BoxParentData) {
             return parentData;
           }
           parent = parent.parent;
-        } else {
-          break; // Если родитель не RenderBox, выходим из цикла
-        }
+
       }
-    }
+
     return null;
   }
 
   RenderBox? getRenderBoxObject(BuildContext context) {
     RenderObject? renderObject = context.findRenderObject();
     if (renderObject != null && renderObject is RenderBox) {
-      return context.findRenderObject()! as RenderBox;
+      return renderObject;
     }
     return null;
   }
