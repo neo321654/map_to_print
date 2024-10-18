@@ -172,6 +172,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
        var overlayEntry = OverlayEntry(
           // Create a new OverlayEntry.
           builder: (BuildContext context) {
+            print('!!!!!!     $offset');
             // context.size;
             // Align is used to position the highlight overlay
             // relative to the NavigationBar destination.
@@ -179,9 +180,9 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    heightFactor: 1.0,
+                  Positioned(
+                    top: offset.dy,
+                    left: offset.dx,
                     child: DefaultTextStyle(
                       style: const TextStyle(
                         color: Colors.blue,
@@ -193,8 +194,9 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
                         children: <Widget>[
                           const Text('Tap here for'),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width / 3,
-                            height: 80.0,
+                            // width: MediaQuery.of(context).size.width / 3,
+                            width: 10,
+                            height: 10.0,
                             child: Center(
                               child: Container(
                                 decoration: BoxDecoration(
@@ -686,16 +688,22 @@ class CustomTickerProvider extends TickerProvider {
 
 
       // Запускаем анимацию
-      _animationController.forward().then((_) {
-        // Удаляем entry после завершения анимации
-        _entry!.remove();
-        _entry!.dispose();
+      // _animationController.forward().then((_) {
+      //   // Удаляем entry после завершения анимации
+      //   _entry!.remove();
+      //   _entry!.dispose();
+      //   _entry = null;
+      //
+      //   onDragEnd?.call(velocity ?? Velocity.zero, _lastOffset!, wasAccepted);
+      //
+      //   // Останавливаем контроллер анимации
+      //   _animationController.dispose();  });
+
+      _entry!.remove();
+      _entry!.dispose();
         _entry = null;
 
         onDragEnd?.call(velocity ?? Velocity.zero, _lastOffset!, wasAccepted);
-
-        // Останавливаем контроллер анимации
-        _animationController.dispose();  });
 
     }
 
