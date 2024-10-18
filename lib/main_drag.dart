@@ -215,19 +215,22 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           },
           builder: (BuildContext context, candidateData, rejectedData) {
             if (candidateData.isNotEmpty) {
+
+              ///не может быть null , из-за  DragTarget ->MetaData extends SingleChildRenderObjectWidget
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-              Offset? offsetBias = getParentOffset(renderBox);
+              Offset offsetBias = getParentOffset(renderBox)??Offset.zero;
 
-              offsetToLeave = offsetBias!;
+              offsetToLeave = offsetBias;
 
               offsetToDelta = widget.globalDeltaOffset - offsetBias;
 
-              if (offsetToDelta.dx >= 0) {
-                offsetToDelta = Offset(renderBox.size.width, 0);
-              } else {
-                offsetToDelta = Offset(-renderBox.size.width, 0);
-              }
+              /// Смещение влево или вправо
+              offsetToDelta = Offset(
+                renderBox.size.width * offsetToDelta.dx.sign,
+                offsetToDelta.dy,
+              );
+
               return TweenAnimationBuilder<Offset>(
                   curve: Curves.easeInOutExpo,
                   tween: Tween<Offset>(
@@ -278,17 +281,13 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
     if (parent == null) return null;
 
-
     while (parent != null) {
-
       var parentData = parent.parentData;
-
       if (parentData is BoxParentData) {
             return parentData;
           }
           parent = parent.parent;
       }
-
     return null;
   }
 
