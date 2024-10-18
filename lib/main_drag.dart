@@ -162,11 +162,17 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         isDragging = true;
         isVisible = false;
       },
-      onDragEnd: (_) {
+      onDragEnd: (details) {
+
+
         isDragging = false;
         isVisible = true;
         // offset = Offset.zero;
         offset = Offset.zero;
+
+        showOverlayAnimation(details.offset, context);
+
+
         // widget.setGlobalDeltaOffset(Offset.infinite);
       },
       onDragCompleted: () {
@@ -182,41 +188,6 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         isVisible = true;
         widget.setGlobalDeltaOffset(Offset.infinite);
 
-         overlayEntry = OverlayEntry(
-          // Create a new OverlayEntry.
-          builder: (BuildContext context) {
-            print('!!!!!!     $offset');
-            // context.size;
-            // Align is used to position the highlight overlay
-            // relative to the NavigationBar destination.
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                TweenAnimationBuilder<Offset>(
-                    curve: Curves.easeInOutExpo,
-                    tween: Tween<Offset>(
-                      begin: offset,
-                      end: widget.globalOffset,
-                    ),
-                    onEnd: () {
-                      removeOverlayEntry();
-                    },
-                    duration: const Duration(milliseconds: 1000),
-                    builder: (context, offset, child) {
-                      return Positioned(
-                        top: offset.dy,
-                        left: offset.dx,
-                        child: widgetFromBuilder,
-                      );
-                    }),
-              ],
-            );
-          },
-        );
-
-        // isVisible = false;
-
-        Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
       },
       dragAnchorStrategy:
           (Draggable<Object> draggable, BuildContext context, Offset position) {
@@ -225,8 +196,11 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         BoxParentData parentData = renderObject.parentData! as BoxParentData;
         Offset offSet = parentData.offset;
 
+
+
+        Offset ofToGlobal = renderObject.localToGlobal(offSet)-offSet;
         widget.setGlobalDeltaOffset(offSet);
-        widget.setGlobalOffset(renderObject.localToGlobal(offSet));
+        widget.setGlobalOffset(ofToGlobal);
 
         return renderObject.globalToLocal(position);
       },
@@ -240,7 +214,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
       feedback: widgetFromBuilder,
       child: DragTarget<T>(
         onMove: (details) {
-          print(details.offset);
+          // print(details.offset);
         },
         builder: (BuildContext context, candidateData, rejectedData) {
           if (candidateData.isNotEmpty) {
@@ -293,10 +267,53 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         },
         onLeave: (data) {
           widget.setGlobalDeltaOffset(offset2);
+          // widget.setGlobalOffset(offset);
           widget.onDrop(data!, widget.item);
         },
       ),
     );
+  }
+
+  void showOverlayAnimation(Offset offset, BuildContext context) {
+    print(widget.globalOffset);
+       overlayEntry = OverlayEntry(
+     // Create a new OverlayEntry.
+     builder: (BuildContext context) {
+       // print('!!!!!!     $offset');
+       // context.size;
+       // Align is used to position the highlight overlay
+       // relative to the NavigationBar destination.
+       return Container(
+         color: Colors.red.withOpacity(0.3),
+         child: Stack(
+           fit: StackFit.expand,
+           children: [
+             TweenAnimationBuilder<Offset>(
+                 curve: Curves.easeInOutExpo,
+                 tween: Tween<Offset>(
+                   begin: offset,
+                   end: widget.globalOffset,
+                 ),
+                 onEnd: () {
+                   removeOverlayEntry();
+                 },
+                 duration: const Duration(milliseconds: 1000),
+                 builder: (context, offset, child) {
+                   return Positioned(
+                     top: offset.dy,
+                     left: offset.dx,
+                     child: widgetFromBuilder,
+                   );
+                 }),
+           ],
+         ),
+       );
+     },
+            );
+
+            // isVisible = false;
+
+            Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
   }
 
   void removeOverlayEntry() {
