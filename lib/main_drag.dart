@@ -186,7 +186,6 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
-
           /// не может быть null , из-за  Draggable ->Listener extends SingleChildRenderObjectWidget
           RenderBox renderObject = getRenderBoxObject(context)!;
 
@@ -215,11 +214,10 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           },
           builder: (BuildContext context, candidateData, rejectedData) {
             if (candidateData.isNotEmpty) {
-
               ///не может быть null , из-за  DragTarget ->MetaData extends SingleChildRenderObjectWidget
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-              Offset offsetBias = getParentOffset(renderBox)??Offset.zero;
+              Offset offsetBias = getParentOffset(renderBox) ?? Offset.zero;
 
               offsetToLeave = offsetBias;
 
@@ -231,22 +229,32 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
                 offsetToDelta.dy,
               );
 
-              return TweenAnimationBuilder<Offset>(
-                  curve: Curves.easeInOutExpo,
-                  tween: Tween<Offset>(
-                    begin: Offset.zero,
-                    end: candidateData.isNotEmpty ? offsetToDelta : Offset.zero,
-                    // end: candidateData.isNotEmpty
-                    //     ? offset
-                    //     : Offset.zero, // Изменяем смещение
-                  ),
-                  duration: const Duration(milliseconds: 600),
-                  builder: (context, offset, child) {
-                    return Transform.translate(
-                      offset: offset,
-                      child: widgetFromBuilder,
-                    );
-                  });
+              return AnimatedOffsetWidget(
+                begin: Offset.zero,
+                end: candidateData.isNotEmpty ? offsetToDelta : Offset.zero,
+                duration: const Duration(milliseconds: 600),
+                child: widgetFromBuilder,
+                builder: (context, offset, child) {
+                  return Transform.translate(
+                    offset: offset,
+                    child: widgetFromBuilder,
+                  );
+                },
+              );
+
+              // return TweenAnimationBuilder<Offset>(
+              //     curve: Curves.easeInOutExpo,
+              //     tween: Tween<Offset>(
+              //       begin: Offset.zero,
+              //       end: candidateData.isNotEmpty ? offsetToDelta : Offset.zero,
+              //     ),
+              //     duration: const Duration(milliseconds: 600),
+              //     builder: (context, offset, child) {
+              //       return Transform.translate(
+              //         offset: offset,
+              //         child: widgetFromBuilder,
+              //       );
+              //     });
             }
 
             return widgetFromBuilder;
@@ -284,10 +292,10 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     while (parent != null) {
       var parentData = parent.parentData;
       if (parentData is BoxParentData) {
-            return parentData;
-          }
-          parent = parent.parent;
+        return parentData;
       }
+      parent = parent.parent;
+    }
     return null;
   }
 
@@ -318,23 +326,31 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              TweenAnimationBuilder<Offset>(
-                  curve: Curves.easeInOutExpo,
-                  tween: Tween<Offset>(
-                    begin: offset,
-                    end: widget.globalOffset,
-                  ),
-                  onEnd: () {
-                    removeOverlayEntry();
-                  },
-                  duration: const Duration(milliseconds: 1000),
-                  builder: (context, offset, child) {
-                    return Positioned(
-                      top: offset.dy,
-                      left: offset.dx,
-                      child: widgetFromBuilder,
-                    );
-                  }),
+              AnimatedOffsetWidget(
+                begin: offset,
+                end: widget.globalOffset,
+                duration: const Duration(milliseconds: 1000),
+                onEnd: removeOverlayEntry,
+                child: widgetFromBuilder,
+              ),
+
+              // TweenAnimationBuilder<Offset>(
+              //     curve: Curves.easeInOutExpo,
+              //     tween: Tween<Offset>(
+              //       begin: offset,
+              //       end: widget.globalOffset,
+              //     ),
+              //     onEnd: () {
+              //       removeOverlayEntry();
+              //     },
+              //     duration: const Duration(milliseconds: 1000),
+              //     builder: (context, offset, child) {
+              //       return Positioned(
+              //         top: offset.dy,
+              //         left: offset.dx,
+              //         child: widgetFromBuilder,
+              //       );
+              //     }),
             ],
           ),
         );
@@ -350,5 +366,56 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     overlayEntry?.remove();
     overlayEntry?.dispose();
     overlayEntry = null;
+  }
+}
+
+class AnimatedOffsetWidget extends StatelessWidget {
+  final Offset begin;
+  final Offset end;
+  final Duration duration;
+  final Widget child;
+  final Curve curve;
+  final Widget Function(BuildContext, Offset, Widget) builder;
+  final void Function()? onEnd;
+
+  const AnimatedOffsetWidget({
+    Key? key,
+    required this.begin,
+    required this.end,
+    required this.duration,
+    required this.child,
+    this.curve = Curves.easeInOutExpo,
+    this.onEnd,
+    Widget Function(BuildContext context, Offset offset, Widget child)? builder,
+  })  : builder = builder ?? _defaultBuilder,
+        super(key: key);
+
+  static Widget _defaultBuilder(
+      BuildContext context, Offset offset, Widget child) {
+    return Positioned(
+      top: offset.dy,
+      left: offset.dx,
+      child: child,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<Offset>(
+      curve: curve,
+      tween: Tween<Offset>(
+        begin: begin,
+        end: end,
+      ),
+      duration: duration,
+      onEnd: onEnd,
+      builder: (context, offset, child) {
+        return Transform.translate(
+          offset: offset,
+          child: child,
+        );
+      },
+      child: child,
+    );
   }
 }
