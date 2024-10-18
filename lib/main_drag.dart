@@ -164,10 +164,59 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
         // globalDragPositions = Offset.infinite;
       },
-      onDraggableCanceled: (_, __) {
+      onDraggableCanceled: (vel, offset) {
         isDragging = false;
         isVisible = true;
         widget.setGlobalDeltaOffset(Offset.infinite);
+
+       var overlayEntry = OverlayEntry(
+          // Create a new OverlayEntry.
+          builder: (BuildContext context) {
+            // context.size;
+            // Align is used to position the highlight overlay
+            // relative to the NavigationBar destination.
+            return SafeArea(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    heightFactor: 1.0,
+                    child: DefaultTextStyle(
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.0,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const Text('Tap here for'),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            height: 80.0,
+                            child: Center(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.red,
+                                    width: 4.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+
+        Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
       },
       dragAnchorStrategy:
           (MyDraggable<Object> draggable, BuildContext context, Offset position) {
@@ -215,9 +264,12 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
                     begin: Offset.zero,
                     end: candidateData.isNotEmpty
                         ? offset
-                        : Offset.zero, // Изменяем смещение
+                        : Offset.zero,
+                    // end: candidateData.isNotEmpty
+                    //     ? offset
+                    //     : Offset.zero, // Изменяем смещение
                   ),
-                  duration: const Duration(milliseconds: 600),
+                  duration: const Duration(milliseconds: 2600),
                   builder: (context, offset, child) {
                     return Transform.translate(
                       offset: offset,
@@ -470,9 +522,13 @@ class CustomTickerProvider extends TickerProvider {
 
       // Определение Tween для анимации
       _animation = Tween<Offset>(
+
         begin: Offset.zero,
-        end: Offset(-1,-1),
+        // end: Offset(-1,-1),
+        end: -dragStartPoint/100,
       ).animate(CurvedAnimation(
+
+
         parent: _animationController,
         curve: Curves.easeInOut,
       ));
@@ -614,19 +670,20 @@ class CustomTickerProvider extends TickerProvider {
       _activeTarget = null;
 
       // Устанавливаем конечное значение для анимации
-      _animation = Tween<Offset>(
-        begin: _lastOffset,
-        end: dragStartPoint, // Возвращаем на исходную позицию
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ));
+      // _animation = Tween<Offset>(
+      //   begin: _lastOffset,
+      //   end: dragStartPoint, // Возвращаем на исходную позицию
+      // ).animate(CurvedAnimation(
+      //   parent: _animationController,
+      //   curve: Curves.easeInOut,
+      // ));
 
       print('qq $_lastOffset');
       print('qqqqww $_overlayOffset');
       print('qqwww $dragStartPoint');
       print('qq $_lastOffset');
       print('qssasasqwq $_position');
+
 
       // Запускаем анимацию
       _animationController.forward().then((_) {
