@@ -155,7 +155,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return MyDraggable<T>(
+    return Draggable<T>(
       data: widget.item,
       onDragStarted: () {
         isDragging = true;
@@ -237,14 +237,14 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
       },
       dragAnchorStrategy:
-          (MyDraggable<Object> draggable, BuildContext context, Offset position) {
+          (Draggable<Object> draggable, BuildContext context, Offset position) {
         final RenderBox renderObject = context.findRenderObject()! as RenderBox;
 
         BoxParentData parentData = renderObject.parentData! as BoxParentData;
         Offset offSet = parentData.offset;
 
         widget.setGlobalDeltaOffset(offSet);
-        widget.setGlobalOffset(position);
+        widget.setGlobalOffset(renderObject.localToGlobal(offSet));
 
 
         return renderObject.globalToLocal(position);
