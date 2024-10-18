@@ -278,14 +278,15 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
     if (parent == null) return null;
 
+
     while (parent != null) {
 
-          var parentData = parent.parentData;
-          if (parentData is BoxParentData) {
+      var parentData = parent.parentData;
+
+      if (parentData is BoxParentData) {
             return parentData;
           }
           parent = parent.parent;
-
       }
 
     return null;
