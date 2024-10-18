@@ -186,8 +186,6 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         },
         dragAnchorStrategy: (Draggable<Object> draggable, BuildContext context,
             Offset position) {
-          // print(context);
-
           RenderBox renderObject = getRenderBoxObject(context)!;
 
           /// офсет для
@@ -215,44 +213,35 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           },
           builder: (BuildContext context, candidateData, rejectedData) {
             if (candidateData.isNotEmpty) {
+              RenderBox renderBox = context.findRenderObject() as RenderBox;
 
+              Offset? offsetBias = getParentOffset(renderBox);
 
-                RenderBox renderBox = context.findRenderObject() as RenderBox;
+              offsetToLeave = offsetBias!;
 
-                if (renderBox.parent != null) {
-                  // if(renderBox.parent is BoxParentData){
+              offsetToDelta = widget.globalDeltaOffset - offsetBias;
 
-                  Offset? offsetBias = getParentOffset(renderBox);
-
-                  offsetToLeave = offsetBias!;
-
-                  offsetToDelta = widget.globalDeltaOffset - offsetBias;
-
-                  if (offsetToDelta.dx >= 0) {
-                    offsetToDelta = Offset(renderBox.size.width, 0);
-                  } else {
-                    offsetToDelta = Offset(-renderBox.size.width, 0);
-                  }
-                  return TweenAnimationBuilder<Offset>(
-                      curve: Curves.easeInOutExpo,
-                      tween: Tween<Offset>(
-                        begin: Offset.zero,
-                        end: candidateData.isNotEmpty
-                            ? offsetToDelta
-                            : Offset.zero,
-                        // end: candidateData.isNotEmpty
-                        //     ? offset
-                        //     : Offset.zero, // Изменяем смещение
-                      ),
-                      duration: const Duration(milliseconds: 600),
-                      builder: (context, offset, child) {
-                        return Transform.translate(
-                          offset: offset,
-                          child: widgetFromBuilder,
-                        );
-                      });
-                }
-
+              if (offsetToDelta.dx >= 0) {
+                offsetToDelta = Offset(renderBox.size.width, 0);
+              } else {
+                offsetToDelta = Offset(-renderBox.size.width, 0);
+              }
+              return TweenAnimationBuilder<Offset>(
+                  curve: Curves.easeInOutExpo,
+                  tween: Tween<Offset>(
+                    begin: Offset.zero,
+                    end: candidateData.isNotEmpty ? offsetToDelta : Offset.zero,
+                    // end: candidateData.isNotEmpty
+                    //     ? offset
+                    //     : Offset.zero, // Изменяем смещение
+                  ),
+                  duration: const Duration(milliseconds: 600),
+                  builder: (context, offset, child) {
+                    return Transform.translate(
+                      offset: offset,
+                      child: widgetFromBuilder,
+                    );
+                  });
             }
 
             return widgetFromBuilder;
@@ -300,7 +289,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
   }
 
   RenderBox? getRenderBoxObject(BuildContext context) {
-    if (context.findRenderObject() != null) {
+    RenderObject? renderObject = context.findRenderObject();
+    if (renderObject != null && renderObject is RenderBox) {
       return context.findRenderObject()! as RenderBox;
     }
     return null;
