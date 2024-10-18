@@ -238,69 +238,63 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         child: widgetFromBuilder,
       ),
       feedback: widgetFromBuilder,
-      child: Visibility(
-        visible: isVisible,
-        maintainSize: true,
-        maintainAnimation: true,
-        maintainState: true,
-        child: DragTarget<T>(
-          onMove: (details) {
-            print(details.offset);
-          },
-          builder: (BuildContext context, candidateData, rejectedData) {
-            if (candidateData.isNotEmpty) {
-              var renderBox = context.findRenderObject();
-              if (renderBox is RenderBox) {
-                RenderBox renderBox = context.findRenderObject() as RenderBox;
+      child: DragTarget<T>(
+        onMove: (details) {
+          print(details.offset);
+        },
+        builder: (BuildContext context, candidateData, rejectedData) {
+          if (candidateData.isNotEmpty) {
+            var renderBox = context.findRenderObject();
+            if (renderBox is RenderBox) {
+              RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-    if (renderBox.parent != null) {
-      if(renderBox.parent is BoxParentData){
+          if (renderBox.parent != null) {
+            // if(renderBox.parent is BoxParentData){
 
 
-      BoxParentData vvv =
-      renderBox.parent?.parentData as BoxParentData;
+            BoxParentData vvv =
+            renderBox.parent?.parentData as BoxParentData;
 
-      offset2 = vvv.offset;
+            offset2 = vvv.offset;
 
-      offset = widget.globalDeltaOffset - vvv.offset;
+            offset = widget.globalDeltaOffset - vvv.offset;
 
-      if (offset.dx >= 0) {
-        offset = Offset(renderBox.size.width, 0);
-      } else {
-        offset = Offset(-renderBox.size.width, 0);
-      }
-      return TweenAnimationBuilder<Offset>(
-          curve: Curves.easeInOutExpo,
-          tween: Tween<Offset>(
-            begin: Offset.zero,
-            end: candidateData.isNotEmpty ? offset : Offset.zero,
-            // end: candidateData.isNotEmpty
-            //     ? offset
-            //     : Offset.zero, // Изменяем смещение
-          ),
-          duration: const Duration(milliseconds: 2600),
-          builder: (context, offset, child) {
-            return Transform.translate(
-              offset: offset,
-              child: widgetFromBuilder,
-            );
-          });}
-
-    }
-
-              }
+            if (offset.dx >= 0) {
+      offset = Offset(renderBox.size.width, 0);
+            } else {
+      offset = Offset(-renderBox.size.width, 0);
             }
-
-            return widgetFromBuilder;
-          },
-          onAcceptWithDetails: (data) {
-            widget.onDrop(data.data, widget.item);
-          },
-          onLeave: (data) {
-            widget.setGlobalDeltaOffset(offset2);
-            widget.onDrop(data!, widget.item);
-          },
+            return TweenAnimationBuilder<Offset>(
+        curve: Curves.easeInOutExpo,
+        tween: Tween<Offset>(
+          begin: Offset.zero,
+          end: candidateData.isNotEmpty ? offset : Offset.zero,
+          // end: candidateData.isNotEmpty
+          //     ? offset
+          //     : Offset.zero, // Изменяем смещение
         ),
+        duration: const Duration(milliseconds: 600),
+        builder: (context, offset, child) {
+          return Transform.translate(
+            offset: offset,
+            child: widgetFromBuilder,
+          );
+        });
+
+          }
+
+            }
+          }
+
+          return widgetFromBuilder;
+        },
+        onAcceptWithDetails: (data) {
+          widget.onDrop(data.data, widget.item);
+        },
+        onLeave: (data) {
+          widget.setGlobalDeltaOffset(offset2);
+          widget.onDrop(data!, widget.item);
+        },
       ),
     );
   }
