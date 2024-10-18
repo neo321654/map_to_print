@@ -144,9 +144,9 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
   bool isDragging = false;
   bool isVisible = true;
   late Widget widgetFromBuilder;
-  Offset offset = Offset.zero;
-  Offset offset2 = Offset.zero;
-  OverlayEntry? overlayEntry ;
+  Offset offsetToDelta = Offset.zero;
+  Offset offsetToLeave = Offset.zero;
+  OverlayEntry? overlayEntry;
 
   @override
   void initState() {
@@ -163,31 +163,20 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         isVisible = false;
       },
       onDragEnd: (details) {
-
-
         isDragging = false;
         isVisible = true;
-        // offset = Offset.zero;
-        offset = Offset.zero;
-
+        resetGlobalDelta();
         showOverlayAnimation(details.offset, context);
-
-
-        // widget.setGlobalDeltaOffset(Offset.infinite);
       },
       onDragCompleted: () {
         isDragging = false;
         isVisible = true;
-        widget.setGlobalDeltaOffset(Offset.infinite);
-        offset = Offset.zero;
-
-        // globalDragPositions = Offset.infinite;
+        resetGlobalDelta();
       },
       onDraggableCanceled: (vel, offset) {
         isDragging = false;
         isVisible = true;
-        widget.setGlobalDeltaOffset(Offset.infinite);
-
+        resetGlobalDelta();
       },
       dragAnchorStrategy:
           (Draggable<Object> draggable, BuildContext context, Offset position) {
@@ -196,9 +185,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
         BoxParentData parentData = renderObject.parentData! as BoxParentData;
         Offset offSet = parentData.offset;
 
-
-
-        Offset ofToGlobal = renderObject.localToGlobal(offSet)-offSet;
+        Offset ofToGlobal = renderObject.localToGlobal(offSet) - offSet;
         widget.setGlobalDeltaOffset(offSet);
         widget.setGlobalOffset(ofToGlobal);
 
@@ -222,41 +209,40 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
             if (renderBox is RenderBox) {
               RenderBox renderBox = context.findRenderObject() as RenderBox;
 
-          if (renderBox.parent != null) {
-            // if(renderBox.parent is BoxParentData){
+              if (renderBox.parent != null) {
+                // if(renderBox.parent is BoxParentData){
 
+                BoxParentData vvv =
+                    renderBox.parent?.parentData as BoxParentData;
 
-            BoxParentData vvv =
-            renderBox.parent?.parentData as BoxParentData;
+                offsetToLeave = vvv.offset;
 
-            offset2 = vvv.offset;
+                offsetToDelta = widget.globalDeltaOffset - vvv.offset;
 
-            offset = widget.globalDeltaOffset - vvv.offset;
-
-            if (offset.dx >= 0) {
-      offset = Offset(renderBox.size.width, 0);
-            } else {
-      offset = Offset(-renderBox.size.width, 0);
-            }
-            return TweenAnimationBuilder<Offset>(
-        curve: Curves.easeInOutExpo,
-        tween: Tween<Offset>(
-          begin: Offset.zero,
-          end: candidateData.isNotEmpty ? offset : Offset.zero,
-          // end: candidateData.isNotEmpty
-          //     ? offset
-          //     : Offset.zero, // Изменяем смещение
-        ),
-        duration: const Duration(milliseconds: 600),
-        builder: (context, offset, child) {
-          return Transform.translate(
-            offset: offset,
-            child: widgetFromBuilder,
-          );
-        });
-
-          }
-
+                if (offsetToDelta.dx >= 0) {
+                  offsetToDelta = Offset(renderBox.size.width, 0);
+                } else {
+                  offsetToDelta = Offset(-renderBox.size.width, 0);
+                }
+                return TweenAnimationBuilder<Offset>(
+                    curve: Curves.easeInOutExpo,
+                    tween: Tween<Offset>(
+                      begin: Offset.zero,
+                      end: candidateData.isNotEmpty
+                          ? offsetToDelta
+                          : Offset.zero,
+                      // end: candidateData.isNotEmpty
+                      //     ? offset
+                      //     : Offset.zero, // Изменяем смещение
+                    ),
+                    duration: const Duration(milliseconds: 600),
+                    builder: (context, offset, child) {
+                      return Transform.translate(
+                        offset: offset,
+                        child: widgetFromBuilder,
+                      );
+                    });
+              }
             }
           }
 
@@ -266,7 +252,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           widget.onDrop(data.data, widget.item);
         },
         onLeave: (data) {
-          widget.setGlobalDeltaOffset(offset2);
+          widget.setGlobalDeltaOffset(offsetToLeave);
           // widget.setGlobalOffset(offset);
           widget.onDrop(data!, widget.item);
         },
@@ -274,46 +260,51 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     );
   }
 
+  void resetGlobalDelta() {
+    offsetToDelta = Offset.zero;
+    widget.setGlobalDeltaOffset(Offset.infinite);
+  }
+
   void showOverlayAnimation(Offset offset, BuildContext context) {
     print(widget.globalOffset);
-       overlayEntry = OverlayEntry(
-     // Create a new OverlayEntry.
-     builder: (BuildContext context) {
-       // print('!!!!!!     $offset');
-       // context.size;
-       // Align is used to position the highlight overlay
-       // relative to the NavigationBar destination.
-       return Container(
-         color: Colors.red.withOpacity(0.3),
-         child: Stack(
-           fit: StackFit.expand,
-           children: [
-             TweenAnimationBuilder<Offset>(
-                 curve: Curves.easeInOutExpo,
-                 tween: Tween<Offset>(
-                   begin: offset,
-                   end: widget.globalOffset,
-                 ),
-                 onEnd: () {
-                   removeOverlayEntry();
-                 },
-                 duration: const Duration(milliseconds: 1000),
-                 builder: (context, offset, child) {
-                   return Positioned(
-                     top: offset.dy,
-                     left: offset.dx,
-                     child: widgetFromBuilder,
-                   );
-                 }),
-           ],
-         ),
-       );
-     },
-            );
+    overlayEntry = OverlayEntry(
+      // Create a new OverlayEntry.
+      builder: (BuildContext context) {
+        // print('!!!!!!     $offset');
+        // context.size;
+        // Align is used to position the highlight overlay
+        // relative to the NavigationBar destination.
+        return Container(
+          color: Colors.red.withOpacity(0.3),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              TweenAnimationBuilder<Offset>(
+                  curve: Curves.easeInOutExpo,
+                  tween: Tween<Offset>(
+                    begin: offset,
+                    end: widget.globalOffset,
+                  ),
+                  onEnd: () {
+                    removeOverlayEntry();
+                  },
+                  duration: const Duration(milliseconds: 1000),
+                  builder: (context, offset, child) {
+                    return Positioned(
+                      top: offset.dy,
+                      left: offset.dx,
+                      child: widgetFromBuilder,
+                    );
+                  }),
+            ],
+          ),
+        );
+      },
+    );
 
-            // isVisible = false;
+    // isVisible = false;
 
-            Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
+    Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
   }
 
   void removeOverlayEntry() {
@@ -322,5 +313,3 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     overlayEntry = null;
   }
 }
-
-
