@@ -332,6 +332,13 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
                 duration: const Duration(milliseconds: 1000),
                 onEnd: removeOverlayEntry,
                 child: widgetFromBuilder,
+                builder: (context, offset, child) {
+                  return Positioned(
+                    top: offset.dy,
+                    left: offset.dx,
+                    child: widgetFromBuilder,
+                  );
+                },
               ),
 
               // TweenAnimationBuilder<Offset>(
@@ -375,7 +382,7 @@ class AnimatedOffsetWidget extends StatelessWidget {
   final Duration duration;
   final Widget child;
   final Curve curve;
-  final Widget Function(BuildContext, Offset, Widget) builder;
+  final ValueWidgetBuilder<Offset> builder;
   final void Function()? onEnd;
 
   const AnimatedOffsetWidget({
@@ -384,20 +391,12 @@ class AnimatedOffsetWidget extends StatelessWidget {
     required this.end,
     required this.duration,
     required this.child,
+    required this.builder,
     this.curve = Curves.easeInOutExpo,
     this.onEnd,
-    Widget Function(BuildContext context, Offset offset, Widget child)? builder,
-  })  : builder = builder ?? _defaultBuilder,
-        super(key: key);
+  }) : super(key: key);
 
-  static Widget _defaultBuilder(
-      BuildContext context, Offset offset, Widget child) {
-    return Positioned(
-      top: offset.dy,
-      left: offset.dx,
-      child: child,
-    );
-  }
+  // ValueWidgetBuilder<Offset>
 
   @override
   Widget build(BuildContext context) {
@@ -409,12 +408,7 @@ class AnimatedOffsetWidget extends StatelessWidget {
       ),
       duration: duration,
       onEnd: onEnd,
-      builder: (context, offset, child) {
-        return Transform.translate(
-          offset: offset,
-          child: child,
-        );
-      },
+      builder: builder,
       child: child,
     );
   }
