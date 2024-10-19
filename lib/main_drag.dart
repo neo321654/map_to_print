@@ -172,7 +172,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           isDragging = false;
           isVisible = true;
           resetGlobalDelta();
-          showOverlayAnimation(details.offset, context);
+          showOverlayAnimation(details.offset,widget.globalOffset, context);
         },
         onDragCompleted: () {
           isDragging = false;
@@ -298,7 +298,11 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     widget.setGlobalDeltaOffset(Offset.infinite);
   }
 
-  void showOverlayAnimation(Offset offset, BuildContext context) {
+  void showOverlayAnimation(begin,end , context) {
+
+
+
+
     overlayEntry = OverlayEntry(
       // Create a new OverlayEntry.
       builder: (BuildContext context) {
@@ -308,8 +312,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
             fit: StackFit.expand,
             children: [
               AnimatedOffsetWidget(
-                begin: offset,
-                end: widget.globalOffset,
+                begin: begin,
+                end:end,
                 duration: const Duration(milliseconds: 1000),
                 onEnd: removeOverlayEntry,
                 child: widgetFromBuilder,
