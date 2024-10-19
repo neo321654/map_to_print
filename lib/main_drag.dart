@@ -298,12 +298,8 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     widget.setGlobalDeltaOffset(Offset.infinite);
   }
 
-  void showOverlayAnimation(begin,end , context) {
-
-
-
-
-    overlayEntry = OverlayEntry(
+  void showOverlayAnimation(begin,end,context) {
+ overlayEntry = OverlayEntry(
       // Create a new OverlayEntry.
       builder: (BuildContext context) {
         return Container(
