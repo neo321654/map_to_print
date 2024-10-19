@@ -172,7 +172,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           isDragging = false;
           isVisible = true;
           resetGlobalDelta();
-          showOverlayAnimation(details.offset,widget.globalOffset, context);
+          showOverlayAnimation(begin:details.offset,end:widget.globalOffset,context:  context);
         },
         onDragCompleted: () {
           isDragging = false;
@@ -298,7 +298,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     widget.setGlobalDeltaOffset(Offset.infinite);
   }
 
-  void showOverlayAnimation(begin,end,context) {
+  void showOverlayAnimation({required Offset begin, required Offset end,required  context}) {
 
 
     OverlayEntry? overlayEntry ;
