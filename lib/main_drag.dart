@@ -97,6 +97,7 @@ class _DockState<T extends Object> extends State<Dock<T>> {
   }
 
   void onDrop(T itemToReplace, T item) {
+
     setState(() {
       int index = _items.indexOf(item);
       _items.remove(itemToReplace);
@@ -146,7 +147,6 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
   late Widget widgetFromBuilder;
   Offset offsetToDelta = Offset.zero;
   Offset offsetToLeave = Offset.zero;
-  OverlayEntry? overlayEntry;
 
   @override
   void initState() {
@@ -299,7 +299,18 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
   }
 
   void showOverlayAnimation(begin,end,context) {
- overlayEntry = OverlayEntry(
+
+
+    OverlayEntry? overlayEntry ;
+
+    void removeOverlayEntry() {
+      overlayEntry?.remove();
+      overlayEntry?.dispose();
+      overlayEntry = null;
+    }
+
+
+      overlayEntry = OverlayEntry(
       // Create a new OverlayEntry.
       builder: (BuildContext context) {
         return Container(
@@ -330,13 +341,10 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
     // isVisible = false;
 
     Overlay.of(context, debugRequiredFor: widget).insert(overlayEntry!);
+
   }
 
-  void removeOverlayEntry() {
-    overlayEntry?.remove();
-    overlayEntry?.dispose();
-    overlayEntry = null;
-  }
+
 }
 
 class AnimatedOffsetWidget extends StatelessWidget {
