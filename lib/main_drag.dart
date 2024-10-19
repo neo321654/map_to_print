@@ -241,20 +241,6 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
                   );
                 },
               );
-
-              // return TweenAnimationBuilder<Offset>(
-              //     curve: Curves.easeInOutExpo,
-              //     tween: Tween<Offset>(
-              //       begin: Offset.zero,
-              //       end: candidateData.isNotEmpty ? offsetToDelta : Offset.zero,
-              //     ),
-              //     duration: const Duration(milliseconds: 600),
-              //     builder: (context, offset, child) {
-              //       return Transform.translate(
-              //         offset: offset,
-              //         child: widgetFromBuilder,
-              //       );
-              //     });
             }
 
             return widgetFromBuilder;
@@ -313,14 +299,9 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
   }
 
   void showOverlayAnimation(Offset offset, BuildContext context) {
-    // print(widget.globalOffset);
     overlayEntry = OverlayEntry(
       // Create a new OverlayEntry.
       builder: (BuildContext context) {
-        // print('!!!!!!     $offset');
-        // context.size;
-        // Align is used to position the highlight overlay
-        // relative to the NavigationBar destination.
         return Container(
           color: Colors.red.withOpacity(0.3),
           child: Stack(
@@ -340,24 +321,6 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
                   );
                 },
               ),
-
-              // TweenAnimationBuilder<Offset>(
-              //     curve: Curves.easeInOutExpo,
-              //     tween: Tween<Offset>(
-              //       begin: offset,
-              //       end: widget.globalOffset,
-              //     ),
-              //     onEnd: () {
-              //       removeOverlayEntry();
-              //     },
-              //     duration: const Duration(milliseconds: 1000),
-              //     builder: (context, offset, child) {
-              //       return Positioned(
-              //         top: offset.dy,
-              //         left: offset.dx,
-              //         child: widgetFromBuilder,
-              //       );
-              //     }),
             ],
           ),
         );
