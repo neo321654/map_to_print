@@ -172,7 +172,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
           isDragging = false;
           isVisible = true;
           resetGlobalDelta();
-          showOverlayAnimation(begin:details.offset,end:widget.globalOffset,context:  context);
+          showOverlayAnimation(begin:details.offset,end:offsetToLeave,context:  context);
         },
         onDragCompleted: () {
           isDragging = false;
