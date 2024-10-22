@@ -476,13 +476,18 @@ List<LatLng> calculateApex({
   required double width,
   required double height,
   required double meterInCm,
+  bool landscape = true,
 }) {
   const dst = Distance();
 
   List<LatLng> listLatLng= [];
 
-  num firstBearing = 0;
-  num secondBearing = 270;
+  if(landscape){
+    double temp = width;
+    width = height;
+    height = temp;
+  }
+
 
 
 
