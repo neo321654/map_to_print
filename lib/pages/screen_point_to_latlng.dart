@@ -30,7 +30,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
-  bool isFixedCurcularProgress = false;
+  bool isFixedCircularProgress = false;
 
   LatLng? latLngFixed;
 
@@ -46,11 +46,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         latLng = latLngFixed;
       });
 
-      isFixedCurcularProgress = true;
+      isFixedCircularProgress = true;
 
-      await Future.delayed(Duration(seconds: 2), () {});
+      await Future.delayed(const Duration(seconds: 2), () {});
 
-      isFixedCurcularProgress = false;
+      isFixedCircularProgress = false;
       isFixed = false;
       setState(() {});
     }
@@ -142,15 +142,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       borderPaint,
     );
 
-
     final picture = recorder.endRecording();
 
     int width = (((maxX - minX) * 2)).toInt();
     int height2 = (((maxY - minY) * 2)).toInt();
     if (width == 0) width = height.toInt();
     if (height2 == 0) width = height.toInt();
-
-
 
     final image = await picture.toImage(width, height2);
 
@@ -255,8 +252,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         onPressed: () {
           setState(() {
             isFixed = !isFixed;
-            if (isFixed) latLngFixed = latLng;
-            drawRect();
+            if (isFixed) latLngFixed = LatLng(latLng?.latitude??33, latLng?.longitude??44);
+            listApex = getNewApex(latLng: latLng, camera: mapController.camera);
           });
         },
         isExtended: true,
@@ -264,13 +261,17 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       ),
       appBar: AppBar(
         leading: ElevatedButton(
-          onPressed: (){
-            Navigator.pushNamed(context, ScreenSave.route,arguments:  <String, dynamic>{
-                   'center': latLng,
-                   'country': 'Germany',
-                },);
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              ScreenSave.route,
+              arguments: <String, dynamic>{
+                'center': latLng,
+                'country': 'Germany',
+              },
+            );
           },
-          child:Icon(Icons.save),
+          child: Icon(Icons.save),
         ),
         title: const Text('Map to print'),
         centerTitle: true,
@@ -284,8 +285,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   width: 10,
                 ),
                 Icon(Icons.save),
-                if (isFixed && isFixedCurcularProgress)
-                  CircularProgressIndicator(),
+                if (isFixed && isFixedCircularProgress)
+                  const CircularProgressIndicator(),
               ],
             ),
           ),
@@ -297,10 +298,10 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-                onPositionChanged: (_, __) => updatePoint(context),
+                onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 14,
-                minZoom: 14,
+                initialZoom: 4,
+                minZoom: 4,
                 maxZoom: 14),
             children: [
               openStreetMapTileLayer,
@@ -312,30 +313,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   polygons: [
                     Polygon(
                       color: Colors.orange.withAlpha(95),
-
-                      // points: const [
-                      //   LatLng(51.5, -0.09),
-                      //   LatLng(53.3498, -6.2603),
-                      //   LatLng(48.8566, 2.3522),
-                      //   LatLng(78.8566, 10.3522),
-                      // ],
                       points: listApex,
-                      // points: ()sync*{yield  LatLng(51.5, -0.09); }().toList(),
-                      // label: '(51.5, -0.09)(53.3498, -6.2603)' ,
-                      // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
-                      // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
-                      // labelStyle: const TextStyle(
-                      //     color: Colors.black,
-                      //     fontSize: 6,
-                      //     fontWeight: FontWeight.bold),
-                      // labelPlacement: PolygonLabelPlacement.polylabel,
                       borderColor: Colors.orange,
-                      borderStrokeWidth: 2,
+                      borderStrokeWidth: 1,
 
-                      hitValue: (
-                        title: 'Basic Unfilled Polygon',
-                        subtitle: 'Nothing really special here...',
-                      ),
+
                     ),
                   ],
                 ),
@@ -392,11 +374,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void updatePoint(BuildContext context) {
     var p = Point(_getPointX(context), pointY);
 
-    setState(() => latLng = mapController.camera.pointToLatLng(p));
-
-    if (!isFixed) {
-      drawRect();
-    }
+    setState(() {
+      latLng = mapController.camera.pointToLatLng(p);
+      if (!isFixed) {
+        listApex = getNewApex(latLng: latLng, camera: mapController.camera);
+      }
+    });
   }
 
   double _getPointX(BuildContext context) =>
@@ -406,29 +389,31 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Future.delayed(Duration(seconds: 0), () {
-      // var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
-      drawRect();
-
-      // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
-
-      for (var apex in listApex) {
-        print(mapController.camera.project(apex));
-      }
+    Future.delayed(const Duration(seconds: 0), () {
+      setState(() {
+        listApex = getNewApex(latLng: latLng, camera: mapController.camera);
+      });
     });
   }
 
-  void drawRect() {
+  List<LatLng> getNewApex({
+    required LatLng? latLng,
+    required MapCamera camera,
+    double width = 210,
+    double height = 297,
+    double multiply = 1,
+  }) {
+    List<LatLng> listApex = [];
     if (latLng != null) {
-      var ppoint = mapController.camera.project(latLng!);
-      // var ppoint = mapController.camera.project(LatLng(55.386, 9.030));
+      Point<double> point = camera.project(latLng);
 
-      var pppp = createRectangleNew(ppoint, 210, 297);
-      listApex.clear();
-      for (Point pnew in pppp) {
-        listApex.add(mapController.camera.unproject(pnew));
+      List<Point<num>> listPoints = createRectangleNew(point, width*multiply, height*multiply);
+
+      for (Point pnew in listPoints) {
+        listApex.add(camera.unproject(pnew));
       }
-      setState(() {});
+      return listApex;
     }
+    return listApex;
   }
 }
