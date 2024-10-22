@@ -304,7 +304,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 18,
+                initialZoom: 14,
                 minZoom: 1,
                 maxZoom: 18),
             children: [
@@ -343,6 +343,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 padding: EdgeInsets.only(right: 10, left: 10, bottom: 80),
                 alignment: Alignment.center,
                 length: ScalebarLength.xl,
+              ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                padding: EdgeInsets.only(right: 10, left: 10, bottom: 80),
+                alignment: Alignment.topCenter,
+                length: ScalebarLength.l,
               ),
             ],
           ),
@@ -484,11 +490,11 @@ List<LatLng> calculateApex({
     LatLng tempLL =dst.offset(latLng,height*meterInCm/2, 0);
      LatLng tempLL1 = dst.offset(tempLL,width*meterInCm/2, 270);
   listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,height, 180);
+  tempLL1 = dst.offset(tempLL1,height*meterInCm, 180);
   listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,width, 90);
+  tempLL1 = dst.offset(tempLL1,width*meterInCm, 90);
   listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,height, 0);
+  tempLL1 = dst.offset(tempLL1,height*meterInCm, 0);
   listLatLng.add(tempLL1);
 
 
@@ -507,7 +513,7 @@ List<LatLng> getNewApex({
   required MapCamera camera,
   double width = 21.0,
   double height = 29.7,
-  double meterInCm = 5,
+  double meterInCm = 100,
 }) {
   List<LatLng> listApex = [];
   if (latLng != null) {
