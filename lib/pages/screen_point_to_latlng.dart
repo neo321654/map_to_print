@@ -465,22 +465,62 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
 }
 
 
+List<LatLng> calculateApex({
+  required LatLng latLng,
+  required double width,
+  required double height,
+  required double meterInCm,
+}) {
+  const dst = Distance();
+
+  List<LatLng> listLatLng= [];
+
+  num firstBearing = 0;
+  num secondBearing = 270;
+
+
+
+
+    LatLng tempLL =dst.offset(latLng,height*meterInCm/2, 0);
+     LatLng tempLL1 = dst.offset(tempLL,width*meterInCm/2, 270);
+  listLatLng.add(tempLL1);
+  tempLL1 = dst.offset(tempLL1,height, 180);
+  listLatLng.add(tempLL1);
+  tempLL1 = dst.offset(tempLL1,width, 90);
+  listLatLng.add(tempLL1);
+  tempLL1 = dst.offset(tempLL1,height, 0);
+  listLatLng.add(tempLL1);
+
+
+
+  return listLatLng;
+
+
+
+
+
+}
+
+
 List<LatLng> getNewApex({
   required LatLng? latLng,
   required MapCamera camera,
-  double width = 210,
-  double height = 297,
-  double meterInCm = 100,
+  double width = 21.0,
+  double height = 29.7,
+  double meterInCm = 5,
 }) {
   List<LatLng> listApex = [];
   if (latLng != null) {
 
-    const dst = Distance();
 
-    listApex.add(dst.offset(latLng, meterInCm/2, 135));
-    listApex.add(dst.offset(latLng, meterInCm/2, 45));
-    listApex.add(dst.offset(latLng, meterInCm/2, 315));
-    listApex.add(dst.offset(latLng, meterInCm/2, 225));
+    listApex =calculateApex(latLng: latLng,width: width,height: height,meterInCm:meterInCm);
+
+
+    // listApex.add(dst.offset(latLng, diagonal/2, 135));
+    //
+    // listApex.add(dst.offset(latLng, diagonal/2, 45));
+    // listApex.add(dst.offset(latLng, diagonal/2, 315));
+    // listApex.add(dst.offset(latLng, diagonal/2, 225));
 
 
 
