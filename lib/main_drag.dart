@@ -231,7 +231,7 @@ class _DockItemState<T extends Object> extends State<DockItem<T>> {
 
               return AnimatedOffsetWidget(
                 begin: Offset.zero,
-                end: candidateData.isNotEmpty ? offsetToDelta : Offset.zero,
+                end:  offsetToDelta,
                 duration: const Duration(milliseconds: 600),
                 child: widgetFromBuilder,
                 builder: (context, offset, child) {
