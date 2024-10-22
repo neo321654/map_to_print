@@ -477,11 +477,10 @@ List<LatLng> getNewApex({
 
     const dst = Distance();
 
-    listApex.add(dst.offset(latLng, meterInCm/2, 90));
-
-    listApex.add(dst.offset(latLng, meterInCm/2, 180));
-    listApex.add(dst.offset(latLng, meterInCm/2, 270));
-    listApex.add(dst.offset(latLng, meterInCm/2, 360));
+    listApex.add(dst.offset(latLng, meterInCm/2, 135));
+    listApex.add(dst.offset(latLng, meterInCm/2, 45));
+    listApex.add(dst.offset(latLng, meterInCm/2, 315));
+    listApex.add(dst.offset(latLng, meterInCm/2, 225));
 
 
 
