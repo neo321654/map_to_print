@@ -64,6 +64,14 @@ class Scalebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
+
+
+
+
     final camera = MapCamera.of(context);
     const dst = Distance();
 

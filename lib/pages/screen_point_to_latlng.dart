@@ -304,7 +304,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 14,
+                initialZoom: 12,
                 minZoom: 1,
                 maxZoom: 18),
             children: [
@@ -392,27 +392,38 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     });
   }
 
-  List<LatLng> getNewApex({
-    required LatLng? latLng,
-    required MapCamera camera,
-    double width = 210,
-    double height = 297,
-    double multiply = 0.07,
-  }) {
-    List<LatLng> listApex = [];
-    if (latLng != null) {
-      Point<double> point = camera.project(latLng);
-      double biasToZoom = camera.zoom*multiply;
+
+}
 
 
-      List<Point<num>> listPoints =
-          createRectangleNew(point, width * biasToZoom, height * biasToZoom);
 
-      for (Point pnew in listPoints) {
-        listApex.add(camera.unproject(pnew));
-      }
-      return listApex;
+double getMultiply({required MapCamera camera, required double meterInCm}) {
+
+  return 10.0;
+}
+
+
+List<LatLng> getNewApex({
+  required LatLng? latLng,
+  required MapCamera camera,
+  double width = 210,
+  double height = 297,
+  double meterInCm = 100,
+}) {
+  List<LatLng> listApex = [];
+  if (latLng != null) {
+    Point<double> point = camera.project(latLng);
+
+    double biasToZoom = getMultiply(camera: camera, meterInCm: meterInCm);
+
+
+    List<Point<num>> listPoints =
+    createRectangleNew(point, width * biasToZoom, height * biasToZoom);
+
+    for (Point pnew in listPoints) {
+      listApex.add(camera.unproject(pnew));
     }
     return listApex;
   }
+  return listApex;
 }
