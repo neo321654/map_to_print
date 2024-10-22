@@ -101,7 +101,7 @@ class Scalebar extends StatelessWidget {
         text: label,
       ),
       alignment: alignment,
-      lineColor: Colors.red,
+      lineColor: Colors.black,
       strokeWidth: strokeWidth,
       lineHeight: lineHeight,
     );

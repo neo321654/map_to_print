@@ -340,32 +340,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 ),
               const Scalebar(
                 textStyle: TextStyle(color: Colors.black, fontSize: 14),
-                padding: EdgeInsets.only(right: 10, left: 10, bottom: 40),
-                alignment: Alignment.bottomLeft,
-              ),
-              const Scalebar(
-                textStyle: TextStyle(color: Colors.black, fontSize: 14),
                 padding: EdgeInsets.only(right: 10, left: 10, bottom: 80),
-                alignment: Alignment.bottomLeft,
-                length: ScalebarLength.s,
-              ),
-              const Scalebar(
-                textStyle: TextStyle(color: Colors.black, fontSize: 14),
-                alignment: Alignment.bottomCenter,
-                length: ScalebarLength.s,
-              ),
-              const Scalebar(
-                textStyle: TextStyle(color: Colors.black, fontSize: 14),
-                length: ScalebarLength.xxl,
-              ),
-              const Scalebar(
-                textStyle: TextStyle(color: Colors.black, fontSize: 14),
-                padding: EdgeInsets.only(right: 10, left: 10, top: 40),
-              ),
-              const Scalebar(
-                textStyle: TextStyle(color: Colors.black, fontSize: 14),
-                padding: EdgeInsets.only(right: 10, left: 10, top: 80),
-                length: ScalebarLength.s,
+                alignment: Alignment.center,
+                length: ScalebarLength.xl,
               ),
             ],
           ),
@@ -420,7 +397,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     required MapCamera camera,
     double width = 210,
     double height = 297,
-    double multiply = 0.3,
+    double multiply = 0.07,
   }) {
     List<LatLng> listApex = [];
     if (latLng != null) {
