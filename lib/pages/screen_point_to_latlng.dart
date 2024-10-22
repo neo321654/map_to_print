@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
@@ -248,11 +249,14 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const MenuDrawer( '/screen_point_to_latlng'),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
             isFixed = !isFixed;
-            if (isFixed) latLngFixed = LatLng(latLng?.latitude??33, latLng?.longitude??44);
+            if (isFixed)
+              latLngFixed =
+                  LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
             listApex = getNewApex(latLng: latLng, camera: mapController.camera);
           });
         },
@@ -300,9 +304,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 4,
-                minZoom: 4,
-                maxZoom: 14),
+                initialZoom: 14,
+                minZoom: 1,
+                maxZoom: 18),
             children: [
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
@@ -316,8 +320,6 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                       points: listApex,
                       borderColor: Colors.orange,
                       borderStrokeWidth: 1,
-
-
                     ),
                   ],
                 ),
@@ -336,20 +338,37 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                     ),
                   ],
                 ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                padding: EdgeInsets.only(right: 10, left: 10, bottom: 40),
+                alignment: Alignment.bottomLeft,
+              ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                padding: EdgeInsets.only(right: 10, left: 10, bottom: 80),
+                alignment: Alignment.bottomLeft,
+                length: ScalebarLength.s,
+              ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                alignment: Alignment.bottomCenter,
+                length: ScalebarLength.s,
+              ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                length: ScalebarLength.xxl,
+              ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                padding: EdgeInsets.only(right: 10, left: 10, top: 40),
+              ),
+              const Scalebar(
+                textStyle: TextStyle(color: Colors.black, fontSize: 14),
+                padding: EdgeInsets.only(right: 10, left: 10, top: 80),
+                length: ScalebarLength.s,
+              ),
             ],
           ),
-          // Positioned(
-          //   top: pointY - pointSize / 2,
-          //   left: _getPointX(context) - pointSize / 2,
-          //   child: const IgnorePointer(
-          //     child: Icon(
-          //       Icons.center_focus_strong_outlined,
-          //       size: pointSize,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          // ),
-          // project
           Positioned(
             top: pointY + pointSize / 2 + 6,
             left: 0,
@@ -401,13 +420,16 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     required MapCamera camera,
     double width = 210,
     double height = 297,
-    double multiply = 1,
+    double multiply = 0.3,
   }) {
     List<LatLng> listApex = [];
     if (latLng != null) {
       Point<double> point = camera.project(latLng);
+      double biasToZoom = camera.zoom*multiply;
 
-      List<Point<num>> listPoints = createRectangleNew(point, width*multiply, height*multiply);
+
+      List<Point<num>> listPoints =
+          createRectangleNew(point, width * biasToZoom, height * biasToZoom);
 
       for (Point pnew in listPoints) {
         listApex.add(camera.unproject(pnew));
