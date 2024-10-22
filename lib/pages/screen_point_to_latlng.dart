@@ -304,7 +304,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 12,
+                initialZoom: 18,
                 minZoom: 1,
                 maxZoom: 18),
             children: [
@@ -399,7 +399,69 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
 double getMultiply({required MapCamera camera, required double meterInCm}) {
 
-  return 10.0;
+
+
+  const dst = Distance();
+
+  // calculate the scalebar width in pixels
+  final latLngCenter = camera.center;
+  final offsetCenter = camera.project(latLngCenter);
+
+  final absLat = latLngCenter.latitude.abs();
+  //ScalebarLength.m = m(-1),
+  double index = camera.zoom - (-1);
+  // The following adjustments help to make the length of the scalebar
+  // more equal if the map center is near the equator or the poles.
+  //todo make this
+  if (camera.crs is Epsg3857) {
+    if (absLat > 85) return 0;
+    if (absLat > 60) index++;
+    if (absLat > 80) index++;
+  }
+
+  //тут мы нашли длину для подписи , то еть посути отрезок на карте
+  //похоже она влияет на полученную пропорцию
+  // final metricDst =
+  // _metricScale[index.round().clamp(0, _metricScale.length - 1)];
+  final metricDst = meterInCm;
+
+
+  //находим точку смещения вправо на metricDst метров вдоль оси OX
+  LatLng latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 90);
+
+  //если условие верно разворачиваем влево точку
+  if (latLngOffset.longitude < latLngCenter.longitude) {
+    latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 270);
+  }
+
+
+  //точка на карте в пикселях телефона
+  final offsetDistance = camera.project(latLngOffset);
+
+  //преобразует километры в метры
+  final label = metricDst < 1000
+      ? '$metricDst m'
+      : '${(metricDst / 1000.0).toStringAsFixed(0)} km';
+
+
+  // final ScalebarPainter scalebarPainter = _SimpleScalebarPainter(
+  //   // use .abs() to avoid wrong placements on the right map border
+  //   scalebarLength: (offsetDistance.x - offsetCenter.x).abs(),
+  //   text: TextSpan(
+  //     style: textStyle,
+  //     text: label,
+  //   ),
+  //   alignment: alignment,
+  //   lineColor: Colors.black,
+  //   strokeWidth: strokeWidth,
+  //   lineHeight: lineHeight,
+  // );
+
+
+
+
+
+  return 0.11;
 }
 
 
@@ -412,18 +474,62 @@ List<LatLng> getNewApex({
 }) {
   List<LatLng> listApex = [];
   if (latLng != null) {
-    Point<double> point = camera.project(latLng);
 
-    double biasToZoom = getMultiply(camera: camera, meterInCm: meterInCm);
+    const dst = Distance();
+
+    listApex.add(dst.offset(latLng, meterInCm/2, 90));
+
+    listApex.add(dst.offset(latLng, meterInCm/2, 180));
+    listApex.add(dst.offset(latLng, meterInCm/2, 270));
+    listApex.add(dst.offset(latLng, meterInCm/2, 360));
 
 
-    List<Point<num>> listPoints =
-    createRectangleNew(point, width * biasToZoom, height * biasToZoom);
 
-    for (Point pnew in listPoints) {
-      listApex.add(camera.unproject(pnew));
-    }
+    // Point<double> point = camera.project(latLng);
+    //
+    //
+    //
+    //
+    //
+    //
+    // double biasToZoom = getMultiply(camera: camera, meterInCm: meterInCm);
+    //
+    //
+    // List<Point<num>> listPoints =
+    // createRectangleNew(point, width * biasToZoom, height * biasToZoom);
+    //
+    // for (Point pnew in listPoints) {
+    //   listApex.add(camera.unproject(pnew));
+    // }
     return listApex;
   }
   return listApex;
 }
+
+
+const _metricScale = <int>[
+  15000000,
+  8000000,
+  4000000,
+  2000000,
+  1000000,
+  500000,
+  250000,
+  100000,
+  50000,
+  25000,
+  15000,
+  8000,
+  4000,
+  2000,
+  1000,
+  500,
+  250,
+  100,
+  50,
+  25,
+  10,
+  5,
+  2,
+  1,
+];
