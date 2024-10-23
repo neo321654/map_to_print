@@ -482,6 +482,7 @@ List<LatLng> calculateApex({
 
   List<LatLng> listLatLng= [];
 //izmene freeelancer 222 333
+  //na mastere
   if(landscape){
     double temp = width;
     width = height;
