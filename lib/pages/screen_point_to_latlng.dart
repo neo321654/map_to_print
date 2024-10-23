@@ -481,7 +481,7 @@ List<LatLng> calculateApex({
   const dst = Distance();
 
   List<LatLng> listLatLng= [];
-
+//
   if(landscape){
     double temp = width;
     width = height;
