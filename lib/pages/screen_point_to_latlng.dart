@@ -419,8 +419,6 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
   if (latLngOffset.longitude < latLngCenter.longitude) {
     latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 270);
   }
-//fdf
-//sdsd/dfddfdf/dfdfdsdsdfdffdfdsddsdsdsddfdffdfdfd/fdf/kklkk/fdffdssds/dsdsdeddsdfdfdsddsd/dfdf
   //точка на карте в пикселях телефона
   final offsetDistance = camera.project(latLngOffset);
 
@@ -430,19 +428,7 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
       : '${(metricDst / 1000.0).toStringAsFixed(0)} km';
 
 
-  // final ScalebarPainter scalebarPainter = _SimpleScalebarPainter(
-  //   // use .abs() to avoid wrong placements on the right map border
-  //   scalebarLength: (offsetDistance.x - offsetCenter.x).abs(),
-  //   text: TextSpan(
-  //     style: textStyle,
-  //     text: label,
-  //   ),
-  //   alignment: alignment,
-  //   lineColor: Colors.black,
-  //   strokeWidth: strokeWidth,
-  //   lineHeight: lineHeight,
-  // );
-  //// ///
+
 
 
 
