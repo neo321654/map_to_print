@@ -440,7 +440,7 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
     latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 270);
   }
 
-
+//sdsd/
   //точка на карте в пикселях телефона
   final offsetDistance = camera.project(latLngOffset);
 
@@ -481,22 +481,7 @@ List<LatLng> calculateApex({
   const dst = Distance();
 
   List<LatLng> listLatLng= [];
-//izmene freeelancer 222 333
-  //na mastere
-  //freelance again 222 333
-  //na mastere 444
-  //fre  fdsdf 4343
-  //master 1112222
-  //freelanceq 3333
-  //master 55
-  //master again
-  //master again 222
-  //free 222
-  //fr 222
-  //fr13 13вавав
-  //fr 22выввывыссв
-  //fr weefdfdвывыв
-  //master fdf  fdf fdfd dfdfdffdsdddssddfdf dffdf dffвваывыввва
+
   if(landscape){
     double temp = width;
     width = height;
