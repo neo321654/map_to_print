@@ -494,7 +494,7 @@ List<LatLng> calculateApex({
   //free 222
   //fr 222
   //fr13 13вавав
-  //fr 22выввывы
+  //fr 22выввывыссв
   //fr weefdfdвывыв
   //master fdf  fdf fdfd dfdfdffdsdddssddfdf dffdf dffвваывыввва
   if(landscape){
