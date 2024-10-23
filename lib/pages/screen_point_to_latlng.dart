@@ -40,6 +40,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   LatLng? latLng;
 
   Future<void> _captureAndSave() async {
+    //todo refactor
     if (isFixed) {
       mapController.move(latLngFixed!, mapController.camera.zoom);
       // mapController.camera.
