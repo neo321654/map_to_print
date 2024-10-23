@@ -39,14 +39,18 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
   LatLng? latLng;
 
-  Future<void> _captureAndSave() async {
+  List<LatLng> listApex = [];
+
+
+  Future<void> _captureAndSave({required List<Tile> ch,required isFixed, required MapController mapController, required LatLng latLngFixed,required LatLng latLng,}) async {
+    //todo refactor
     if (isFixed) {
-      mapController.move(latLngFixed!, mapController.camera.zoom);
+      mapController.move(latLngFixed, mapController.camera.zoom);
       // mapController.camera.
       setState(() {
         latLng = latLngFixed;
       });
-
+//todo debil combination
       isFixedCircularProgress = true;
 
       await Future.delayed(const Duration(seconds: 2), () {});
@@ -211,7 +215,6 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     );
   }
 
-  List<LatLng> listApex = [];
 
   @override
   void initState() {
@@ -230,9 +233,10 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         onPressed: () {
           setState(() {
             isFixed = !isFixed;
-            if (isFixed)
+            if (isFixed) {
               latLngFixed =
                   LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
+            }
             listApex = getNewApex(latLng: latLng, camera: mapController.camera);
           });
         },
@@ -251,20 +255,23 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
               },
             );
           },
-          child: Icon(Icons.save),
+          child: const Icon(Icons.save),
         ),
         title: const Text('Map to print'),
         centerTitle: true,
         actions: [
           ElevatedButton(
-            onPressed: _captureAndSave,
+            onPressed: (){
+              _captureAndSave(ch:ch,mapController:mapController,latLngFixed: latLngFixed?? const LatLng(44, 44),latLng: latLng?? const LatLng(44, 44), isFixed: isFixed);
+            },
             child: Row(
               children: [
-                Text('Save'),
-                SizedBox(
+                const Text('Save'),
+                //
+                const SizedBox(
                   width: 10,
                 ),
-                Icon(Icons.save),
+                const Icon(Icons.save),
                 if (isFixed && isFixedCircularProgress)
                   const CircularProgressIndicator(),
               ],
