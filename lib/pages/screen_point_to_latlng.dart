@@ -481,7 +481,7 @@ List<LatLng> calculateApex({
   const dst = Distance();
 
   List<LatLng> listLatLng= [];
-//izmene freeelancer
+//izmene freeelancer 222
   if(landscape){
     double temp = width;
     width = height;
