@@ -202,13 +202,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
             requestStoragePermission();
 
-
             if (true) {
-
               launchUrl(Uri.parse(result["filePath"]));
-
-            } else {
-            }
+            } else {}
           },
         ),
       ),
@@ -229,7 +225,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MenuDrawer( '/screen_point_to_latlng'),
+      drawer: const MenuDrawer('/screen_point_to_latlng'),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -377,190 +373,5 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       });
     });
   }
-
-
 }
 
-
-
-double getMultiply({required MapCamera camera, required double meterInCm}) {
-
-
-
-  const dst = Distance();
-
-  // calculate the scalebar width in pixels
-  final latLngCenter = camera.center;
-  final offsetCenter = camera.project(latLngCenter);
-
-  final absLat = latLngCenter.latitude.abs();
-  //ScalebarLength.m = m(-1),
-  double index = camera.zoom - (-1);
-  // The following adjustments help to make the length of the scalebar
-  // more equal if the map center is near the equator or the poles.
-  //todo make this
-  if (camera.crs is Epsg3857) {
-    if (absLat > 85) return 0;
-    if (absLat > 60) index++;
-    if (absLat > 80) index++;
-  }
-
-  //тут мы нашли длину для подписи , то еть посути отрезок на карте
-  //похоже она влияет на полученную пропорцию
-  // final metricDst =
-  // _metricScale[index.round().clamp(0, _metricScale.length - 1)];
-  final metricDst = meterInCm;
-
-
-  //находим точку смещения вправо на metricDst метров вдоль оси OX
-  LatLng latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 90);
-
-  //если условие верно разворачиваем влево точку
-  if (latLngOffset.longitude < latLngCenter.longitude) {
-    latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 270);
-  }
-//fdf
-//sdsd/dfddfdf/dfdfdsdsdfdffdfdsddsdsdsddfdffdfdfd/fdf/kklkk/fdffdssds/dsdsdeddsdfdfdsddsd/dfdf
-  //точка на карте в пикселях телефона
-  final offsetDistance = camera.project(latLngOffset);
-
-  //преобразует километры в метры
-  final label = metricDst < 1000
-      ? '$metricDst m'
-      : '${(metricDst / 1000.0).toStringAsFixed(0)} km';
-
-
-  // final ScalebarPainter scalebarPainter = _SimpleScalebarPainter(
-  //   // use .abs() to avoid wrong placements on the right map border
-  //   scalebarLength: (offsetDistance.x - offsetCenter.x).abs(),
-  //   text: TextSpan(
-  //     style: textStyle,
-  //     text: label,
-  //   ),
-  //   alignment: alignment,
-  //   lineColor: Colors.black,
-  //   strokeWidth: strokeWidth,
-  //   lineHeight: lineHeight,
-  // );
-  //// ///
-
-
-
-
-
-  return 0.11;
-}
-
-
-List<LatLng> calculateApex({
-  required LatLng latLng,
-  required double width,
-  required double height,
-  required double meterInCm,
-  bool landscape = true,
-}) {
-  const dst = Distance();
-
-  List<LatLng> listLatLng= [];
-
-  if(landscape){
-    double temp = width;
-    width = height;
-    height = temp;
-  }
-
-
-
-
-
-    LatLng tempLL =dst.offset(latLng,height*meterInCm/2, 0);
-     LatLng tempLL1 = dst.offset(tempLL,width*meterInCm/2, 270);
-  listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,height*meterInCm, 180);
-  listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,width*meterInCm, 90);
-  listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,height*meterInCm, 0);
-  listLatLng.add(tempLL1);
-
-
-
-  return listLatLng;
-
-
-
-
-
-}
-
-
-List<LatLng> getNewApex({
-  required LatLng? latLng,
-  required MapCamera camera,
-  double width = 21.0,
-  double height = 29.7,
-  double meterInCm = 100,
-}) {
-  List<LatLng> listApex = [];
-  if (latLng != null) {
-
-
-    listApex =calculateApex(latLng: latLng,width: width,height: height,meterInCm:meterInCm);
-
-
-    // listApex.add(dst.offset(latLng, diagonal/2, 135));
-    //
-    // listApex.add(dst.offset(latLng, diagonal/2, 45));
-    // listApex.add(dst.offset(latLng, diagonal/2, 315));
-    // listApex.add(dst.offset(latLng, diagonal/2, 225));
-
-
-
-    // Point<double> point = camera.project(latLng);
-    //
-    //
-    //
-    //
-    //
-    //
-    // double biasToZoom = getMultiply(camera: camera, meterInCm: meterInCm);
-    //
-    //
-    // List<Point<num>> listPoints =
-    // createRectangleNew(point, width * biasToZoom, height * biasToZoom);
-    //
-    // for (Point pnew in listPoints) {
-    //   listApex.add(camera.unproject(pnew));
-    // }
-    return listApex;
-  }
-  return listApex;
-}
-
-
-const _metricScale = <int>[
-  15000000,
-  8000000,
-  4000000,
-  2000000,
-  1000000,
-  500000,
-  250000,
-  100000,
-  50000,
-  25000,
-  15000,
-  8000,
-  4000,
-  2000,
-  1000,
-  500,
-  250,
-  100,
-  50,
-  25,
-  10,
-  5,
-  2,
-  1,
-];
