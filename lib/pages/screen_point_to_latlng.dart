@@ -202,32 +202,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
             requestStoragePermission();
 
-            // Открываем изображение в галерее
-            // final pathToOpen = Uri.tryParse('file:/${imagePath.path}')??Uri.base;
-            // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
-            // if (await canLaunchUrl(pathToOpen)) {
+
             if (true) {
-              // final result = await OpenFile.open(imagePath.path);
-              // const types = {
-              //   ".png":  "image/png",
-              // };
 
-              // OpenFile.open("/sdcard/example.txt");
-
-              // await  OpenFile.open("content://media/external/images/media/36");
-              // OpenFile.open("file://data/user/0/com.example.map_to_print/app_flutter/canvas_image.png");
-              // final result = await OpenFile.open(imagePath.path);
-              // if (result.type != ResultType.error) {
-              //   print('Не удалось открыть изображение: ${result.message}');
-              // "filePath" -> "content://media/external/images/media/40"
               launchUrl(Uri.parse(result["filePath"]));
-              // }
 
-              // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
-
-              // await launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
             } else {
-              print('Не удалось открыть изображение.');
             }
           },
         ),
