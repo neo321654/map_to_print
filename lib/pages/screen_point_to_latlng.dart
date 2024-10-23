@@ -460,28 +460,7 @@ List<LatLng> getNewApex({
     listApex = calculateApex(
         latLng: latLng, width: width, height: height, meterInCm: meterInCm);
 
-    // listApex.add(dst.offset(latLng, diagonal/2, 135));
-    //
-    // listApex.add(dst.offset(latLng, diagonal/2, 45));
-    // listApex.add(dst.offset(latLng, diagonal/2, 315));
-    // listApex.add(dst.offset(latLng, diagonal/2, 225));
 
-    // Point<double> point = camera.project(latLng);
-    //
-    //
-    //
-    //
-    //
-    //
-    // double biasToZoom = getMultiply(camera: camera, meterInCm: meterInCm);
-    //
-    //
-    // List<Point<num>> listPoints =
-    // createRectangleNew(point, width * biasToZoom, height * biasToZoom);
-    //
-    // for (Point pnew in listPoints) {
-    //   listApex.add(camera.unproject(pnew));
-    // }
     return listApex;
   }
   return listApex;
