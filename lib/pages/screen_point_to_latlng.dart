@@ -439,8 +439,8 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
   if (latLngOffset.longitude < latLngCenter.longitude) {
     latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 270);
   }
-
-//sdsd/dfdf/dfdfdffd/fdf/kkdsdsddslkk/dsdsdsdfdffdffdssds/dsdsdsdfdfdsddsd/dfdf
+//fdf
+//sdsd/dfddfdf/dfdfdsdsdfdfdsddsdsdsddfdffdfdfd/fdf/kklkk/fdffdssds/dsdsdeddsdfdfdsddsd/dfdf
   //точка на карте в пикселях телефона
   final offsetDistance = camera.project(latLngOffset);
 
