@@ -39,15 +39,15 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
   LatLng? latLng;
 
-  Future<void> _captureAndSave() async {
+  Future<void> _captureAndSave({required isFixed, required MapController mapController, required LatLng latLngFixed,required LatLng latLng,}) async {
     //todo refactor
     if (isFixed) {
-      mapController.move(latLngFixed!, mapController.camera.zoom);
+      mapController.move(latLngFixed, mapController.camera.zoom);
       // mapController.camera.
       setState(() {
         latLng = latLngFixed;
       });
-
+//todo debil combination
       isFixedCircularProgress = true;
 
       await Future.delayed(const Duration(seconds: 2), () {});
@@ -258,7 +258,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         centerTitle: true,
         actions: [
           ElevatedButton(
-            onPressed: _captureAndSave,
+            onPressed: (){
+              _captureAndSave(isFixed: isFixed,mapController:mapController,latLngFixed: latLngFixed?? const LatLng(44, 44),latLng: latLng?? const LatLng(44, 44));
+            },
             child: Row(
               children: [
                 Text('Save'),
