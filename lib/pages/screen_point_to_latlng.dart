@@ -101,7 +101,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         Paint(),
       );
 
-      // Определяем размеры рамки
+      // Определяем размеры рамки//
       double imageWidth = img.width.toDouble(); // Ширина изображения
       double imageHeight = img.height.toDouble(); // Высота изображения
 
