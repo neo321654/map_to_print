@@ -497,8 +497,6 @@ List<LatLng> calculateApex({
   //fr 22
   //fr weefdfd
   //master
-  //fr
-  //fdff hh hh
   if(landscape){
     double temp = width;
     width = height;
