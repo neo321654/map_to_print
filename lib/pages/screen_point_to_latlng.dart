@@ -202,13 +202,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
             requestStoragePermission();
 
-
             if (true) {
-
               launchUrl(Uri.parse(result["filePath"]));
-
-            } else {
-            }
+            } else {}
           },
         ),
       ),
@@ -229,7 +225,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MenuDrawer( '/screen_point_to_latlng'),
+      drawer: const MenuDrawer('/screen_point_to_latlng'),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -377,16 +373,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       });
     });
   }
-
-
 }
 
-
-
 double getMultiply({required MapCamera camera, required double meterInCm}) {
-
-
-
   const dst = Distance();
 
   // calculate the scalebar width in pixels
@@ -411,7 +400,6 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
   // _metricScale[index.round().clamp(0, _metricScale.length - 1)];
   final metricDst = meterInCm;
 
-
   //находим точку смещения вправо на metricDst метров вдоль оси OX
   LatLng latLngOffset = dst.offset(latLngCenter, metricDst.toDouble(), 90);
 
@@ -427,16 +415,8 @@ double getMultiply({required MapCamera camera, required double meterInCm}) {
       ? '$metricDst m'
       : '${(metricDst / 1000.0).toStringAsFixed(0)} km';
 
-
-
-
-
-
-
-
   return 0.11;
 }
-
 
 List<LatLng> calculateApex({
   required LatLng latLng,
@@ -447,38 +427,26 @@ List<LatLng> calculateApex({
 }) {
   const dst = Distance();
 
-  List<LatLng> listLatLng= [];
+  List<LatLng> listLatLng = [];
 
-  if(landscape){
+  if (landscape) {
     double temp = width;
     width = height;
     height = temp;
   }
 
-
-
-
-
-    LatLng tempLL =dst.offset(latLng,height*meterInCm/2, 0);
-     LatLng tempLL1 = dst.offset(tempLL,width*meterInCm/2, 270);
+  LatLng tempLL = dst.offset(latLng, height * meterInCm / 2, 0);
+  LatLng tempLL1 = dst.offset(tempLL, width * meterInCm / 2, 270);
   listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,height*meterInCm, 180);
+  tempLL1 = dst.offset(tempLL1, height * meterInCm, 180);
   listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,width*meterInCm, 90);
+  tempLL1 = dst.offset(tempLL1, width * meterInCm, 90);
   listLatLng.add(tempLL1);
-  tempLL1 = dst.offset(tempLL1,height*meterInCm, 0);
+  tempLL1 = dst.offset(tempLL1, height * meterInCm, 0);
   listLatLng.add(tempLL1);
-
-
 
   return listLatLng;
-
-
-
-
-
 }
-
 
 List<LatLng> getNewApex({
   required LatLng? latLng,
@@ -489,18 +457,14 @@ List<LatLng> getNewApex({
 }) {
   List<LatLng> listApex = [];
   if (latLng != null) {
-
-
-    listApex =calculateApex(latLng: latLng,width: width,height: height,meterInCm:meterInCm);
-
+    listApex = calculateApex(
+        latLng: latLng, width: width, height: height, meterInCm: meterInCm);
 
     // listApex.add(dst.offset(latLng, diagonal/2, 135));
     //
     // listApex.add(dst.offset(latLng, diagonal/2, 45));
     // listApex.add(dst.offset(latLng, diagonal/2, 315));
     // listApex.add(dst.offset(latLng, diagonal/2, 225));
-
-
 
     // Point<double> point = camera.project(latLng);
     //
@@ -522,7 +486,6 @@ List<LatLng> getNewApex({
   }
   return listApex;
 }
-
 
 const _metricScale = <int>[
   15000000,
