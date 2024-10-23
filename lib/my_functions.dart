@@ -49,3 +49,52 @@ List<Point> createRectangleNew(Point<double> center, double width, double height
   return [topLeft, topRight,bottomRight,  bottomLeft,];
   // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
 }
+
+
+
+List<LatLng> calculateApexFromCenter({
+  required LatLng latLng,
+  required double width,
+  required double height,
+  required double meterInCm,
+  bool landscape = true,
+}) {
+  const dst = Distance();
+
+  List<LatLng> listLatLng = [];
+
+  if (landscape) {
+    double temp = width;
+    width = height;
+    height = temp;
+  }
+
+  LatLng tempLL = dst.offset(latLng, height * meterInCm / 2, 0);
+  LatLng tempLL1 = dst.offset(tempLL, width * meterInCm / 2, 270);
+  listLatLng.add(tempLL1);
+  tempLL1 = dst.offset(tempLL1, height * meterInCm, 180);
+  listLatLng.add(tempLL1);
+  tempLL1 = dst.offset(tempLL1, width * meterInCm, 90);
+  listLatLng.add(tempLL1);
+  tempLL1 = dst.offset(tempLL1, height * meterInCm, 0);
+  listLatLng.add(tempLL1);
+
+  return listLatLng;
+}
+
+List<LatLng> getNewApex({
+  required LatLng? latLng,
+  required MapCamera camera,
+  double width = 21.0,
+  double height = 29.7,
+  double meterInCm = 100,
+}) {
+  List<LatLng> listApex = [];
+  if (latLng != null) {
+    listApex = calculateApexFromCenter(
+        latLng: latLng, width: width, height: height, meterInCm: meterInCm);
+
+    return listApex;
+  }
+  return listApex;
+}
