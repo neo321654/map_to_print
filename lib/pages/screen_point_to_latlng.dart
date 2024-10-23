@@ -486,6 +486,7 @@ List<LatLng> calculateApex({
   //freelance again 222 333
   //na mastere 444
   //fre  fdsdf 4343
+  //master
   if(landscape){
     double temp = width;
     width = height;
