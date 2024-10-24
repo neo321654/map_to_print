@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
@@ -255,7 +256,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     final canvas = Canvas(recorder);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
-    drawTileOnCanvas(
+    await drawTileOnCanvas(
         listTiles: listTiles,
         canvas: canvas,
         height: height,
@@ -354,43 +355,98 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   }
 }
 
-void drawTileOnCanvas(
+Future<void> drawTileOnCanvas (
     {required List<Tile> listTiles,
     required Canvas canvas,
     required double height,
     required double minX,
-    required double minY}) {
+    required double minY}) async {
   for (var tile in listTiles) {
+
+    ui.Image? img;
     // Tile tile = listTiles[listImages.indexOf(img)];
 //todo избавиться от imageInfo!
-    if (tile.tileImage.imageInfo?.image == null) continue;
-    ui.Image img = tile.tileImage.imageInfo!.image;
+    if (tile.tileImage.imageInfo?.image == null){
 
-    canvas.drawImage(
-      img,
-      Offset(tile.positionCoordinates.x * height - minX,
-          tile.positionCoordinates.y * height - minY),
-      Paint(),
-    );
+      // tile.tileImage.imageProvider
+      //     .resolve(ImageConfiguration())
+      //     .addListener(ImageStreamListener((imageInfo, b) {
+      //
+      // }));
+
+      img =  await loadImage(tile.tileImage.imageProvider);
+
+
+         canvas.drawImage(
+           img,
+           Offset(tile.positionCoordinates.x * height - minX,
+               tile.positionCoordinates.y * height - minY),
+           Paint(),
+         );
+
+
+
+
+
+      // continue;
+    }else{
+      img = tile.tileImage.imageInfo!.image;
+
+      canvas.drawImage(
+        img,
+        Offset(tile.positionCoordinates.x * height - minX,
+            tile.positionCoordinates.y * height - minY),
+        Paint(),
+      );
+    }
+
+
+
 
     // Определяем размеры рамки//
-    double imageWidth = img.width.toDouble(); // Ширина изображения
-    double imageHeight = img.height.toDouble(); // Высота изображения
-
-    // Рисуем красную рамку вокруг изображения
-    Paint borderPaint = Paint()
-      ..color = Colors.red
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4; // Ширина рамки
-
-    canvas.drawRect(
-      Rect.fromLTWH(
-        tile.positionCoordinates.x * height - minX,
-        tile.positionCoordinates.y * height - minY,
-        imageWidth,
-        imageHeight,
-      ),
-      borderPaint,
-    );
+    // double imageWidth = img!.width.toDouble(); // Ширина изображения
+    // double imageHeight = img!.height.toDouble(); // Высота изображения
+    //
+    // // Рисуем красную рамку вокруг изображения
+    // Paint borderPaint = Paint()
+    //   ..color = Colors.red
+    //   ..style = PaintingStyle.stroke
+    //   ..strokeWidth = 4; // Ширина рамки
+    //
+    // canvas.drawRect(
+    //   Rect.fromLTWH(
+    //     tile.positionCoordinates.x * height - minX,
+    //     tile.positionCoordinates.y * height - minY,
+    //     imageWidth,
+    //     imageHeight,
+    //   ),
+    //   borderPaint,
+    // );
   }
+}
+
+
+Future<ui.Image> loadImage(ImageProvider imageProvider) async {
+  final Completer<ui.Image> completer = Completer();
+
+  final ImageStream stream = imageProvider.resolve(const ImageConfiguration());
+
+  // stream.setCompleter(completer);completer
+  final listener = ImageStreamListener((ImageInfo imageInfo,
+      bool synchronousCall) {
+    completer.complete(imageInfo.image);
+  }, onError: (dynamic error, StackTrace? stackTrace) {
+    completer.completeError(error);
+  });
+
+  stream.addListener(listener);
+
+  // Удаляем слушателя после завершения
+  completer.future.then((image) {
+
+    stream.removeListener(listener);
+
+  });
+
+  return completer.future;
 }
