@@ -213,7 +213,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
       isFixedCircularProgress = true;
 
-      await Future.delayed(const Duration(seconds: 2), () {});
+      await Future.delayed(const Duration(milliseconds: 100), () {});
 
       isFixedCircularProgress = false;
       isFixed = false;
@@ -404,24 +404,24 @@ Future<void> drawTileOnCanvas (
 
 
     // Определяем размеры рамки//
-    // double imageWidth = img!.width.toDouble(); // Ширина изображения
-    // double imageHeight = img!.height.toDouble(); // Высота изображения
-    //
-    // // Рисуем красную рамку вокруг изображения
-    // Paint borderPaint = Paint()
-    //   ..color = Colors.red
-    //   ..style = PaintingStyle.stroke
-    //   ..strokeWidth = 4; // Ширина рамки
-    //
-    // canvas.drawRect(
-    //   Rect.fromLTWH(
-    //     tile.positionCoordinates.x * height - minX,
-    //     tile.positionCoordinates.y * height - minY,
-    //     imageWidth,
-    //     imageHeight,
-    //   ),
-    //   borderPaint,
-    // );
+    double imageWidth = img!.width.toDouble(); // Ширина изображения
+    double imageHeight = img!.height.toDouble(); // Высота изображения
+
+    // Рисуем красную рамку вокруг изображения
+    Paint borderPaint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4; // Ширина рамки
+
+    canvas.drawRect(
+      Rect.fromLTWH(
+        tile.positionCoordinates.x * height - minX,
+        tile.positionCoordinates.y * height - minY,
+        imageWidth,
+        imageHeight,
+      ),
+      borderPaint,
+    );
   }
 }
 
