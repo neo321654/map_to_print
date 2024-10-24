@@ -11,7 +11,7 @@ TileLayer get openStreetMapTileLayerSave {
   int countTiles = 0;
   return TileLayer(
   isSave:true,
-  key: UniqueKey(),
+  // key: UniqueKey(),
 
 
   // tileBounds: LatLngBounds.fromPoints([

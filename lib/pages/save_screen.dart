@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:map_to_print/pages/screen_point_to_latlng.dart';
+// import 'package:map_to_print/pages/screen_point_to_latlng.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../misc/tile_providers_save.dart';
 import '../my_functions.dart';
@@ -40,25 +42,240 @@ class ScreenSaveState extends State<ScreenSave> {
 
    Map<String,dynamic> args = {};
 
+//   Future<void> _captureAndSave() async {
+//     if (isFixed) {
+//       mapController.move(latLngFixed!, mapController.camera.zoom);
+//       // mapController.camera.
+//       setState(() {
+//         latLng = latLngFixed;
+//       });
+//
+//       isFixedCurcularProgress = true;
+//
+//       await Future.delayed(Duration(seconds: 2), () {});
+//
+//       isFixedCurcularProgress = false;
+//       isFixed = false;
+//       setState(() {});
+//     }
+//
+//     var list = <ui.Image>[];
+//     var listE = <Tile>[];
+//
+//     double height = 256;
+//
+//     List<int> xX = [];
+//     List<int> yY = [];
+//
+//     double minX = 0;
+//     double minY = 0;
+//     double maxX = 0;
+//     double maxY = 0;
+//
+//
+//
+// //todo избавиться от глобальной переменной
+//     ch.length;
+//     for (var i = 0; i < ch.length; i++) {
+//       xX.add(ch[i].positionCoordinates.x);
+//       yY.add(ch[i].positionCoordinates.y);
+//
+//       list.add(ch[i].tileImage.imageInfo!.image);
+//       listE.add(ch[i]);
+//     }
+//
+//     xX.sort();
+//     minX = xX.first * height.toDouble();
+//     maxX = xX.last * height.toDouble();
+//
+//     yY.sort();
+//     minY = yY.first * height.toDouble();
+//     maxY = yY.last * height.toDouble();
+//
+//     final recorder = ui.PictureRecorder();
+//     final canvas = Canvas(recorder);
+//
+//     int wwwWith = 0;
+//     int hhhHeigth = 0;
+//
+// // Предполагается, что list содержит изображения, а listE содержит информацию о позициях
+//     for (var img in list) {
+//       var ee = listE[list.indexOf(img)];
+//
+//       wwwWith+=height.toInt();
+//       hhhHeigth += height.toInt();
+//
+//       // Рисуем изображение
+//       canvas.drawImage(
+//         img,
+//         Offset(ee.positionCoordinates.x * height - minX,
+//             ee.positionCoordinates.y * height - minY),
+//         Paint(),
+//       );
+//
+//       // Определяем размеры рамки
+//       double imageWidth = img.width.toDouble(); // Ширина изображения
+//       double imageHeight = img.height.toDouble(); // Высота изображения
+//
+//       // Рисуем красную рамку вокруг изображения
+//       Paint borderPaint = Paint()
+//         ..color = Colors.red
+//         ..style = PaintingStyle.stroke
+//         ..strokeWidth = 4; // Ширина рамки
+//
+//       canvas.drawRect(
+//         Rect.fromLTWH(
+//           ee.positionCoordinates.x * height - minX,
+//           ee.positionCoordinates.y * height - minY,
+//           imageWidth,
+//           imageHeight,
+//         ),
+//         borderPaint,
+//       );
+//     }
+//
+//     var pP = mapController.camera.project(latLng!);
+//
+//     // var list111 =  createRectangle(LatLng(5.8, -59),10,10);
+//     // var list111 =  createRectangle(latLng??LatLng(5.8, -59),10,10);
+//
+//     double coeficient = 3;
+//     double wA4 = 210*coeficient;
+//     double hA4 = 297*coeficient;
+//
+//     var list111 = createRectangleNew(pP, wA4, hA4);
+//
+//     var p1 = list111[0];
+//     var p2 = list111[2];
+//
+//     Paint borderPaint = Paint()
+//       ..color = Colors.orange
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = 4;
+//
+//     canvas.drawRect(
+//       Rect.fromPoints(
+//           ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
+//           ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble())),
+//       borderPaint,
+//     );
+//
+//
+//     final picture = recorder.endRecording();
+//
+//     int width = (((maxX - minX) * 2)).toInt();
+//     int height2 = (((maxY - minY) * 2)).toInt();
+//     if (width == 0) width = height.toInt();
+//     if (height2 == 0) width = height.toInt();
+//
+//
+//
+//     final image = await picture.toImage(width, height2);
+//
+//     final recorder1 = ui.PictureRecorder();
+//     final canvas1 = Canvas(recorder1);
+//
+//     Rect.fromPoints(
+//         ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
+//         ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
+//
+//     var of1 = (p1.x - minX).toDouble();
+//     var of2 = (p1.y - minY).toDouble();
+//     var of3 = (p2.x - minX).toDouble();
+//     var of4 = (p2.y - minY).toDouble();
+//
+//     // canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
+//     canvas1.drawImage(image, ui.Offset(-of3, -of2), Paint());
+//
+//     final picture1 = recorder1.endRecording();
+//
+//
+//     // final image2 = await picture1.toImage(210, 297);
+//     final image2 = await picture1.toImage( hA4.toInt(),wA4.toInt(),);
+//     // final image2 = await picture1.toImage( 900,900,);
+//
+//     ByteData? byteData =
+//         await image2.toByteData(format: ui.ImageByteFormat.png);
+//     Uint8List pngBytes = byteData!.buffer.asUint8List();
+//
+// // Получение пути для сохранения
+//     final directory = await getApplicationDocumentsDirectory();
+//     final imagePath = File('${directory.path}/canvas_image.png');
+//     await imagePath.writeAsBytes(pngBytes);
+//
+// // Сохранение в галерею
+//     final result = await ImageGallerySaver.saveFile(imagePath.path);
+//     print('Image saved to gallery: $result');
+//
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       SnackBar(
+//         padding: EdgeInsets.all(20),
+//         content: Text('Изображение успешно сохранено!'),
+//         duration: Duration(seconds: 10),
+//         action: SnackBarAction(
+//           label: 'Открыть',
+//           onPressed: () async {
+//             Future<void> requestStoragePermission() async {
+//               var status = await Permission.manageExternalStorage.status;
+//               if (!status.isGranted) {
+//                 await Permission.manageExternalStorage.request();
+//               }
+//             }
+//
+//             requestStoragePermission();
+//
+//             // Открываем изображение в галерее
+//             // final pathToOpen = Uri.tryParse('file:/${imagePath.path}')??Uri.base;
+//             // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
+//             // if (await canLaunchUrl(pathToOpen)) {
+//             if (true) {
+//               // final result = await OpenFile.open(imagePath.path);
+//               // const types = {
+//               //   ".png":  "image/png",
+//               // };
+//
+//               // OpenFile.open("/sdcard/example.txt");
+//
+//               // await  OpenFile.open("content://media/external/images/media/36");
+//               // OpenFile.open("file://data/user/0/com.example.map_to_print/app_flutter/canvas_image.png");
+//               // final result = await OpenFile.open(imagePath.path);
+//               // if (result.type != ResultType.error) {
+//               //   print('Не удалось открыть изображение: ${result.message}');
+//               // "filePath" -> "content://media/external/images/media/40"
+//               launchUrl(Uri.parse(result["filePath"]));
+//               // }
+//
+//               // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
+//
+//               // await launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
+//             } else {
+//               print('Не удалось открыть изображение.');
+//             }
+//           },
+//         ),
+//       ),
+//     );
+//   }
+
   Future<void> _captureAndSave() async {
+    //todo refactor
     if (isFixed) {
       mapController.move(latLngFixed!, mapController.camera.zoom);
-      // mapController.camera.
       setState(() {
         latLng = latLngFixed;
       });
 
-      isFixedCurcularProgress = true;
+      // isFixedCircularProgress = true;
 
-      await Future.delayed(Duration(seconds: 2), () {});
+      await Future.delayed(const Duration(milliseconds: 100), () {});
 
-      isFixedCurcularProgress = false;
+      // isFixedCircularProgress = false;
       isFixed = false;
       setState(() {});
     }
 
-    var list = <ui.Image>[];
-    var listE = <Tile>[];
+    List<ui.Image> list = <ui.Image>[];
+    var listTiles = <Tile>[];
 
     double height = 256;
 
@@ -70,16 +287,14 @@ class ScreenSaveState extends State<ScreenSave> {
     double maxX = 0;
     double maxY = 0;
 
-
-
 //todo избавиться от глобальной переменной
     ch.length;
     for (var i = 0; i < ch.length; i++) {
       xX.add(ch[i].positionCoordinates.x);
       yY.add(ch[i].positionCoordinates.y);
 
-      list.add(ch[i].tileImage.imageInfo!.image);
-      listE.add(ch[i]);
+      // list.add(ch[i].tileImage.imageInfo!.image);
+      listTiles.add(ch[i]);
     }
 
     xX.sort();
@@ -87,61 +302,24 @@ class ScreenSaveState extends State<ScreenSave> {
     maxX = xX.last * height.toDouble();
 
     yY.sort();
+
     minY = yY.first * height.toDouble();
     maxY = yY.last * height.toDouble();
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
-    int wwwWith = 0;
-    int hhhHeigth = 0;
-
-// Предполагается, что list содержит изображения, а listE содержит информацию о позициях
-    for (var img in list) {
-      var ee = listE[list.indexOf(img)];
-
-      wwwWith+=height.toInt();
-      hhhHeigth += height.toInt();
-
-      // Рисуем изображение
-      canvas.drawImage(
-        img,
-        Offset(ee.positionCoordinates.x * height - minX,
-            ee.positionCoordinates.y * height - minY),
-        Paint(),
-      );
-
-      // Определяем размеры рамки
-      double imageWidth = img.width.toDouble(); // Ширина изображения
-      double imageHeight = img.height.toDouble(); // Высота изображения
-
-      // Рисуем красную рамку вокруг изображения
-      Paint borderPaint = Paint()
-        ..color = Colors.red
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4; // Ширина рамки
-
-      canvas.drawRect(
-        Rect.fromLTWH(
-          ee.positionCoordinates.x * height - minX,
-          ee.positionCoordinates.y * height - minY,
-          imageWidth,
-          imageHeight,
-        ),
-        borderPaint,
-      );
-    }
+    //todo отдельный метод для отрисовки тайлов на канвасе
+    await drawTilesOnCanvas(
+        listTiles: listTiles,
+        canvas: canvas,
+        height: height,
+        minX: minX,
+        minY: minY);
 
     var pP = mapController.camera.project(latLng!);
 
-    // var list111 =  createRectangle(LatLng(5.8, -59),10,10);
-    // var list111 =  createRectangle(latLng??LatLng(5.8, -59),10,10);
-
-    double coeficient = 3;
-    double wA4 = 210*coeficient;
-    double hA4 = 297*coeficient;
-
-    var list111 = createRectangleNew(pP, wA4, hA4);
+    var list111 = createRectangleNew(pP, 210, 297);
 
     var p1 = list111[0];
     var p2 = list111[2];
@@ -158,15 +336,12 @@ class ScreenSaveState extends State<ScreenSave> {
       borderPaint,
     );
 
-
     final picture = recorder.endRecording();
 
     int width = (((maxX - minX) * 2)).toInt();
     int height2 = (((maxY - minY) * 2)).toInt();
     if (width == 0) width = height.toInt();
     if (height2 == 0) width = height.toInt();
-
-
 
     final image = await picture.toImage(width, height2);
 
@@ -187,21 +362,95 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final picture1 = recorder1.endRecording();
 
-
     // final image2 = await picture1.toImage(210, 297);
-    final image2 = await picture1.toImage( hA4.toInt(),wA4.toInt(),);
-    // final image2 = await picture1.toImage( 900,900,);
+    final image2 = await picture1.toImage(2970, 2100);
 
     ByteData? byteData =
-        await image2.toByteData(format: ui.ImageByteFormat.png);
+    // await image2.toByteData(format: ui.ImageByteFormat.png);
+    await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-// Получение пути для сохранения
+    await saveAndShowSnack(pngBytes);
+  }
+
+
+  Future<void> drawTilesOnCanvas (
+      {required List<Tile> listTiles,
+        required Canvas canvas,
+        required double height,
+        required double minX,
+        required double minY}) async {
+    for (var tile in listTiles) {
+
+      ui.Image? img;
+      // Tile tile = listTiles[listImages.indexOf(img)];
+//todo избавиться от imageInfo!
+      if (tile.tileImage.imageInfo?.image == null){
+
+        // tile.tileImage.imageProvider
+        //     .resolve(ImageConfiguration())
+        //     .addListener(ImageStreamListener((imageInfo, b) {
+        //
+        // }));
+
+        img =  await loadImage(tile.tileImage.imageProvider);
+
+
+        canvas.drawImage(
+          img,
+          Offset(tile.positionCoordinates.x * height - minX,
+              tile.positionCoordinates.y * height - minY),
+          Paint(),
+        );
+
+
+
+
+
+        // continue;
+      }else{
+        img = tile.tileImage.imageInfo!.image;
+
+        canvas.drawImage(
+          img,
+          Offset(tile.positionCoordinates.x * height - minX,
+              tile.positionCoordinates.y * height - minY),
+          Paint(),
+        );
+      }
+
+
+
+
+      // Определяем размеры рамки//
+      double imageWidth = img!.width.toDouble(); // Ширина изображения
+      double imageHeight = img!.height.toDouble(); // Высота изображения
+
+      // Рисуем красную рамку вокруг изображения
+      Paint borderPaint = Paint()
+        ..color = Colors.red
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4; // Ширина рамки
+
+      canvas.drawRect(
+        Rect.fromLTWH(
+          tile.positionCoordinates.x * height - minX,
+          tile.positionCoordinates.y * height - minY,
+          imageWidth,
+          imageHeight,
+        ),
+        borderPaint,
+      );
+    }
+  }
+
+  Future<void> saveAndShowSnack(Uint8List pngBytes) async {
+    // Получение пути для сохранения
     final directory = await getApplicationDocumentsDirectory();
     final imagePath = File('${directory.path}/canvas_image.png');
     await imagePath.writeAsBytes(pngBytes);
 
-// Сохранение в галерею
+    // Сохранение в галерею
     final result = await ImageGallerySaver.saveFile(imagePath.path);
     print('Image saved to gallery: $result');
 
@@ -222,32 +471,8 @@ class ScreenSaveState extends State<ScreenSave> {
 
             requestStoragePermission();
 
-            // Открываем изображение в галерее
-            // final pathToOpen = Uri.tryParse('file:/${imagePath.path}')??Uri.base;
-            // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
-            // if (await canLaunchUrl(pathToOpen)) {
             if (true) {
-              // final result = await OpenFile.open(imagePath.path);
-              // const types = {
-              //   ".png":  "image/png",
-              // };
-
-              // OpenFile.open("/sdcard/example.txt");
-
-              // await  OpenFile.open("content://media/external/images/media/36");
-              // OpenFile.open("file://data/user/0/com.example.map_to_print/app_flutter/canvas_image.png");
-              // final result = await OpenFile.open(imagePath.path);
-              // if (result.type != ResultType.error) {
-              //   print('Не удалось открыть изображение: ${result.message}');
-              // "filePath" -> "content://media/external/images/media/40"
               launchUrl(Uri.parse(result["filePath"]));
-              // }
-
-              // launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
-
-              // await launchUrl(pathToOpen,mode:  LaunchMode.externalApplication);
-            } else {
-              print('Не удалось открыть изображение.');
             }
           },
         ),
@@ -456,4 +681,5 @@ class ScreenSaveState extends State<ScreenSave> {
       setState(() {});
     }
   }
+
 }

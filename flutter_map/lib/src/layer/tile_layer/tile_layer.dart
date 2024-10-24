@@ -521,6 +521,8 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       // var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
       // var map6 = map.(LatLng(53.3498, -6.2603));
 
+      print('isSave');
+
       double indexToZoom = 3;
       double www = 210 * indexToZoom;
       double hhh = 297 * indexToZoom;
@@ -599,60 +601,13 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
     ch = tiles..sort(renderOrder);
 
-    // _captureAndSave(ch);
 
     return MobileLayerTransformer(
       child: Stack(children: ch),
     );
   }
 
-  // Future<ui.Image> _loadImage(String path) async {
-  //   final data = await DefaultAssetBundle.of(context).load(path);
-  //   final bytes = data.buffer.asUint8List();
-  //
-  //   return await decodeImageFromList(bytes);
-  // }
-  Future<void> _captureAndSave(List<Tile> ch) async {
-    bool isDone = false;
 
-    double height = 256;
-
-
-    double minX = 0;
-    double minY = 0;
-    double maxX = 0;
-    double maxY = 0;
-
-    for (var e in ch) {
-      if (!isDone) {
-        if (minX == 0 && minY == 0) {
-          minX = e.positionCoordinates.x * height;
-          minY = e.positionCoordinates.y * height;
-        }
-
-        if (maxX == 0 && maxY == 0) {
-          maxX = e.positionCoordinates.x * height + height;
-          maxY = e.positionCoordinates.y * height + height;
-        }
-
-        if (e.positionCoordinates.x < minX) {
-          minX = e.positionCoordinates.x * height;
-        }
-        if (e.positionCoordinates.y < minY) {
-          minY = e.positionCoordinates.y * height;
-        }
-
-        if (e.positionCoordinates.x + height > maxX) {
-          maxX = e.positionCoordinates.x * height + height;
-        }
-        if (e.positionCoordinates.y + height > maxY) {
-          maxY = e.positionCoordinates.y * height + height;
-        }
-
-      }
-    }
-
-  }
 
   TileImage _createTileImage({
     required TileCoordinates coordinates,
