@@ -202,7 +202,6 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     });
   }
 
-
   Future<void> _captureAndSave() async {
     //todo refactor
     if (isFixed) {
@@ -220,7 +219,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       setState(() {});
     }
 
-    var list = <ui.Image>[];
+    List<ui.Image> list = <ui.Image>[];
     var listE = <Tile>[];
 
     double height = 256;
@@ -248,43 +247,15 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     maxX = xX.last * height.toDouble();
 
     yY.sort();
+
     minY = yY.first * height.toDouble();
     maxY = yY.last * height.toDouble();
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-// Предполагается, что list содержит изображения, а listE содержит информацию о позициях
-    for (var img in list) {
-      var ee = listE[list.indexOf(img)];
 
-      // Рисуем изображение
-      canvas.drawImage(
-        img,
-        Offset(ee.positionCoordinates.x * height - minX,
-            ee.positionCoordinates.y * height - minY),
-        Paint(),
-      );
-
-      // Определяем размеры рамки//
-      double imageWidth = img.width.toDouble(); // Ширина изображения
-      double imageHeight = img.height.toDouble(); // Высота изображения
-
-      // Рисуем красную рамку вокруг изображения
-      Paint borderPaint = Paint()
-        ..color = Colors.red
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4; // Ширина рамки
-
-      canvas.drawRect(
-        Rect.fromLTWH(
-          ee.positionCoordinates.x * height - minX,
-          ee.positionCoordinates.y * height - minY,
-          imageWidth,
-          imageHeight,
-        ),
-        borderPaint,
-      );
-    }
+    //todo отдельный метод для отрисовки тайлов на канвасе
+    drawTileOnCanvas(listImages: list,listTiles:  listE, canvas: canvas, height: height, minX: minX,minY:  minY);
 
     var pP = mapController.camera.project(latLng!);
 
@@ -335,20 +306,13 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     final image2 = await picture1.toImage(297, 210);
 
     ByteData? byteData =
-    await image2.toByteData(format: ui.ImageByteFormat.png);
+        await image2.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-
-
     await saveAndShowSnack(pngBytes);
-
-
   }
 
-
   Future<void> saveAndShowSnack(Uint8List pngBytes) async {
-
-
     // Получение пути для сохранения
     final directory = await getApplicationDocumentsDirectory();
     final imagePath = File('${directory.path}/canvas_image.png');
@@ -383,6 +347,45 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       ),
     );
   }
-
 }
 
+void drawTileOnCanvas(
+    {required List<ui.Image> listImages,
+    required List<Tile> listTiles,
+    required Canvas canvas,
+    required double height,
+    required double minX,
+    required double minY}) {
+
+  for (var img in listImages) {
+
+    Tile tile = listTiles[listImages.indexOf(img)];
+
+    canvas.drawImage(
+      img,
+      Offset(tile.positionCoordinates.x * height - minX,
+          tile.positionCoordinates.y * height - minY),
+      Paint(),
+    );
+
+    // Определяем размеры рамки//
+    double imageWidth = img.width.toDouble(); // Ширина изображения
+    double imageHeight = img.height.toDouble(); // Высота изображения
+
+    // Рисуем красную рамку вокруг изображения
+    Paint borderPaint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4; // Ширина рамки
+
+    canvas.drawRect(
+      Rect.fromLTWH(
+        tile.positionCoordinates.x * height - minX,
+        tile.positionCoordinates.y * height - minY,
+        imageWidth,
+        imageHeight,
+      ),
+      borderPaint,
+    );
+  }
+}
