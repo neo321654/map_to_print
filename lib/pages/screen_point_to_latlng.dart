@@ -220,7 +220,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     }
 
     List<ui.Image> list = <ui.Image>[];
-    var listE = <Tile>[];
+    var listTiles = <Tile>[];
 
     double height = 256;
 
@@ -239,7 +239,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       yY.add(ch[i].positionCoordinates.y);
 
       list.add(ch[i].tileImage.imageInfo!.image);
-      listE.add(ch[i]);
+      listTiles.add(ch[i]);
     }
 
     xX.sort();
@@ -255,7 +255,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     final canvas = Canvas(recorder);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
-    drawTileOnCanvas(listImages: list,listTiles:  listE, canvas: canvas, height: height, minX: minX,minY:  minY);
+    drawTileOnCanvas(listTiles: listTiles, canvas: canvas, height: height, minX: minX,minY:  minY);
 
     var pP = mapController.camera.project(latLng!);
 
@@ -350,16 +350,18 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 }
 
 void drawTileOnCanvas(
-    {required List<ui.Image> listImages,
+    {
     required List<Tile> listTiles,
     required Canvas canvas,
     required double height,
     required double minX,
     required double minY}) {
 
-  for (var img in listImages) {
+  for (var tile in listTiles) {
 
-    Tile tile = listTiles[listImages.indexOf(img)];
+    // Tile tile = listTiles[listImages.indexOf(img)];
+//todo избавиться от imageInfo!
+    ui.Image img = tile.tileImage.imageInfo!.image;
 
     canvas.drawImage(
       img,
