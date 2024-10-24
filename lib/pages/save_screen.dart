@@ -367,11 +367,11 @@ class ScreenSaveState extends State<ScreenSave> {
     final picture1 = recorder1.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
-    final image2 = await picture1.toImage(2970, 2100);
+    final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
 
     ByteData? byteData =
-    // await image2.toByteData(format: ui.ImageByteFormat.png);
-    await image.toByteData(format: ui.ImageByteFormat.png);
+    await image2.toByteData(format: ui.ImageByteFormat.png);
+    // await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
     await saveAndShowSnack(pngBytes);
