@@ -43,7 +43,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     //todo refactor
     if (isFixed) {
       mapController.move(latLngFixed!, mapController.camera.zoom);
-      // mapController.camera...ююю
+      // mapController.camera...юююбб
       setState(() {
         latLng = latLngFixed;
       });
