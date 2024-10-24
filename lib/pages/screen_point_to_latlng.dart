@@ -238,7 +238,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       xX.add(ch[i].positionCoordinates.x);
       yY.add(ch[i].positionCoordinates.y);
 
-      list.add(ch[i].tileImage.imageInfo!.image);
+      // list.add(ch[i].tileImage.imageInfo!.image);
       listTiles.add(ch[i]);
     }
 
@@ -255,7 +255,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     final canvas = Canvas(recorder);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
-    drawTileOnCanvas(listTiles: listTiles, canvas: canvas, height: height, minX: minX,minY:  minY);
+    drawTileOnCanvas(
+        listTiles: listTiles,
+        canvas: canvas,
+        height: height,
+        minX: minX,
+        minY: minY);
 
     var pP = mapController.camera.project(latLng!);
 
@@ -350,17 +355,15 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 }
 
 void drawTileOnCanvas(
-    {
-    required List<Tile> listTiles,
+    {required List<Tile> listTiles,
     required Canvas canvas,
     required double height,
     required double minX,
     required double minY}) {
-
   for (var tile in listTiles) {
-
     // Tile tile = listTiles[listImages.indexOf(img)];
 //todo избавиться от imageInfo!
+    if (tile.tileImage.imageInfo?.image == null) continue;
     ui.Image img = tile.tileImage.imageInfo!.image;
 
     canvas.drawImage(
