@@ -31,6 +31,7 @@ part 'wms_tile_layer_options.dart';
 
 List<Tile> ch = [];
 List<LatLng> globalListApex = [];
+List<double> globalHeightWidht = [];
 
 
 /// Describes the needed properties to create a tile-based layer. A tile is an
@@ -550,9 +551,12 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
       globalListApex;
 
+      globalHeightWidht = [width,height];
 
-      map = map.withNonRotatedSize(Point(width/10, height/10));
+
+      map = map.withNonRotatedSize(Point(width*1.3, height*1.3));
       // map = map.withOptions(MapOptions(initialZoom: 18));
+
 
     }
     ch;

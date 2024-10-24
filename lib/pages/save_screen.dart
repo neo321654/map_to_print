@@ -319,15 +319,18 @@ class ScreenSaveState extends State<ScreenSave> {
 
     var pP = mapController.camera.project(latLng!);
 
-    var list111 = createRectangleNew(pP, 210, 297);
+    globalHeightWidht;
+
+    // var list111 = createRectangleNew(pP, 210, 297);
+    var list111 = createRectangleNew(pP, globalHeightWidht[1], globalHeightWidht[0]);
 
     var p1 = list111[0];
     var p2 = list111[2];
 
     Paint borderPaint = Paint()
-      ..color = Colors.orange
+      ..color = Colors.blue
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4;
+      ..strokeWidth = 14;
 
     canvas.drawRect(
       Rect.fromPoints(
@@ -338,8 +341,9 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final picture = recorder.endRecording();
 
-    int width = (((maxX - minX) * 2)).toInt();
-    int height2 = (((maxY - minY) * 2)).toInt();
+    int width = (((maxX - minX))).toInt();
+    int height2 = (((maxY - minY))).toInt();
+
     if (width == 0) width = height.toInt();
     if (height2 == 0) width = height.toInt();
 
@@ -481,6 +485,7 @@ class ScreenSaveState extends State<ScreenSave> {
   }
 
   List<LatLng> listApex = [];
+  double my_zoom = 16;
 
   @override
   void initState() {
@@ -545,10 +550,10 @@ class ScreenSaveState extends State<ScreenSave> {
             options: MapOptions(
                 onPositionChanged: (_, __) => updatePoint(context),
                 // initialCenter: const LatLng(55.386, 39.030),
-                initialCenter: LatLng(55.386, 39.030),
-                initialZoom: 18,
-                minZoom: 8,
-                maxZoom: 18),
+                initialCenter: const LatLng(55.386, 39.030),
+                initialZoom: my_zoom,
+                minZoom: my_zoom,
+                maxZoom: my_zoom),
             children: [
               openStreetMapTileLayerSave,
               if (listApex.isNotEmpty)
