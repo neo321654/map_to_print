@@ -449,7 +449,7 @@ class ScreenSaveState extends State<ScreenSave> {
       double imageHeight = img!.height.toDouble(); // Высота изображения
 
       // Рисуем красную рамку вокруг изображения
-      Paint borderPaint = Paint()
+      Paint borderPaintRed = Paint()
         ..color = Colors.red
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4; // Ширина рамки
@@ -461,7 +461,7 @@ class ScreenSaveState extends State<ScreenSave> {
           imageWidth,
           imageHeight,
         ),
-        borderPaint,
+        borderPaintRed,
       );
     }
   }
