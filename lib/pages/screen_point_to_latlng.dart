@@ -56,7 +56,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MenuDrawer('/screen_point_to_latlng'),
+      // drawer: const MenuDrawer('/screen_point_to_latlng'),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -71,37 +71,23 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         child: Text(isFixed ? 'Unfix' : 'Fix'),
       ),
       appBar: AppBar(
-        leading: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(
-              context,
-              ScreenSave.route,
-              arguments: <String, dynamic>{
-                'center': latLng,
-                'country': 'Germany',
-              },
-            );
-          },
-          child: Icon(Icons.save),
-        ),
-        title: const Text('Map to print'),
-        centerTitle: true,
         actions: [
           ElevatedButton(
-            onPressed: _captureAndSave,
-            child: Row(
-              children: [
-                Text('Save'),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(Icons.save),
-                if (isFixed && isFixedCircularProgress)
-                  const CircularProgressIndicator(),
-              ],
-            ),
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                ScreenSave.route,
+                arguments: <String, dynamic>{
+                  'center': latLng,
+                  'country': 'Germany',
+                },
+              );
+            },
+            child: Icon(Icons.save),
           ),
         ],
+        title: const Text('Map to print'),
+        centerTitle: true,
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(

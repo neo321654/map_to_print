@@ -505,7 +505,7 @@ class ScreenSaveState extends State<ScreenSave> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      updatePoint(context);
+      // updatePoint(context);
 
       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       latLng = args["center"] ?? LatLng(33, 33);
@@ -517,17 +517,6 @@ class ScreenSaveState extends State<ScreenSave> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            isFixed = !isFixed;
-            if (isFixed) latLngFixed = latLng;
-            drawRect();
-          });
-        },
-        isExtended: true,
-        child: Text(isFixed ? 'Unfix' : 'Fix'),
-      ),
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
@@ -554,7 +543,7 @@ class ScreenSaveState extends State<ScreenSave> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-                onPositionChanged: (_, __) => updatePoint(context),
+                // onPositionChanged: (_, __) => updatePoint(context),
                 // initialCenter: const LatLng(55.386, 39.030),
                 initialCenter: const LatLng(55.386, 39.030),
                 initialZoom: my_zoom,
@@ -562,56 +551,7 @@ class ScreenSaveState extends State<ScreenSave> {
                 maxZoom: my_zoom),
             children: [
               openStreetMapTileLayerSave,
-              if (listApex.isNotEmpty)
-                PolygonLayer(
-                  // hitNotifier: _hitNotifier,
-                  // simplificationTolerance: 0,
-                  // polygons: [..._polygonsRaw, ...?_hoverGons],
-                  polygons: [
-                    Polygon(
-                      color: Colors.orange.withAlpha(95),
 
-                      // points: const [
-                      //   LatLng(51.5, -0.09),
-                      //   LatLng(53.3498, -6.2603),
-                      //   LatLng(48.8566, 2.3522),
-                      //   LatLng(78.8566, 10.3522),
-                      // ],
-                      points: listApex,
-                      // points: ()sync*{yield  LatLng(51.5, -0.09); }().toList(),
-                      // label: '(51.5, -0.09)(53.3498, -6.2603)' ,
-                      // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
-                      // label: '(51.5, -0.09)(53.3498, -6.2603)(48.8566, 2.3522)',
-                      // labelStyle: const TextStyle(
-                      //     color: Colors.black,
-                      //     fontSize: 6,
-                      //     fontWeight: FontWeight.bold),
-                      // labelPlacement: PolygonLabelPlacement.polylabel,
-                      borderColor: Colors.orange,
-                      borderStrokeWidth: 2,
-
-                      hitValue: (
-                        title: 'Basic Unfilled Polygon',
-                        subtitle: 'Nothing really special here...',
-                      ),
-                    ),
-                  ],
-                ),
-              if (latLng != null)
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      width: pointSize,
-                      height: pointSize,
-                      point: latLng!,
-                      child: const Icon(
-                        Icons.circle,
-                        size: 5,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
             ],
           ),
           // Positioned(
@@ -625,37 +565,29 @@ class ScreenSaveState extends State<ScreenSave> {
           //     ),
           //   ),
           // ),
-          // project
-          Positioned(
-            top: pointY + pointSize / 2 + 6,
-            left: 0,
-            right: 0,
-            child: IgnorePointer(
-              child: Text(
-                '(${latLng?.latitude.toStringAsFixed(3)},${latLng?.longitude.toStringAsFixed(3)})',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          )
+          // // project
+          // Positioned(
+          //   top: pointY + pointSize / 2 + 6,
+          //   left: 0,
+          //   right: 0,
+          //   child: IgnorePointer(
+          //     child: Text(
+          //       '(${latLng?.latitude.toStringAsFixed(3)},${latLng?.longitude.toStringAsFixed(3)})',
+          //       textAlign: TextAlign.center,
+          //       style: const TextStyle(
+          //         color: Colors.black,
+          //         fontWeight: FontWeight.bold,
+          //         fontSize: 16,
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
   }
 
-  void updatePoint(BuildContext context) {
-    var p = Point(_getPointX(context), pointY);
 
-    setState(() => latLng = mapController.camera.pointToLatLng(p));
-
-    if (!isFixed) {
-      drawRect();
-    }
-  }
 
   double _getPointX(BuildContext context) =>
       MediaQuery.sizeOf(context).width / 2;
@@ -666,7 +598,6 @@ class ScreenSaveState extends State<ScreenSave> {
 
     Future.delayed(Duration(seconds: 0), () {
       // var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
-      drawRect();
 
       // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
 
@@ -676,17 +607,5 @@ class ScreenSaveState extends State<ScreenSave> {
     });
   }
 
-  void drawRect() {
-    if (latLng != null) {
-      var ppoint = mapController.camera.project(latLng!);
-      // var ppoint = mapController.camera.project(LatLng(55.386, 9.030));
 
-      var pppp = createRectangleNew(ppoint, 210, 297);
-      listApex.clear();
-      for (Point pnew in pppp) {
-        listApex.add(mapController.camera.unproject(pnew));
-      }
-      setState(() {});
-    }
-  }
 }
