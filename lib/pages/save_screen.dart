@@ -360,7 +360,7 @@ class ScreenSaveState extends State<ScreenSave> {
     var of2 = (p1.y - minY).toDouble();
     var of3 = (p2.x - minX).toDouble();
     var of4 = (p2.y - minY).toDouble();
-
+//
     // canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
     canvas1.drawImage(image, ui.Offset(-of3, -of2), Paint());
 
