@@ -78,7 +78,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 context,
                 ScreenSave.route,
                 arguments: <String, dynamic>{
-                  'center': latLng,
+                  'center': isFixed?latLngFixed:latLng,
                   'country': 'Germany',
                 },
               );
