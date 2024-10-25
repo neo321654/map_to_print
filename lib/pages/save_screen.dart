@@ -205,7 +205,7 @@ class ScreenSaveState extends State<ScreenSave> {
         img = await loadImage(tile.tileImage.imageProvider);
 
         setState(() {
-          listImagesString.add(tile.tileImage.imageProvider.toString());
+          addStringToList(tile);
         });
         print(
             'load image height:${img.height} ${tile.tileImage.imageProvider} ');
@@ -225,7 +225,7 @@ class ScreenSaveState extends State<ScreenSave> {
           Paint(),
         );
         setState(() {
-          listImagesString.add(tile.tileImage.imageProvider.toString());
+          addStringToList(tile);
         });
         print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
@@ -251,6 +251,17 @@ class ScreenSaveState extends State<ScreenSave> {
         borderPaintRed,
       );
     }
+  }
+
+  void addStringToList(Tile tile) {
+    String coordinates =     tile.positionCoordinates.toString();
+
+
+    listImagesString.add('$coordinates');
+    Future.delayed(Duration(milliseconds: 100), () {
+      _scrollController
+          .jumpTo(_scrollController.position.maxScrollExtent);
+    });
   }
 
   Future<void> saveAndShowSnack(Uint8List pngBytes) async {
@@ -294,6 +305,7 @@ class ScreenSaveState extends State<ScreenSave> {
   List<LatLng> listApex = [];
   double my_zoom = 16;
   List<String> listImagesString = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -307,13 +319,10 @@ class ScreenSaveState extends State<ScreenSave> {
       mapController.move(latLng ?? LatLng(33, 33), 18);
       setState(() {});
 
-
-      Future.delayed(const Duration(milliseconds: 1000),(){
+      Future.delayed(const Duration(milliseconds: 1000), () {
         _captureAndSave();
       });
-
     });
-
   }
 
   @override
@@ -322,26 +331,6 @@ class ScreenSaveState extends State<ScreenSave> {
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
-        // actions: [
-        //   ElevatedButton(
-        //     onPressed: () {
-        //       _captureAndSave();
-        //       listImagesString.clear();
-        //       setState(() {});
-        //     },
-        //     child: Row(
-        //       children: [
-        //         Text('Save'),
-        //         SizedBox(
-        //           width: 10,
-        //         ),
-        //         Icon(Icons.save),
-        //         if (isFixed && isFixedCurcularProgress)
-        //           CircularProgressIndicator(),
-        //       ],
-        //     ),
-        //   ),
-        // ],
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
@@ -363,14 +352,24 @@ class ScreenSaveState extends State<ScreenSave> {
             color: Colors.blueAccent.withOpacity(0.3),
           ),
           SingleChildScrollView(
+              controller: _scrollController,
+              padding: const EdgeInsets.only(bottom: 120),
               child: Center(
                 child: Column(
-
-
-                            children: listImagesString.map((imgStr) {
-                return Container(color:Colors.red,child: Text(imgStr,textAlign: TextAlign.center,));
-                            }).toList(),
-                          ),
+                  children: listImagesString.map((imgStr) {
+                    return Container(
+                      margin: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
+                        color: Colors.white38,
+                        child: Text(
+                          imgStr,
+                          textAlign: TextAlign.center,
+                        ));
+                  }).toList(),
+                ),
               ))
 
           // Positioned(
