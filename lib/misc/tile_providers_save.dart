@@ -10,8 +10,10 @@ TileLayer get openStreetMapTileLayerSave {
 
   int countTiles = 0;
   return TileLayer(
+    panBuffer: 3,
   isSave:true,
-  key: UniqueKey(),
+  // tileBounds: LatLngBounds.fromPoints(globalListApex),
+  // key: UniqueKey(),
 
 
   // tileBounds: LatLngBounds.fromPoints([
@@ -36,11 +38,11 @@ TileLayer get openStreetMapTileLayerSave {
       //   );
       // }),
       tileBuilder: (context, widget, tileImage){
-        tileImage.addListener((){
-          countTiles++;
-          print(countTiles);
-          print(tileImage);
-        });
+        // tileImage.addListener((){
+        //   countTiles++;
+        //   print(countTiles);
+        //   print(tileImage);
+        // });
           return Center(child: widget,);
       },
       tileDisplay: TileDisplay.fadeIn(),

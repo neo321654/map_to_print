@@ -30,6 +30,9 @@ part 'tile_error_evict_callback.dart';
 part 'wms_tile_layer_options.dart';
 
 List<Tile> ch = [];
+List<LatLng> globalListApex = [];
+List<double> globalHeightWidht = [];
+
 
 /// Describes the needed properties to create a tile-based layer. A tile is an
 /// image bound to a specific geographical position.
@@ -521,12 +524,39 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       // var map5 = map.latLngToScreenPoint(LatLng(53.3498, -6.2603));
       // var map6 = map.(LatLng(53.3498, -6.2603));
 
-      double indexToZoom = 3;
+      print('isSave');
+      // globalListApex.
+
+      double distance(Point p1, Point p2) {
+        return sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
+      }
+
+
+      double indexToZoom = 8;
       double www = 210 * indexToZoom;
       double hhh = 297 * indexToZoom;
 
-      map = map.withNonRotatedSize(Point(www, hhh));
+      Point p1 = map.project(globalListApex[0]);
+      Point p2 = map.project(globalListApex[1]);
+
+      double height = distance(p1, p2);
+
+
+
+      Point p3 = map.project(globalListApex[2]);
+      Point p4 = map.project(globalListApex[3]);
+
+      double width = distance(p2, p3);
+
+
+      globalListApex;
+
+      globalHeightWidht = [width,height];
+
+
+      map = map.withNonRotatedSize(Point(width*2, height*2));
       // map = map.withOptions(MapOptions(initialZoom: 18));
+
 
     }
     ch;
@@ -599,164 +629,13 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
     ch = tiles..sort(renderOrder);
 
-    // _captureAndSave(ch);
 
     return MobileLayerTransformer(
       child: Stack(children: ch),
     );
   }
 
-  // Future<ui.Image> _loadImage(String path) async {
-  //   final data = await DefaultAssetBundle.of(context).load(path);
-  //   final bytes = data.buffer.asUint8List();
-  //
-  //   return await decodeImageFromList(bytes);
-  // }
-  Future<void> _captureAndSave(List<Tile> ch) async {
-    bool isDone = false;
 
-    double height = 256;
-
-    int count = 0;
-
-    double minX = 0;
-    double minY = 0;
-    double maxX = 0;
-    double maxY = 0;
-
-    for (var e in ch) {
-      if (!isDone) {
-        if (minX == 0 && minY == 0) {
-          minX = e.positionCoordinates.x * height;
-          minY = e.positionCoordinates.y * height;
-        }
-
-        if (maxX == 0 && maxY == 0) {
-          maxX = e.positionCoordinates.x * height + height;
-          maxY = e.positionCoordinates.y * height + height;
-        }
-
-        if (e.positionCoordinates.x < minX) {
-          minX = e.positionCoordinates.x * height;
-        }
-        if (e.positionCoordinates.y < minY) {
-          minY = e.positionCoordinates.y * height;
-        }
-
-        if (e.positionCoordinates.x + height > maxX) {
-          maxX = e.positionCoordinates.x * height + height;
-        }
-        if (e.positionCoordinates.y + height > maxY) {
-          maxY = e.positionCoordinates.y * height + height;
-        }
-
-        e.tileImage.addListener(() {
-          if (e.tileImage.readyToDisplay) {
-            count++;
-            // list.add(e.tileImage.imageInfo!.image);
-            // listE.add(e);
-
-            if (count == ch.length) {
-              // listE.toSet().toList();
-              // list.toSet().toList();
-
-              // final recorder = ui.PictureRecorder();
-              // final canvas = Canvas(recorder);
-              //
-              // for (var img in list) {
-              //   var ee =listE[list.indexOf(img)];
-              //   canvas.drawImage(img, Offset(ee.positionCoordinates.x*height-minX, ee.positionCoordinates.y*height-minY), Paint());
-              // }
-              //
-              // final picture = recorder.endRecording();
-              // final image = await picture.toImage((maxX - minX).toInt(), (maxY-minY).toInt()); // Укажите нужные размеры
-              // ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-              // Uint8List pngBytes = byteData!.buffer.asUint8List();
-              //
-              // // Получение пути для сохранения
-              // final directory = await getApplicationDocumentsDirectory();
-              // final imagePath = File('${directory.path}/canvas_image.png');
-              // await imagePath.writeAsBytes(pngBytes);
-              //
-              // // Сохранение в галерею
-              // final result = await ImageGallerySaver.saveFile(imagePath.path);
-              // print('Image saved to gallery: $result');
-              //
-              // isDone = true;
-            }
-
-            // final img = first.imageInfo!.image;
-          }
-        });
-      }
-    }
-
-    // Future.delayed(Duration(seconds: 5),() async {
-
-    // });
-
-    // ch.first.tileImage.addListener(() async {
-    //
-    //   print(first.readyToDisplay);
-    //   if(first.readyToDisplay){
-    //
-    //
-    //     // final recorder = ui.PictureRecorder();
-    //     // final canvas = Canvas(recorder);
-    //
-    //     // Загружаем изображение
-    //     // final img = first.imageInfo!.image;
-    //
-    //     // canvas.drawImage(img, Offset(0, 0), Paint());
-    //
-    //     // Завершение записи и создание изображения
-    //     // final picture = recorder.endRecording();
-    //     // final image = await picture.toImage(3000, 3000); // Укажите нужные размеры
-    //     // ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    //     // Uint8List pngBytes = byteData!.buffer.asUint8List();
-    //     //
-    //     // // Получение пути для сохранения
-    //     // final directory = await getApplicationDocumentsDirectory();
-    //     // final imagePath = File('${directory.path}/canvas_image.png');
-    //     // await imagePath.writeAsBytes(pngBytes);
-    //     //
-    //     // // Сохранение в галерею
-    //     // final result = await ImageGallerySaver.saveFile(imagePath.path);
-    //     // print('Image saved to gallery: $result');
-    //
-    //
-    //   }
-    //
-    // });
-
-    // onLoadComplete = () async {
-    //
-    // };
-    // Создание PictureRecorder для рисования на Canvas
-    // final recorder = ui.PictureRecorder();
-    // final canvas = Canvas(recorder);
-    //
-    // // Загружаем изображение
-    // final img = await _loadImage('assets/ProjectIcon.png'); // Укажите путь к вашему PNG изображению
-    //
-    // // Рисуем изображение на Canvas
-    // canvas.drawImage(img, Offset(0, 0), Paint());
-    //
-    // // Завершение записи и создание изображения
-    // final picture = recorder.endRecording();
-    // final image = await picture.toImage(300, 300); // Укажите нужные размеры
-    // ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    // Uint8List pngBytes = byteData!.buffer.asUint8List();
-    //
-    // // Получение пути для сохранения
-    // final directory = await getApplicationDocumentsDirectory();
-    // final imagePath = File('${directory.path}/canvas_image.png');
-    // await imagePath.writeAsBytes(pngBytes);
-    //
-    // // Сохранение в галерею
-    // final result = await ImageGallerySaver.saveFile(imagePath.path);
-    // print('Image saved to gallery: $result');
-  }
 
   TileImage _createTileImage({
     required TileCoordinates coordinates,

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:map_to_print/pages/screen_point_to_latlng.dart';
 
 LatLng getCenterPoint(List<LatLng> points) {
   // Проверяем, что список содержит ровно 4 координаты
@@ -89,12 +90,21 @@ List<LatLng> getNewApex({
   double height = 29.7,
   double meterInCm = 100,
 }) {
+
+
   List<LatLng> listApex = [];
   if (latLng != null) {
     listApex = calculateApexFromCenter(
         latLng: latLng, width: width, height: height, meterInCm: meterInCm);
+//todo удалить потом
 
+    globalListApex = listApex;
     return listApex;
   }
+  //todo удалить потом
+
+  globalListApex = listApex;
+
   return listApex;
 }
+//todo удалить потом
