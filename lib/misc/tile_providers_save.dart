@@ -10,6 +10,7 @@ TileLayer get openStreetMapTileLayerSave {
 
   int countTiles = 0;
   return TileLayer(
+    panBuffer: 3,
   isSave:true,
   // tileBounds: LatLngBounds.fromPoints(globalListApex),
   // key: UniqueKey(),
