@@ -327,11 +327,14 @@ class ScreenSaveState extends State<ScreenSave> {
     var p1 = list111[0];
     var p2 = list111[2];
 
+
+
     Paint borderPaint = Paint()
       ..color = Colors.blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14;
 
+    //рисую синий прямоугольник
     canvas.drawRect(
       Rect.fromPoints(
           ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
@@ -347,14 +350,14 @@ class ScreenSaveState extends State<ScreenSave> {
     if (width == 0) width = height.toInt();
     if (height2 == 0) width = height.toInt();
 
-    final image = await picture.toImage(width, height2);
+    final image = await picture.toImage((width).toInt(), (height2).toInt());
 
     final recorder1 = ui.PictureRecorder();
     final canvas1 = Canvas(recorder1);
 
-    Rect.fromPoints(
-        ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
-        ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
+    // Rect.fromPoints(
+    //     ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
+    //     ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
 
     var of1 = (p1.x - minX).toDouble();
     var of2 = (p1.y - minY).toDouble();
@@ -370,8 +373,8 @@ class ScreenSaveState extends State<ScreenSave> {
     final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
 
     ByteData? byteData =
-    await image2.toByteData(format: ui.ImageByteFormat.png);
-    // await image.toByteData(format: ui.ImageByteFormat.png);
+    // await image2.toByteData(format: ui.ImageByteFormat.png);
+    await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
     await saveAndShowSnack(pngBytes);
@@ -400,12 +403,36 @@ class ScreenSaveState extends State<ScreenSave> {
         img =  await loadImage(tile.tileImage.imageProvider);
 
 
-        canvas.drawImage(
-          img,
-          Offset(tile.positionCoordinates.x * height - minX,
-              tile.positionCoordinates.y * height - minY),
-          Paint(),
+        const double scaleFactor = 2.0; // Увеличиваем вдвое
+
+        final Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
+        final Rect dstRect = Rect.fromLTWH(
+          // position.dx,
+          // position.dy,
+          tile.positionCoordinates.x * height - minX,
+          tile.positionCoordinates.y * height - minY,
+
+          img.width * scaleFactor,
+          img.height * scaleFactor,
         );
+
+        // Рисуем изображение с учетом масштаба
+        canvas.drawImageRect(img, srcRect, dstRect, Paint());
+
+
+
+
+
+
+
+
+
+        // canvas.drawImage(
+        //   img,
+        //   Offset(tile.positionCoordinates.x * height - minX,
+        //       tile.positionCoordinates.y * height - minY),
+        //   Paint(),
+        // );
 
 
 
