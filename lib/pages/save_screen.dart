@@ -204,6 +204,11 @@ class ScreenSaveState extends State<ScreenSave> {
         // }));
 
         img = await loadImage(tile.tileImage.imageProvider);
+
+        setState(() {
+          listImagesString.add(tile.tileImage.imageProvider.toString());
+
+        });
         print(
             'load image height:${img.height} ${tile.tileImage.imageProvider} ');
         canvas.drawImage(
@@ -221,6 +226,10 @@ class ScreenSaveState extends State<ScreenSave> {
               tile.positionCoordinates.y * height - minY),
           Paint(),
         );
+        setState(() {
+          listImagesString.add(tile.tileImage.imageProvider.toString());
+
+        });
         print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
       }
@@ -290,6 +299,7 @@ class ScreenSaveState extends State<ScreenSave> {
 
   List<LatLng> listApex = [];
   double my_zoom = 16;
+  List<String> listImagesString = [];
 
   @override
   void initState() {
@@ -346,6 +356,10 @@ class ScreenSaveState extends State<ScreenSave> {
             ],
           ),
           Container(color: Colors.red,),
+          SingleChildScrollView(child: Column(children:   listImagesString.map((imgStr){
+            return Text(imgStr);
+          }).toList(),)
+        )
 
           // Positioned(
           //   top: pointY - pointSize / 2,
