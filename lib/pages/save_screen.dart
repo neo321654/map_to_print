@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:map_to_print/pages/screen_point_to_latlng.dart';
+
 // import 'package:map_to_print/pages/screen_point_to_latlng.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../misc/tile_providers_save.dart';
@@ -40,7 +41,7 @@ class ScreenSaveState extends State<ScreenSave> {
 
   LatLng? latLng;
 
-   Map<String,dynamic> args = {};
+  Map<String, dynamic> args = {};
 
 //   Future<void> _captureAndSave() async {
 //     if (isFixed) {
@@ -293,7 +294,7 @@ class ScreenSaveState extends State<ScreenSave> {
       xX.add(ch[i].positionCoordinates.x);
       yY.add(ch[i].positionCoordinates.y);
 
-      // list.add(ch[i].tileImage.imageInfo!.image);
+      // list.add(ch[i].tileImage.imageInfo!.imageFirstCanvas);
       listTiles.add(ch[i]);
     }
 
@@ -310,8 +311,8 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final canvas = Canvas(recorder);
 
-    double scaleToAll =2;
-     canvas.scale(scaleToAll);
+    double scaleToAll = 2;
+    canvas.scale(scaleToAll);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
     await drawTilesOnCanvas(
@@ -326,14 +327,12 @@ class ScreenSaveState extends State<ScreenSave> {
 
     var pP = mapController.camera.project(latLng!);
 
-
     // var listPointsToBlueRectangle = createRectangleNew(pP, 210, 297);
-    var listPointsToBlueRectangle = createRectangleNew(pP, globalHeightWidht[1], globalHeightWidht[0]);
+    var listPointsToBlueRectangle =
+        createRectangleNew(pP, globalHeightWidht[1], globalHeightWidht[0]);
 
     var leftTopPointToBlue = listPointsToBlueRectangle[0];
     var rightBottomPointToBlue = listPointsToBlueRectangle[2];
-
-
 
     Paint blueBorderPaint = Paint()
       ..color = Colors.blue
@@ -343,122 +342,96 @@ class ScreenSaveState extends State<ScreenSave> {
     //рисую синий прямоугольник
     canvas.drawRect(
       Rect.fromPoints(
-          ui.Offset((leftTopPointToBlue.x - minX).toDouble(), (leftTopPointToBlue.y - minY).toDouble()),
-          ui.Offset((rightBottomPointToBlue.x - minX).toDouble(), (rightBottomPointToBlue.y - minY).toDouble())),
+          ui.Offset((leftTopPointToBlue.x - minX).toDouble(),
+              (leftTopPointToBlue.y - minY).toDouble()),
+          ui.Offset((rightBottomPointToBlue.x - minX).toDouble(),
+              (rightBottomPointToBlue.y - minY).toDouble())),
       blueBorderPaint,
     );
 
     // canvas.scale(0.7);
 
-    final picture = recorder.endRecording();
+    final ui.Picture pictureFirstCanvas = recorder.endRecording();
 
-    int width = (((maxX - minX))).toInt();
-    int height2 = (((maxY - minY))).toInt();
+    int widthAllSumTiles = (((maxX - minX))).toInt();
+    int heightAllSumTiles = (((maxY - minY))).toInt();
 
-    if (width == 0) width = height.toInt();
-    if (height2 == 0) width = height.toInt();
+    //перестраховка если 0
+    if (widthAllSumTiles == 0) widthAllSumTiles = height.toInt();
+    if (heightAllSumTiles == 0) widthAllSumTiles = height.toInt();
 
+    final imageFirstCanvas = await pictureFirstCanvas.toImage(
+        (widthAllSumTiles * scaleToAll).toInt(),
+        (heightAllSumTiles * scaleToAll).toInt());
 
-    final image = await picture.toImage((width*scaleToAll).toInt(), (height2*scaleToAll).toInt());
-
-
-
-    final recorder1 = ui.PictureRecorder();
-    final canvas1 = Canvas(recorder1);
+    final recorder2 = ui.PictureRecorder();
+    final canvas2 = Canvas(recorder2);
 
     // Rect.fromPoints(
     //     ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
     //     ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
 
-    var of1 = ((leftTopPointToBlue.x - minX)*scaleToAll).toDouble();
-    var of2 = ((leftTopPointToBlue.y - minY)*scaleToAll).toDouble();
-    var of3 = ((rightBottomPointToBlue.x - minX)*scaleToAll).toDouble();
-    var of4 = ((rightBottomPointToBlue.y - minY)*scaleToAll).toDouble();
+    var of1 = ((leftTopPointToBlue.x - minX) * scaleToAll).toDouble();
+    var leftTopOffsetBlueOnCanvas =
+        ((leftTopPointToBlue.y - minY) * scaleToAll).toDouble();
+    var of3 = ((rightBottomPointToBlue.x - minX) * scaleToAll).toDouble();
+    var of4 = ((rightBottomPointToBlue.y - minY) * scaleToAll).toDouble();
 
-    var of5 = width*scaleToAll-((maxX-rightBottomPointToBlue.x)).toDouble();
-    var of6 = height2*scaleToAll-((maxY-rightBottomPointToBlue.y)).toDouble();
+    var of5 = widthAllSumTiles * scaleToAll -
+        ((maxX - rightBottomPointToBlue.x)).toDouble();
+    var of6 = heightAllSumTiles * scaleToAll -
+        ((maxY - rightBottomPointToBlue.y)).toDouble();
 
 //
-//     canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
-  // canvas1.scale(0.7);
-    canvas1.drawImage(image, ui.Offset(-of3, -of2), Paint());
+//     canvas2.drawImage(imageFirstCanvas, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
+    // canvas2.scale(0.7);
+    canvas2.drawImage(
+        imageFirstCanvas, ui.Offset(-of3, -leftTopOffsetBlueOnCanvas), Paint());
 
-    final picture1 = recorder1.endRecording();
+    final picture1 = recorder2.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
     // final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
-    // final image2 = await picture1.toImage(((width*scaleToAll)-of3).toInt(), ((height2*scaleToAll)-of2).toInt());
-    final image2 = await picture1.toImage(((width*scaleToAll)-of5).toInt(), ((height2*scaleToAll)-of6).toInt());
+    // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)-of3).toInt(), ((heightAllSumTiles*scaleToAll)-leftTopOffsetBlueOnCanvas).toInt());
+    // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)).toInt(), ((heightAllSumTiles*scaleToAll)).toInt());
+    final image2 = await picture1.toImage(7000, 7000);
     // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
-    await image2.toByteData(format: ui.ImageByteFormat.png);
-    // await image.toByteData(format: ui.ImageByteFormat.png);
+        await image2.toByteData(format: ui.ImageByteFormat.png);
+    // await imageFirstCanvas.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
     await saveAndShowSnack(pngBytes);
   }
 
-
-  Future<void> drawTilesOnCanvas (
+  Future<void> drawTilesOnCanvas(
       {required List<Tile> listTiles,
-        required Canvas canvas,
-        required double height,
-        required double minX,
-        required double minY}) async {
+      required Canvas canvas,
+      required double height,
+      required double minX,
+      required double minY}) async {
     for (var tile in listTiles) {
-
       ui.Image? img;
       // Tile tile = listTiles[listImages.indexOf(img)];
 //todo избавиться от imageInfo!
-      if (tile.tileImage.imageInfo?.image == null){
-
+      if (tile.tileImage.imageInfo?.image == null) {
         // tile.tileImage.imageProvider
         //     .resolve(ImageConfiguration())
         //     .addListener(ImageStreamListener((imageInfo, b) {
         //
         // }));
 
-        img =  await loadImage(tile.tileImage.imageProvider);
-
-
-        // const double scaleFactor = 1.0; // Увеличиваем вдвое
-        //
-        // final Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
-        // final Rect dstRect = Rect.fromLTWH(
-        //   // position.dx,
-        //   // position.dy,
-        //   tile.positionCoordinates.x * height - minX,
-        //   tile.positionCoordinates.y * height - minY,
-        //
-        //   img.width * scaleFactor,
-        //   img.height * scaleFactor,
-        // );
-        //
-        // // Рисуем изображение с учетом масштаба
-        // canvas.drawImageRect(img, srcRect, dstRect, Paint());
-
-
-
-
-
-
-
-
-
+        img = await loadImage(tile.tileImage.imageProvider);
+        print(
+            'load image height:${img.height} ${tile.tileImage.imageProvider} ');
         canvas.drawImage(
           img,
           Offset(tile.positionCoordinates.x * height - minX,
               tile.positionCoordinates.y * height - minY),
           Paint(),
         );
-
-
-
-
-
-        // continue;
-      }else{
+      } else {
         img = tile.tileImage.imageInfo!.image;
 
         canvas.drawImage(
@@ -467,10 +440,9 @@ class ScreenSaveState extends State<ScreenSave> {
               tile.positionCoordinates.y * height - minY),
           Paint(),
         );
+        print(
+            'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
       }
-
-
-
 
       // Определяем размеры рамки//
       double imageWidth = img!.width.toDouble(); // Ширина изображения
@@ -537,20 +509,13 @@ class ScreenSaveState extends State<ScreenSave> {
   void initState() {
     super.initState();
 
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       updatePoint(context);
 
-        args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-        latLng =  args["center"]??LatLng(33,33);
-        mapController.move(latLng??LatLng(33,33), 18);
-        setState(() {
-
-        });
-
-
-
+      args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      latLng = args["center"] ?? LatLng(33, 33);
+      mapController.move(latLng ?? LatLng(33, 33), 18);
+      setState(() {});
     });
   }
 
@@ -690,14 +655,11 @@ class ScreenSaveState extends State<ScreenSave> {
   void updatePoint(BuildContext context) {
     var p = Point(_getPointX(context), pointY);
 
+    setState(() => latLng = mapController.camera.pointToLatLng(p));
 
-      setState(() => latLng = mapController.camera.pointToLatLng(p));
-
-      if (!isFixed) {
-        drawRect();
-      }
-
-
+    if (!isFixed) {
+      drawRect();
+    }
   }
 
   double _getPointX(BuildContext context) =>
@@ -732,5 +694,4 @@ class ScreenSaveState extends State<ScreenSave> {
       setState(() {});
     }
   }
-
 }
