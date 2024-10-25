@@ -307,7 +307,11 @@ class ScreenSaveState extends State<ScreenSave> {
     maxY = yY.last * height.toDouble();
 
     final recorder = ui.PictureRecorder();
+
     final canvas = Canvas(recorder);
+
+    double scaleToAll =3;
+     canvas.scale(scaleToAll);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
     await drawTilesOnCanvas(
@@ -316,6 +320,9 @@ class ScreenSaveState extends State<ScreenSave> {
         height: height,
         minX: minX,
         minY: minY);
+
+     canvas.scale(1);
+    // canvas.
 
     var pP = mapController.camera.project(latLng!);
 
@@ -342,6 +349,9 @@ class ScreenSaveState extends State<ScreenSave> {
       borderPaint,
     );
 
+    // canvas.scale(0.7);
+
+
     final picture = recorder.endRecording();
 
     int width = (((maxX - minX))).toInt();
@@ -350,7 +360,10 @@ class ScreenSaveState extends State<ScreenSave> {
     if (width == 0) width = height.toInt();
     if (height2 == 0) width = height.toInt();
 
-    final image = await picture.toImage((width).toInt(), (height2).toInt());
+
+    final image = await picture.toImage((width*scaleToAll).toInt(), (height2*scaleToAll).toInt());
+
+
 
     final recorder1 = ui.PictureRecorder();
     final canvas1 = Canvas(recorder1);
@@ -365,16 +378,18 @@ class ScreenSaveState extends State<ScreenSave> {
     var of4 = (p2.y - minY).toDouble();
 //
     // canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
+  canvas1.scale(0.7);
     canvas1.drawImage(image, ui.Offset(-of3, -of2), Paint());
 
     final picture1 = recorder1.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
-    final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
+    // final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
+    final image2 = await picture1.toImage(6000, 6000);
 
     ByteData? byteData =
-    // await image2.toByteData(format: ui.ImageByteFormat.png);
-    await image.toByteData(format: ui.ImageByteFormat.png);
+    await image2.toByteData(format: ui.ImageByteFormat.png);
+    // await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
     await saveAndShowSnack(pngBytes);
@@ -403,36 +418,36 @@ class ScreenSaveState extends State<ScreenSave> {
         img =  await loadImage(tile.tileImage.imageProvider);
 
 
-        const double scaleFactor = 2.0; // Увеличиваем вдвое
-
-        final Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
-        final Rect dstRect = Rect.fromLTWH(
-          // position.dx,
-          // position.dy,
-          tile.positionCoordinates.x * height - minX,
-          tile.positionCoordinates.y * height - minY,
-
-          img.width * scaleFactor,
-          img.height * scaleFactor,
-        );
-
-        // Рисуем изображение с учетом масштаба
-        canvas.drawImageRect(img, srcRect, dstRect, Paint());
-
-
-
-
-
-
-
-
-
-        // canvas.drawImage(
-        //   img,
-        //   Offset(tile.positionCoordinates.x * height - minX,
-        //       tile.positionCoordinates.y * height - minY),
-        //   Paint(),
+        // const double scaleFactor = 1.0; // Увеличиваем вдвое
+        //
+        // final Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
+        // final Rect dstRect = Rect.fromLTWH(
+        //   // position.dx,
+        //   // position.dy,
+        //   tile.positionCoordinates.x * height - minX,
+        //   tile.positionCoordinates.y * height - minY,
+        //
+        //   img.width * scaleFactor,
+        //   img.height * scaleFactor,
         // );
+        //
+        // // Рисуем изображение с учетом масштаба
+        // canvas.drawImageRect(img, srcRect, dstRect, Paint());
+
+
+
+
+
+
+
+
+
+        canvas.drawImage(
+          img,
+          Offset(tile.positionCoordinates.x * height - minX,
+              tile.positionCoordinates.y * height - minY),
+          Paint(),
+        );
 
 
 
