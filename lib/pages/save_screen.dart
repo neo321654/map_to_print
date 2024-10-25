@@ -252,7 +252,7 @@ class ScreenSaveState extends State<ScreenSave> {
       );
     }
   }
-
+//
   void addStringToList(Tile tile) {
     String coordinates =     tile.positionCoordinates.toString();
 
