@@ -306,7 +306,14 @@ class ScreenSaveState extends State<ScreenSave> {
       latLng = args["center"] ?? LatLng(33, 33);
       mapController.move(latLng ?? LatLng(33, 33), 18);
       setState(() {});
+
+
+      Future.delayed(const Duration(milliseconds: 1000),(){
+        _captureAndSave();
+      });
+
     });
+
   }
 
   @override
@@ -315,26 +322,26 @@ class ScreenSaveState extends State<ScreenSave> {
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              _captureAndSave();
-              listImagesString.clear();
-              setState(() {});
-            },
-            child: Row(
-              children: [
-                Text('Save'),
-                SizedBox(
-                  width: 10,
-                ),
-                Icon(Icons.save),
-                if (isFixed && isFixedCurcularProgress)
-                  CircularProgressIndicator(),
-              ],
-            ),
-          ),
-        ],
+        // actions: [
+        //   ElevatedButton(
+        //     onPressed: () {
+        //       _captureAndSave();
+        //       listImagesString.clear();
+        //       setState(() {});
+        //     },
+        //     child: Row(
+        //       children: [
+        //         Text('Save'),
+        //         SizedBox(
+        //           width: 10,
+        //         ),
+        //         Icon(Icons.save),
+        //         if (isFixed && isFixedCurcularProgress)
+        //           CircularProgressIndicator(),
+        //       ],
+        //     ),
+        //   ),
+        // ],
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
