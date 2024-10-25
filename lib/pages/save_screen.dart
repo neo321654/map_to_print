@@ -43,7 +43,6 @@ class ScreenSaveState extends State<ScreenSave> {
 
   Map<String, dynamic> args = {};
 
-
   Future<void> _captureAndSave() async {
     //todo refactor
     if (isFixed) {
@@ -83,9 +82,6 @@ class ScreenSaveState extends State<ScreenSave> {
       // list.add(ch[i].tileImage.imageInfo!.imageFirstCanvas);
       listTiles.add(ch[i]);
     }
-
-
-
 
     xX.sort();
     minX = xX.first * height.toDouble();
@@ -156,11 +152,10 @@ class ScreenSaveState extends State<ScreenSave> {
     final recorder2 = ui.PictureRecorder();
     final canvas2 = Canvas(recorder2);
 
-
     var topOffsetBlue =
         ((rightTopPointToBlue.y - minY) * scaleToAll).toDouble();
-    var leftOffsetBlue = ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
-
+    var leftOffsetBlue =
+        ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
 
     canvas2.drawImage(
         imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
@@ -168,14 +163,18 @@ class ScreenSaveState extends State<ScreenSave> {
     final picture1 = recorder2.endRecording();
 
     var bottomOffsetBlue =
-    ((maxY - leftBottomPointToBlue.y) * scaleToAll).toDouble();
+        ((maxY - leftBottomPointToBlue.y) * scaleToAll).toDouble();
     var rightOffsetBlue =
-    ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
+        ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
 
-    int finalWidth =  (widthAllSumTiles*scaleToAll-rightOffsetBlue-leftOffsetBlue).toInt();
-    int finalHeight = (heightAllSumTiles*scaleToAll-bottomOffsetBlue-topOffsetBlue).toInt();
+    int finalWidth =
+        (widthAllSumTiles * scaleToAll - rightOffsetBlue - leftOffsetBlue)
+            .toInt();
+    int finalHeight =
+        (heightAllSumTiles * scaleToAll - bottomOffsetBlue - topOffsetBlue)
+            .toInt();
 
-   final image2 = await picture1.toImage(finalWidth, finalHeight);
+    final image2 = await picture1.toImage(finalWidth, finalHeight);
     // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
@@ -207,7 +206,6 @@ class ScreenSaveState extends State<ScreenSave> {
 
         setState(() {
           listImagesString.add(tile.tileImage.imageProvider.toString());
-
         });
         print(
             'load image height:${img.height} ${tile.tileImage.imageProvider} ');
@@ -228,7 +226,6 @@ class ScreenSaveState extends State<ScreenSave> {
         );
         setState(() {
           listImagesString.add(tile.tileImage.imageProvider.toString());
-
         });
         print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
@@ -267,14 +264,11 @@ class ScreenSaveState extends State<ScreenSave> {
     print('Image saved to gallery: $result');
 
     ScaffoldMessenger.of(context).showSnackBar(
-
       SnackBar(
-
         padding: EdgeInsets.all(20),
         content: Text('Изображение успешно сохранено!'),
         duration: Duration(seconds: 15),
         showCloseIcon: true,
-
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: 'Открыть',
@@ -323,7 +317,11 @@ class ScreenSaveState extends State<ScreenSave> {
         centerTitle: true,
         actions: [
           ElevatedButton(
-            onPressed: _captureAndSave,
+            onPressed: () {
+              _captureAndSave();
+              listImagesString.clear();
+              setState(() {});
+            },
             child: Row(
               children: [
                 Text('Save'),
@@ -352,14 +350,21 @@ class ScreenSaveState extends State<ScreenSave> {
                 maxZoom: my_zoom),
             children: [
               openStreetMapTileLayerSave,
-
             ],
           ),
-          Container(color: Colors.red,),
-          SingleChildScrollView(child: Column(children:   listImagesString.map((imgStr){
-            return Text(imgStr);
-          }).toList(),)
-        )
+          Container(
+            color: Colors.blueAccent.withOpacity(0.3),
+          ),
+          SingleChildScrollView(
+              child: Center(
+                child: Column(
+
+
+                            children: listImagesString.map((imgStr) {
+                return Container(color:Colors.red,child: Text(imgStr,textAlign: TextAlign.center,));
+                            }).toList(),
+                          ),
+              ))
 
           // Positioned(
           //   top: pointY - pointSize / 2,
@@ -394,8 +399,6 @@ class ScreenSaveState extends State<ScreenSave> {
     );
   }
 
-
-
   double _getPointX(BuildContext context) =>
       MediaQuery.sizeOf(context).width / 2;
 
@@ -413,6 +416,4 @@ class ScreenSaveState extends State<ScreenSave> {
       }
     });
   }
-
-
 }
