@@ -298,6 +298,9 @@ class ScreenSaveState extends State<ScreenSave> {
       listTiles.add(ch[i]);
     }
 
+
+
+
     xX.sort();
     minX = xX.first * height.toDouble();
     maxX = xX.last * height.toDouble();
@@ -331,8 +334,8 @@ class ScreenSaveState extends State<ScreenSave> {
     var listPointsToBlueRectangle =
         createRectangleNew(pP, globalHeightWidht[1], globalHeightWidht[0]);
 
-    var leftTopPointToBlue = listPointsToBlueRectangle[0];
-    var rightBottomPointToBlue = listPointsToBlueRectangle[2];
+    var rightTopPointToBlue = listPointsToBlueRectangle[0];
+    var leftBottomPointToBlue = listPointsToBlueRectangle[2];
 
     Paint blueBorderPaint = Paint()
       ..color = Colors.blue
@@ -342,10 +345,10 @@ class ScreenSaveState extends State<ScreenSave> {
     //рисую синий прямоугольник
     canvas.drawRect(
       Rect.fromPoints(
-          ui.Offset((leftTopPointToBlue.x - minX).toDouble(),
-              (leftTopPointToBlue.y - minY).toDouble()),
-          ui.Offset((rightBottomPointToBlue.x - minX).toDouble(),
-              (rightBottomPointToBlue.y - minY).toDouble())),
+          ui.Offset((rightTopPointToBlue.x - minX).toDouble(),
+              (rightTopPointToBlue.y - minY).toDouble()),
+          ui.Offset((leftBottomPointToBlue.x - minX).toDouble(),
+              (leftBottomPointToBlue.y - minY).toDouble())),
       blueBorderPaint,
     );
 
@@ -371,28 +374,28 @@ class ScreenSaveState extends State<ScreenSave> {
     //     ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
     //     ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
 
-    var of1 = ((leftTopPointToBlue.x - minX) * scaleToAll).toDouble();
-    var leftTopOffsetBlueOnCanvas =
-        ((leftTopPointToBlue.y - minY) * scaleToAll).toDouble();
-    var of3 = ((rightBottomPointToBlue.x - minX) * scaleToAll).toDouble();
-    var of4 = ((rightBottomPointToBlue.y - minY) * scaleToAll).toDouble();
+    var of1 = ((rightTopPointToBlue.x - minX) * scaleToAll).toDouble();
+    var topOffsetBlue =
+        ((rightTopPointToBlue.y - minY) * scaleToAll).toDouble();
+    var leftOffsetBlue = ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
+    var of4 = ((leftBottomPointToBlue.y - minY) * scaleToAll).toDouble();
 
     var of5 = widthAllSumTiles * scaleToAll -
-        ((maxX - rightBottomPointToBlue.x)).toDouble();
+        ((maxX - leftBottomPointToBlue.x)).toDouble();
     var of6 = heightAllSumTiles * scaleToAll -
-        ((maxY - rightBottomPointToBlue.y)).toDouble();
+        ((maxY - leftBottomPointToBlue.y)).toDouble();
 
 //
 //     canvas2.drawImage(imageFirstCanvas, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
     // canvas2.scale(0.7);
     canvas2.drawImage(
-        imageFirstCanvas, ui.Offset(-of3, -leftTopOffsetBlueOnCanvas), Paint());
+        imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
 
     final picture1 = recorder2.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
     // final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
-    // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)-of3).toInt(), ((heightAllSumTiles*scaleToAll)-leftTopOffsetBlueOnCanvas).toInt());
+    // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)-of3).toInt(), ((heightAllSumTiles*scaleToAll)-topOffsetBlue).toInt());
     // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)).toInt(), ((heightAllSumTiles*scaleToAll)).toInt());
     final image2 = await picture1.toImage(7000, 7000);
     // final image2 = await picture1.toImage(4000, 4000);
