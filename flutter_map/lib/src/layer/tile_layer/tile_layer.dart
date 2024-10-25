@@ -559,7 +559,6 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
 
     }
-    ch;
 
     if (_outsideZoomLimits(map.zoom.round())) return const SizedBox.shrink();
 

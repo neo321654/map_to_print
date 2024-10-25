@@ -310,7 +310,7 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final canvas = Canvas(recorder);
 
-    double scaleToAll =3;
+    double scaleToAll =2;
      canvas.scale(scaleToAll);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
@@ -321,22 +321,21 @@ class ScreenSaveState extends State<ScreenSave> {
         minX: minX,
         minY: minY);
 
-     canvas.scale(1);
+    // canvas.scale(1);
     // canvas.
 
     var pP = mapController.camera.project(latLng!);
 
-    globalHeightWidht;
 
-    // var list111 = createRectangleNew(pP, 210, 297);
-    var list111 = createRectangleNew(pP, globalHeightWidht[1], globalHeightWidht[0]);
+    // var listPointsToBlueRectangle = createRectangleNew(pP, 210, 297);
+    var listPointsToBlueRectangle = createRectangleNew(pP, globalHeightWidht[1], globalHeightWidht[0]);
 
-    var p1 = list111[0];
-    var p2 = list111[2];
-
+    var leftTopPointToBlue = listPointsToBlueRectangle[0];
+    var rightBottomPointToBlue = listPointsToBlueRectangle[2];
 
 
-    Paint borderPaint = Paint()
+
+    Paint blueBorderPaint = Paint()
       ..color = Colors.blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14;
@@ -344,13 +343,12 @@ class ScreenSaveState extends State<ScreenSave> {
     //рисую синий прямоугольник
     canvas.drawRect(
       Rect.fromPoints(
-          ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
-          ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble())),
-      borderPaint,
+          ui.Offset((leftTopPointToBlue.x - minX).toDouble(), (leftTopPointToBlue.y - minY).toDouble()),
+          ui.Offset((rightBottomPointToBlue.x - minX).toDouble(), (rightBottomPointToBlue.y - minY).toDouble())),
+      blueBorderPaint,
     );
 
     // canvas.scale(0.7);
-
 
     final picture = recorder.endRecording();
 
@@ -372,20 +370,26 @@ class ScreenSaveState extends State<ScreenSave> {
     //     ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
     //     ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
 
-    var of1 = (p1.x - minX).toDouble();
-    var of2 = (p1.y - minY).toDouble();
-    var of3 = (p2.x - minX).toDouble();
-    var of4 = (p2.y - minY).toDouble();
+    var of1 = ((leftTopPointToBlue.x - minX)*scaleToAll).toDouble();
+    var of2 = ((leftTopPointToBlue.y - minY)*scaleToAll).toDouble();
+    var of3 = ((rightBottomPointToBlue.x - minX)*scaleToAll).toDouble();
+    var of4 = ((rightBottomPointToBlue.y - minY)*scaleToAll).toDouble();
+
+    var of5 = width*scaleToAll-((maxX-rightBottomPointToBlue.x)).toDouble();
+    var of6 = height2*scaleToAll-((maxY-rightBottomPointToBlue.y)).toDouble();
+
 //
-    // canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
-  canvas1.scale(0.7);
+//     canvas1.drawImage(image, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
+  // canvas1.scale(0.7);
     canvas1.drawImage(image, ui.Offset(-of3, -of2), Paint());
 
     final picture1 = recorder1.endRecording();
 
     // final image2 = await picture1.toImage(210, 297);
     // final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
-    final image2 = await picture1.toImage(6000, 6000);
+    // final image2 = await picture1.toImage(((width*scaleToAll)-of3).toInt(), ((height2*scaleToAll)-of2).toInt());
+    final image2 = await picture1.toImage(((width*scaleToAll)-of5).toInt(), ((height2*scaleToAll)-of6).toInt());
+    // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
     await image2.toByteData(format: ui.ImageByteFormat.png);
