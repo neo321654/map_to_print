@@ -57,18 +57,51 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // drawer: const MenuDrawer('/screen_point_to_latlng'),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            isFixed = !isFixed;
-            if (isFixed)
-              latLngFixed =
-                  LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
-            listApex = getNewApex(latLng: latLng, camera: mapController.camera);
-          });
-        },
-        isExtended: true,
-        child: Text(isFixed ? 'Unfix' : 'Fix'),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+        children: [
+          const SizedBox(width: 25),
+          FloatingActionButton(
+            onPressed: () {
+            },
+            child: const Text('100 m'),
+          ),
+          const SizedBox(width: 5),
+
+          FloatingActionButton(
+            onPressed: () {
+            },
+            child: const Text('250 m'),
+          ),
+          const SizedBox(width: 5),
+
+          FloatingActionButton(
+            onPressed: () {
+            },
+            child: const Text('500 m'),
+          ),
+          const SizedBox(width: 5),
+
+          FloatingActionButton(
+            onPressed: () {
+            },
+            child: const Text('1 km'),
+          ),
+          Spacer(),
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                isFixed = !isFixed;
+                if (isFixed)
+                  latLngFixed =
+                      LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
+                listApex = getNewApex(latLng: latLng, camera: mapController.camera);
+              });
+            },
+            child: Text(isFixed ? 'Unfix' : 'Fix'),
+          ),
+        ],
       ),
       appBar: AppBar(
         actions: [
