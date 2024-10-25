@@ -370,34 +370,26 @@ class ScreenSaveState extends State<ScreenSave> {
     final recorder2 = ui.PictureRecorder();
     final canvas2 = Canvas(recorder2);
 
-    // Rect.fromPoints(
-    //     ui.Offset((p1.x - minX).toDouble(), (p1.y - minY).toDouble()),
-    //     ui.Offset((p2.x - minX).toDouble(), (p2.y - minY).toDouble()));
 
-    var of1 = ((rightTopPointToBlue.x - minX) * scaleToAll).toDouble();
     var topOffsetBlue =
         ((rightTopPointToBlue.y - minY) * scaleToAll).toDouble();
     var leftOffsetBlue = ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
-    var of4 = ((leftBottomPointToBlue.y - minY) * scaleToAll).toDouble();
 
-    var of5 = widthAllSumTiles * scaleToAll -
-        ((maxX - leftBottomPointToBlue.x)).toDouble();
-    var of6 = heightAllSumTiles * scaleToAll -
-        ((maxY - leftBottomPointToBlue.y)).toDouble();
 
-//
-//     canvas2.drawImage(imageFirstCanvas, ui.Offset((-(p1.x - minX).toDouble()), -((p1.y - minY).toDouble())), Paint());
-    // canvas2.scale(0.7);
     canvas2.drawImage(
         imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
 
     final picture1 = recorder2.endRecording();
 
-    // final image2 = await picture1.toImage(210, 297);
-    // final image2 = await picture1.toImage(globalHeightWidht[0].toInt(), globalHeightWidht[1].toInt());
-    // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)-of3).toInt(), ((heightAllSumTiles*scaleToAll)-topOffsetBlue).toInt());
-    // final image2 = await picture1.toImage(((widthAllSumTiles*scaleToAll)).toInt(), ((heightAllSumTiles*scaleToAll)).toInt());
-    final image2 = await picture1.toImage(7000, 7000);
+    var bottomOffsetBlue =
+    ((maxY - leftBottomPointToBlue.y) * scaleToAll).toDouble();
+    var rightOffsetBlue =
+    ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
+
+    int finalWidth =  (widthAllSumTiles*scaleToAll-rightOffsetBlue-leftOffsetBlue).toInt();
+    int finalHeight = (heightAllSumTiles*scaleToAll-bottomOffsetBlue-topOffsetBlue).toInt();
+
+   final image2 = await picture1.toImage(finalWidth, finalHeight);
     // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
