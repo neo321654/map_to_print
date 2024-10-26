@@ -236,6 +236,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
    double newZoom = 1;
     switch(meterInCm){
       case 100: newZoom = 16;
+      case 250: newZoom = 14;
+      case 500: newZoom = 13;
+      case 1000: newZoom = 12;
     }
 
     return newZoom;
@@ -261,6 +264,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void setPrintScale(double newMeterInCm) {
     setState(() {
       meterInCm = newMeterInCm;
+      zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+
       listApex = getNewApex(
           latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
     });
