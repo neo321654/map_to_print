@@ -316,10 +316,10 @@ class ScreenSaveState extends State<ScreenSave> {
       // updatePoint(context);
 
       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      latLng = args["center"] ?? LatLng(33, 33);
+      latLng = args["center"] ?? const LatLng(33, 33);
       setState(() {
         isZoomInstalled = true;
-        zoomToPrint=13;
+        zoomToPrint=14;
         Future.delayed(const Duration(milliseconds: 100),(){
           setState(() {
             mapController.move(latLng ?? const LatLng(33, 33), 18);
