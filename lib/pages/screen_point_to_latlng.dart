@@ -261,6 +261,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     });
   }
 
+  //
   void setPrintScale(double newMeterInCm) {
     setState(() {
       meterInCm = newMeterInCm;
