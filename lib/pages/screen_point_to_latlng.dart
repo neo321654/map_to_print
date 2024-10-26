@@ -116,6 +116,14 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         actions: [
           ElevatedButton(
             onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return ScreenSave(
+                  latLng: isFixed ? latLngFixed! : latLng!,
+                  meterInCm: meterInCm,
+                );
+              }));
+
               Navigator.pushNamed(
                 context,
                 ScreenSave.route,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:map_to_print/pages/save_screen.dart';
 import '/pages/animated_map_controller.dart';
 import '/pages/bundled_offline_map.dart';
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
         ManyCirclesPage.route: (context) => const ManyCirclesPage(),
         CirclePage.route: (context) => const CirclePage(),
         OverlayImagePage.route: (context) => const OverlayImagePage(),
-        ScreenSave.route: (context) => const ScreenSave(),
+        ScreenSave.route: (context) => const ScreenSave(meterInCm: 100,latLng: LatLng(55.5, 55.5),),
         PolygonPerfStressPage.route: (context) => const PolygonPerfStressPage(),
         SlidingMapPage.route: (_) => const SlidingMapPage(),
         WMSLayerPage.route: (context) => const WMSLayerPage(),

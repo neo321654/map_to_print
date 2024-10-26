@@ -23,7 +23,14 @@ import 'package:url_launcher/url_launcher.dart';
 class ScreenSave extends StatefulWidget {
   static const String route = '/ScreenSave';
 
-  const ScreenSave({super.key});
+  final LatLng latLng;
+  final double meterInCm;
+
+  const ScreenSave({
+    super.key,
+    required this.latLng,
+    required this.meterInCm,
+  });
 
   @override
   ScreenSaveState createState() => ScreenSaveState();
@@ -276,11 +283,12 @@ class ScreenSaveState extends State<ScreenSave> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       latLng = args["center"] ?? const LatLng(33, 33);
+
       double meterInCm = args["meterInCm"] ?? 100;
 
       setState(() {
         isZoomInstalled = true;
-
+//todo нужно передать настройки через контсруктор
         zoomToPrint = 16;
         Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
@@ -305,20 +313,20 @@ class ScreenSaveState extends State<ScreenSave> {
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
         children: [
-            FlutterMap(
-              // key: UniqueKey(),
-              mapController: mapController,
-              options: MapOptions(
-                  // onPositionChanged: (_, __) => updatePoint(context),
-                  // initialCenter: const LatLng(55.386, 39.030),
-                  initialCenter: const LatLng(55.386, 39.030),
-                  initialZoom: zoomToPrint,
-                  minZoom: zoomToPrint,
-                  maxZoom: zoomToPrint),
-              children: [
-                openStreetMapTileLayerSave,
-              ],
-            ),
+          FlutterMap(
+            // key: UniqueKey(),
+            mapController: mapController,
+            options: MapOptions(
+                // onPositionChanged: (_, __) => updatePoint(context),
+                // initialCenter: const LatLng(55.386, 39.030),
+                initialCenter: const LatLng(55.386, 39.030),
+                initialZoom: zoomToPrint,
+                minZoom: zoomToPrint,
+                maxZoom: zoomToPrint),
+            children: [
+              openStreetMapTileLayerSave,
+            ],
+          ),
           Container(
             color: Colors.blueAccent.withOpacity(0.3),
           ),
