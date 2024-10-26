@@ -41,7 +41,7 @@ class ScreenSaveState extends State<ScreenSave> {
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
-  bool isFixedCurcularProgress = false;
+  bool isCircularProgress = true;
   LatLng? latLngFixed;
   final mapController = MapController();
   LatLng? latLng;
@@ -190,6 +190,10 @@ class ScreenSaveState extends State<ScreenSave> {
     // await imageFirstCanvas.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
+    setState(() {
+      isCircularProgress = false;
+    });
+
     await saveAndShowSnack(pngBytes, context);
   }
 
@@ -308,6 +312,10 @@ class ScreenSaveState extends State<ScreenSave> {
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
+        actions: [if(isCircularProgress) Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: const CircularProgressIndicator(),
+        )],
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
