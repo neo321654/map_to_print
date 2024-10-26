@@ -303,9 +303,10 @@ class ScreenSaveState extends State<ScreenSave> {
   }
 
   List<LatLng> listApex = [];
-  double my_zoom = 16;
+  double zoomToPrint = 16;
   List<String> listImagesString = [];
   final ScrollController _scrollController = ScrollController();
+  bool isZoomInstalled = false;
 
   @override
   void initState() {
@@ -316,10 +317,22 @@ class ScreenSaveState extends State<ScreenSave> {
 
       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       latLng = args["center"] ?? LatLng(33, 33);
-      mapController.move(latLng ?? LatLng(33, 33), 18);
-      setState(() {});
+      setState(() {
+        isZoomInstalled = true;
+        zoomToPrint=13;
+        Future.delayed(const Duration(milliseconds: 100),(){
+          setState(() {
+            mapController.move(latLng ?? const LatLng(33, 33), 18);
+
+          });
+
+        });
+
+      });
 
       Future.delayed(const Duration(milliseconds: 1000), () {
+
+
         _captureAndSave();
       });
     });
@@ -335,15 +348,17 @@ class ScreenSaveState extends State<ScreenSave> {
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
         children: [
+          if(isZoomInstalled)
           FlutterMap(
+            key: UniqueKey(),
             mapController: mapController,
             options: MapOptions(
                 // onPositionChanged: (_, __) => updatePoint(context),
                 // initialCenter: const LatLng(55.386, 39.030),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: my_zoom,
-                minZoom: my_zoom,
-                maxZoom: my_zoom),
+                initialZoom: zoomToPrint,
+                minZoom: zoomToPrint,
+                maxZoom: zoomToPrint),
             children: [
               openStreetMapTileLayerSave,
             ],

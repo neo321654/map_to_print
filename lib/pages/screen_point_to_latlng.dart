@@ -18,8 +18,6 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
-
 class ScreenPointToLatLngPage extends StatefulWidget {
   static const String route = '/screen_point_to_latlng';
 
@@ -33,10 +31,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
-  bool isFixedCircularProgress = false;
-
   LatLng? latLngFixed;
-
   final mapController = MapController();
 
   LatLng? latLng;
@@ -58,45 +53,45 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       // drawer: const MenuDrawer('/screen_point_to_latlng'),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
         children: [
           const SizedBox(width: 25),
           FloatingActionButton(
+            heroTag: '100',
             onPressed: () {
               setPrintScale(100);
             },
             child: const Text('100 m'),
           ),
           const SizedBox(width: 5),
-
           FloatingActionButton(
-            onPressed: () {
-            },
+            heroTag: '250',
+            onPressed: () {},
             child: const Text('250 m'),
           ),
           const SizedBox(width: 5),
-
           FloatingActionButton(
-            onPressed: () {
-            },
+            heroTag: '500',
+            onPressed: () {},
             child: const Text('500 m'),
           ),
           const SizedBox(width: 5),
-
           FloatingActionButton(
-            onPressed: () {
-            },
+            heroTag: '1000',
+            onPressed: () {},
             child: const Text('1 km'),
           ),
-          Spacer(),
+          const Spacer(),
           FloatingActionButton(
+            heroTag: 'fix',
             onPressed: () {
               setState(() {
                 isFixed = !isFixed;
-                if (isFixed)
+                if (isFixed) {
                   latLngFixed =
                       LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
-                listApex = getNewApex(latLng: latLng, camera: mapController.camera);
+                }
+                listApex =
+                    getNewApex(latLng: latLng, camera: mapController.camera);
               });
             },
             child: Text(isFixed ? 'Unfix' : 'Fix'),
@@ -111,12 +106,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 context,
                 ScreenSave.route,
                 arguments: <String, dynamic>{
-                  'center': isFixed?latLngFixed:latLng,
+                  'center': isFixed ? latLngFixed : latLng,
                   'country': 'Germany',
                 },
               );
             },
-            child: Icon(Icons.save),
+            child: const Icon(Icons.save),
           ),
         ],
         title: const Text('Map to print'),
@@ -130,7 +125,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 14,
+                initialZoom: 13,
                 minZoom: 1,
                 maxZoom: 18),
             children: [
@@ -224,10 +219,5 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     });
   }
 
-
-  void setPrintScale(int i) {
-
-  }
+  void setPrintScale(int i) {}
 }
-
-
