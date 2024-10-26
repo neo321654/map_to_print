@@ -312,9 +312,9 @@ class ScreenSaveState extends State<ScreenSave> {
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
-        actions: [if(isCircularProgress) Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: const CircularProgressIndicator(),
+        actions: [if(isCircularProgress) const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: CircularProgressIndicator(),
         )],
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
