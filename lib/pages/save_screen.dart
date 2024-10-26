@@ -277,6 +277,8 @@ class ScreenSaveState extends State<ScreenSave> {
   void initState() {
     super.initState();
 
+    latLng = widget.latLng;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       // latLng = args["center"] ?? const LatLng(33, 33);

@@ -103,6 +103,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   latLngFixed =
                       LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
                 }
+                zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+
                 listApex = getNewApex(
                     latLng: latLng,
                     camera: mapController.camera,
@@ -231,8 +233,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     });
   }
   double getZoomToPrint({required double meterInCm}){
+   double newZoom = 1;
+    switch(meterInCm){
+      case 100: newZoom = 16;
+    }
 
-    return 12;
+    return newZoom;
   }
 
   double _getPointX(BuildContext context) =>
@@ -244,6 +250,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     Future.delayed(const Duration(seconds: 0), () {
       setState(() {
+        zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+
         listApex = getNewApex(
             latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
       });
