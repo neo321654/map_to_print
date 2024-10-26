@@ -68,7 +68,6 @@ class ScreenSaveState extends State<ScreenSave> {
       setState(() {});
     }
 
-    List<ui.Image> list = <ui.Image>[];
     var listTiles = <Tile>[];
 
     double height = 256;
@@ -237,7 +236,7 @@ class ScreenSaveState extends State<ScreenSave> {
           Paint(),
         );
         setState(() {
-          addStringToList(tile);
+          addStringToList(tile,true);
         });
         print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
@@ -266,10 +265,11 @@ class ScreenSaveState extends State<ScreenSave> {
   }
 
 //start different resolutions
-  void addStringToList(Tile tile) {
+  void addStringToList(Tile tile,[bool fromCash = false]) {
     String coordinates = tile.positionCoordinates.toString();
 
-    listImagesString.add('$coordinates');
+    final String str ='$coordinates ${(fromCash)? 'from cash!':''}';
+    listImagesString.add(str);
     Future.delayed(Duration(milliseconds: 100), () {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
