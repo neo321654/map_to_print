@@ -38,6 +38,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
   List<LatLng> listApex = [];
 
+  double meterInCm = 100;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +58,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         children: [
           const SizedBox(width: 25),
           FloatingActionButton(
+            backgroundColor: (meterInCm == 100) ? Colors.greenAccent : null,
             heroTag: '100',
             onPressed: () {
               setPrintScale(100);
@@ -64,20 +67,29 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
           ),
           const SizedBox(width: 5),
           FloatingActionButton(
+            backgroundColor: (meterInCm == 250) ? Colors.greenAccent : null,
             heroTag: '250',
-            onPressed: () {},
+            onPressed: () {
+              setPrintScale(250);
+            },
             child: const Text('250 m'),
           ),
           const SizedBox(width: 5),
           FloatingActionButton(
+            backgroundColor: (meterInCm == 500) ? Colors.greenAccent : null,
             heroTag: '500',
-            onPressed: () {},
+            onPressed: () {
+              setPrintScale(500);
+            },
             child: const Text('500 m'),
           ),
           const SizedBox(width: 5),
           FloatingActionButton(
+            backgroundColor: (meterInCm == 1000) ? Colors.greenAccent : null,
             heroTag: '1000',
-            onPressed: () {},
+            onPressed: () {
+              setPrintScale(1000);
+            },
             child: const Text('1 km'),
           ),
           const Spacer(),
@@ -90,8 +102,10 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   latLngFixed =
                       LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
                 }
-                listApex =
-                    getNewApex(latLng: latLng, camera: mapController.camera);
+                listApex = getNewApex(
+                    latLng: latLng,
+                    camera: mapController.camera,
+                    meterInCm: meterInCm);
               });
             },
             child: Text(isFixed ? 'Unfix' : 'Fix'),
@@ -200,7 +214,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     setState(() {
       latLng = mapController.camera.pointToLatLng(p);
       if (!isFixed) {
-        listApex = getNewApex(latLng: latLng, camera: mapController.camera);
+        listApex = getNewApex(
+            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
       }
     });
   }
@@ -214,10 +229,17 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     Future.delayed(const Duration(seconds: 0), () {
       setState(() {
-        listApex = getNewApex(latLng: latLng, camera: mapController.camera);
+        listApex = getNewApex(
+            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
       });
     });
   }
 
-  void setPrintScale(int i) {}
+  void setPrintScale(double newMeterInCm) {
+    setState(() {
+      meterInCm = newMeterInCm;
+      listApex = getNewApex(
+          latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
+    });
+  }
 }

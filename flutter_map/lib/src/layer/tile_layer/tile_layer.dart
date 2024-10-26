@@ -543,6 +543,8 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       Point p3 = map.project(globalListApex[2]);
       Point p4 = map.project(globalListApex[3]);
 
+      // map.zoom
+
       double width = distanceBetweenPoints(p2, p3);
 
 

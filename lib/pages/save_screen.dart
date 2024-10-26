@@ -313,7 +313,6 @@ class ScreenSaveState extends State<ScreenSave> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // updatePoint(context);
 
       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       latLng = args["center"] ?? const LatLng(33, 33);
@@ -387,54 +386,16 @@ class ScreenSaveState extends State<ScreenSave> {
                 ),
               ))
 
-          // Positioned(
-          //   top: pointY - pointSize / 2,
-          //   left: _getPointX(context) - pointSize / 2,
-          //   child: const IgnorePointer(
-          //     child: Icon(
-          //       Icons.center_focus_strong_outlined,
-          //       size: pointSize,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          // ),
-          // // project
-          // Positioned(
-          //   top: pointY + pointSize / 2 + 6,
-          //   left: 0,
-          //   right: 0,
-          //   child: IgnorePointer(
-          //     child: Text(
-          //       '(${latLng?.latitude.toStringAsFixed(3)},${latLng?.longitude.toStringAsFixed(3)})',
-          //       textAlign: TextAlign.center,
-          //       style: const TextStyle(
-          //         color: Colors.black,
-          //         fontWeight: FontWeight.bold,
-          //         fontSize: 16,
-          //       ),
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );
   }
 
-  double _getPointX(BuildContext context) =>
-      MediaQuery.sizeOf(context).width / 2;
+
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Future.delayed(Duration(seconds: 0), () {
-      // var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
-
-      // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
-
-      for (var apex in listApex) {
-        print(mapController.camera.project(apex));
-      }
-    });
   }
 }
