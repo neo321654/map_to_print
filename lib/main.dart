@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
         ManyCirclesPage.route: (context) => const ManyCirclesPage(),
         CirclePage.route: (context) => const CirclePage(),
         OverlayImagePage.route: (context) => const OverlayImagePage(),
-        ScreenSave.route: (context) => const ScreenSave(meterInCm: 100,latLng: LatLng(55.5, 55.5),),
+        ScreenSave.route: (context) => const ScreenSave(zoomToPrint: 1,latLng: LatLng(55.5, 55.5),),
         PolygonPerfStressPage.route: (context) => const PolygonPerfStressPage(),
         SlidingMapPage.route: (_) => const SlidingMapPage(),
         WMSLayerPage.route: (context) => const WMSLayerPage(),

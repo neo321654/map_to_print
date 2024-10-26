@@ -24,12 +24,12 @@ class ScreenSave extends StatefulWidget {
   static const String route = '/ScreenSave';
 
   final LatLng latLng;
-  final double meterInCm;
+  final double zoomToPrint;
 
   const ScreenSave({
     super.key,
     required this.latLng,
-    required this.meterInCm,
+    required this.zoomToPrint,
   });
 
   @override
@@ -37,18 +37,19 @@ class ScreenSave extends StatefulWidget {
 }
 
 class ScreenSaveState extends State<ScreenSave> {
+
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
   bool isFixedCurcularProgress = false;
-
   LatLng? latLngFixed;
-
   final mapController = MapController();
-
   LatLng? latLng;
+  List<String> listImagesString = [];
+  final ScrollController _scrollController = ScrollController();
+  bool isZoomInstalled = false;
 
-  Map<String, dynamic> args = {};
+
 
   Future<void> _captureAndSave() async {
     //todo refactor
@@ -270,29 +271,25 @@ class ScreenSaveState extends State<ScreenSave> {
     });
   }
 
-  List<LatLng> listApex = [];
-  double zoomToPrint = 16;
-  List<String> listImagesString = [];
-  final ScrollController _scrollController = ScrollController();
-  bool isZoomInstalled = false;
+
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      latLng = args["center"] ?? const LatLng(33, 33);
+      // args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      // latLng = args["center"] ?? const LatLng(33, 33);
 
-      double meterInCm = args["meterInCm"] ?? 100;
+      // double meterInCm = args["meterInCm"] ?? 100;
 
       setState(() {
         isZoomInstalled = true;
 //todo нужно передать настройки через контсруктор
-        zoomToPrint = 16;
+//         zoomToPrint = 16;
         Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
-            mapController.move(latLng ?? const LatLng(33, 33), 18);
+            mapController.move(widget.latLng,widget.zoomToPrint);
           });
         });
       });
@@ -320,9 +317,9 @@ class ScreenSaveState extends State<ScreenSave> {
                 // onPositionChanged: (_, __) => updatePoint(context),
                 // initialCenter: const LatLng(55.386, 39.030),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: zoomToPrint,
-                minZoom: zoomToPrint,
-                maxZoom: zoomToPrint),
+                initialZoom: widget.zoomToPrint,
+                minZoom: widget.zoomToPrint,
+                maxZoom: widget.zoomToPrint),
             children: [
               openStreetMapTileLayerSave,
             ],

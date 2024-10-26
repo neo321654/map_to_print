@@ -33,6 +33,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   bool isFixed = false;
   LatLng? latLngFixed;
   final mapController = MapController();
+  double zoomToPrint = 12;
 
   LatLng? latLng;
 
@@ -120,19 +121,19 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   MaterialPageRoute(builder: (BuildContext context) {
                 return ScreenSave(
                   latLng: isFixed ? latLngFixed! : latLng!,
-                  meterInCm: meterInCm,
+                  zoomToPrint: zoomToPrint,
                 );
               }));
 
-              Navigator.pushNamed(
-                context,
-                ScreenSave.route,
-                arguments: <String, dynamic>{
-                  'center': isFixed ? latLngFixed : latLng,
-                  'meterInCm': meterInCm,
-                  'country': 'Germany',
-                },
-              );
+              // Navigator.pushNamed(
+              //   context,
+              //   ScreenSave.route,
+              //   arguments: <String, dynamic>{
+              //     'center': isFixed ? latLngFixed : latLng,
+              //     'meterInCm': meterInCm,
+              //     'country': 'Germany',
+              //   },
+              // );
             },
             child: const Icon(Icons.save),
           ),
@@ -223,10 +224,15 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     setState(() {
       latLng = mapController.camera.pointToLatLng(p);
       if (!isFixed) {
+        zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
         listApex = getNewApex(
             latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
       }
     });
+  }
+  double getZoomToPrint({required double meterInCm}){
+
+    return 12;
   }
 
   double _getPointX(BuildContext context) =>
