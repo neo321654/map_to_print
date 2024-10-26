@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
 
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_to_print/pages/screen_point_to_latlng.dart';
@@ -108,3 +111,30 @@ List<LatLng> getNewApex({
   return listApex;
 }
 //todo удалить потом
+
+
+
+Future<ui.Image> loadImage(ImageProvider imageProvider) async {
+  final Completer<ui.Image> completer = Completer();
+
+  final ImageStream stream = imageProvider.resolve(const ImageConfiguration());
+
+  // stream.setCompleter(completer);completer
+  final listener = ImageStreamListener((ImageInfo imageInfo,
+      bool synchronousCall) {
+    completer.complete(imageInfo.image);
+  }, onError: (dynamic error, StackTrace? stackTrace) {
+    completer.completeError(error);
+  });
+
+  stream.addListener(listener);
+
+  // Удаляем слушателя после завершения
+  completer.future.then((image) {
+
+    stream.removeListener(listener);
+
+  });
+
+  return completer.future;
+}
