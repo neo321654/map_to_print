@@ -121,6 +121,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 ScreenSave.route,
                 arguments: <String, dynamic>{
                   'center': isFixed ? latLngFixed : latLng,
+                  'meterInCm': meterInCm,
                   'country': 'Germany',
                 },
               );
@@ -139,7 +140,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 13,
+                initialZoom: 14,
                 minZoom: 1,
                 maxZoom: 18),
             children: [

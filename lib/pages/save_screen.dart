@@ -182,7 +182,7 @@ class ScreenSaveState extends State<ScreenSave> {
     // await imageFirstCanvas.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    await saveAndShowSnack(pngBytes);
+    await saveAndShowSnack(pngBytes, context);
   }
 
   Future<void> drawTilesOnCanvas(
@@ -252,54 +252,15 @@ class ScreenSaveState extends State<ScreenSave> {
       );
     }
   }
+
 //start different resolutions
   void addStringToList(Tile tile) {
-    String coordinates =     tile.positionCoordinates.toString();
-
+    String coordinates = tile.positionCoordinates.toString();
 
     listImagesString.add('$coordinates');
     Future.delayed(Duration(milliseconds: 100), () {
-      _scrollController
-          .jumpTo(_scrollController.position.maxScrollExtent);
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
-  }
-
-  Future<void> saveAndShowSnack(Uint8List pngBytes) async {
-    // Получение пути для сохранения
-    final directory = await getApplicationDocumentsDirectory();
-    final imagePath = File('${directory.path}/canvas_image.png');
-    await imagePath.writeAsBytes(pngBytes);
-
-    // Сохранение в галерею
-    final result = await ImageGallerySaver.saveFile(imagePath.path);
-    print('Image saved to gallery: $result');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: EdgeInsets.all(20),
-        content: Text('Изображение успешно сохранено!'),
-        duration: Duration(seconds: 15),
-        showCloseIcon: true,
-        behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: 'Открыть',
-          onPressed: () async {
-            Future<void> requestStoragePermission() async {
-              var status = await Permission.manageExternalStorage.status;
-              if (!status.isGranted) {
-                await Permission.manageExternalStorage.request();
-              }
-            }
-
-            requestStoragePermission();
-
-            if (true) {
-              launchUrl(Uri.parse(result["filePath"]));
-            }
-          },
-        ),
-      ),
-    );
   }
 
   List<LatLng> listApex = [];
@@ -313,25 +274,22 @@ class ScreenSaveState extends State<ScreenSave> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       latLng = args["center"] ?? const LatLng(33, 33);
+      double meterInCm = args["meterInCm"] ?? 100;
+
       setState(() {
         isZoomInstalled = true;
-        zoomToPrint=14;
-        Future.delayed(const Duration(milliseconds: 100),(){
+
+        zoomToPrint = 16;
+        Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
             mapController.move(latLng ?? const LatLng(33, 33), 18);
-
           });
-
         });
-
       });
 
       Future.delayed(const Duration(milliseconds: 1000), () {
-
-
         _captureAndSave();
       });
     });
@@ -347,21 +305,21 @@ class ScreenSaveState extends State<ScreenSave> {
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
         children: [
-          if(isZoomInstalled)
-          FlutterMap(
-            key: UniqueKey(),
-            mapController: mapController,
-            options: MapOptions(
-                // onPositionChanged: (_, __) => updatePoint(context),
-                // initialCenter: const LatLng(55.386, 39.030),
-                initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: zoomToPrint,
-                minZoom: zoomToPrint,
-                maxZoom: zoomToPrint),
-            children: [
-              openStreetMapTileLayerSave,
-            ],
-          ),
+          if (isZoomInstalled)
+            FlutterMap(
+              key: UniqueKey(),
+              mapController: mapController,
+              options: MapOptions(
+                  // onPositionChanged: (_, __) => updatePoint(context),
+                  // initialCenter: const LatLng(55.386, 39.030),
+                  initialCenter: const LatLng(55.386, 39.030),
+                  initialZoom: zoomToPrint,
+                  minZoom: zoomToPrint,
+                  maxZoom: zoomToPrint),
+              children: [
+                openStreetMapTileLayerSave,
+              ],
+            ),
           Container(
             color: Colors.blueAccent.withOpacity(0.3),
           ),
@@ -372,7 +330,7 @@ class ScreenSaveState extends State<ScreenSave> {
                 child: Column(
                   children: listImagesString.map((imgStr) {
                     return Container(
-                      margin: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(4),
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
                           horizontal: 20,
@@ -385,17 +343,13 @@ class ScreenSaveState extends State<ScreenSave> {
                   }).toList(),
                 ),
               ))
-
         ],
       ),
     );
   }
 
-
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
   }
 }

@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_to_print/pages/screen_point_to_latlng.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 LatLng getCenterPoint(List<LatLng> points) {
   // Проверяем, что список содержит ровно 4 координаты
@@ -137,4 +143,42 @@ Future<ui.Image> loadImage(ImageProvider imageProvider) async {
   });
 
   return completer.future;
+}
+
+Future<void> saveAndShowSnack(Uint8List pngBytes, BuildContext context) async {
+  // Получение пути для сохранения
+  final directory = await getApplicationDocumentsDirectory();
+  final imagePath = File('${directory.path}/canvas_image.png');
+  await imagePath.writeAsBytes(pngBytes);
+
+  // Сохранение в галерею
+  final result = await ImageGallerySaver.saveFile(imagePath.path);
+  print('Image saved to gallery: $result');
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      padding: EdgeInsets.all(20),
+      content: Text('Изображение успешно сохранено!'),
+      duration: Duration(seconds: 15),
+      showCloseIcon: true,
+      behavior: SnackBarBehavior.floating,
+      action: SnackBarAction(
+        label: 'Открыть',
+        onPressed: () async {
+          Future<void> requestStoragePermission() async {
+            var status = await Permission.manageExternalStorage.status;
+            if (!status.isGranted) {
+              await Permission.manageExternalStorage.request();
+            }
+          }
+
+          requestStoragePermission();
+
+          if (true) {
+            launchUrl(Uri.parse(result["filePath"]));
+          }
+        },
+      ),
+    ),
+  );
 }
