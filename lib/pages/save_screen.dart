@@ -37,7 +37,6 @@ class ScreenSave extends StatefulWidget {
 }
 
 class ScreenSaveState extends State<ScreenSave> {
-
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
@@ -48,8 +47,6 @@ class ScreenSaveState extends State<ScreenSave> {
   List<String> listImagesString = [];
   final ScrollController _scrollController = ScrollController();
   bool isZoomInstalled = false;
-
-
 
   Future<void> _captureAndSave() async {
     //todo refactor
@@ -132,12 +129,21 @@ class ScreenSaveState extends State<ScreenSave> {
       ..strokeWidth = 14;
 
     //рисую синий прямоугольник
+
+
+    ui.Offset rightPoint = Offset((rightTopPointToBlue.x - minX).toDouble(),
+        (rightTopPointToBlue.y - minY).toDouble());
+
+    ui.Offset leftOffset = ui.Offset(
+        (leftBottomPointToBlue.x).toDouble(),
+        (leftBottomPointToBlue.y).toDouble());
+
+    canvas.drawCircle(rightPoint, 16, blueBorderPaint);
+    canvas.drawCircle(leftOffset, 16, blueBorderPaint);
+
+
     canvas.drawRect(
-      Rect.fromPoints(
-          ui.Offset((rightTopPointToBlue.x - minX).toDouble(),
-              (rightTopPointToBlue.y - minY).toDouble()),
-          ui.Offset((leftBottomPointToBlue.x - minX).toDouble(),
-              (leftBottomPointToBlue.y - minY).toDouble())),
+      Rect.fromPoints(rightPoint, leftOffset),
       blueBorderPaint,
     );
 
@@ -181,7 +187,9 @@ class ScreenSaveState extends State<ScreenSave> {
         (heightAllSumTiles * scaleToAll - bottomOffsetBlue - topOffsetBlue)
             .toInt();
 
-    final image2 = await picture1.toImage(finalWidth, finalHeight);
+    // final image2 = await picture1.toImage(finalWidth, finalHeight);
+    final image2 = await picture1.toImage(((maxX - minX) * scaleToAll).toInt(),
+        ((maxY - minY) * scaleToAll).toInt());
     // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
@@ -236,7 +244,7 @@ class ScreenSaveState extends State<ScreenSave> {
           Paint(),
         );
         setState(() {
-          addStringToList(tile,true);
+          addStringToList(tile, true);
         });
         print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
@@ -265,17 +273,15 @@ class ScreenSaveState extends State<ScreenSave> {
   }
 
 //start different resolutions
-  void addStringToList(Tile tile,[bool fromCash = false]) {
+  void addStringToList(Tile tile, [bool fromCash = false]) {
     String coordinates = tile.positionCoordinates.toString();
 
-    final String str ='$coordinates ${(fromCash)? 'from cash!':''}';
+    final String str = '$coordinates ${(fromCash) ? 'from cash!' : ''}';
     listImagesString.add(str);
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
-
-
 
   @override
   void initState() {
@@ -295,7 +301,7 @@ class ScreenSaveState extends State<ScreenSave> {
 //         zoomToPrint = 16;
         Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
-            mapController.move(widget.latLng,widget.zoomToPrint);
+            mapController.move(widget.latLng, widget.zoomToPrint);
           });
         });
       });
@@ -312,10 +318,13 @@ class ScreenSaveState extends State<ScreenSave> {
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
-        actions: [if(isCircularProgress) const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: CircularProgressIndicator(),
-        )],
+        actions: [
+          if (isCircularProgress)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            )
+        ],
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
