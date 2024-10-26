@@ -305,9 +305,8 @@ class ScreenSaveState extends State<ScreenSave> {
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
         children: [
-          if (isZoomInstalled)
             FlutterMap(
-              key: UniqueKey(),
+              // key: UniqueKey(),
               mapController: mapController,
               options: MapOptions(
                   // onPositionChanged: (_, __) => updatePoint(context),
