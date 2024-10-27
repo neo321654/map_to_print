@@ -196,12 +196,16 @@ class ScreenSaveState extends State<ScreenSave> {
     var leftOffsetBlue2 =
     ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
 
+    var topOffsetBlue2 =
+    ((maxY-leftBottomPointToBlue.y) * scaleToAll).toDouble();
+
     int finalWidth =((maxX - minX-leftOffsetBlue-leftOffsetBlue2) * scaleToAll).toInt();
 
 
 
 
-    int finalHeight =((maxY - minY) * scaleToAll).toInt();
+    int finalHeight =((maxY - minY -topOffsetBlue-topOffsetBlue2) * scaleToAll).toInt();
+
 
     // final image2 = await picture1.toImage(finalWidth, finalHeight);
     final image2 = await picture1.toImage(finalWidth,
