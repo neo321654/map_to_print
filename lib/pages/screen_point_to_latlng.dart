@@ -179,8 +179,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
                 TweenAnimationBuilder<List<LatLng>>(
+                  curve: Curves.easeInOutBack,
                     tween:ListTween<LatLng>(begin: oldListApex, end: listApex),
-                    duration: const Duration(seconds: 1),
+                    duration: const Duration(milliseconds: 300),
                     builder: (context, value, child) {
                     return PolygonLayer(
                       // hitNotifier: _hitNotifier,
