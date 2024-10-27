@@ -136,11 +136,13 @@ class ScreenSaveState extends State<ScreenSave> {
         (rightTopPointToBlue.y - minY).toDouble());
 
     ui.Offset leftOffset = ui.Offset(
-        (leftBottomPointToBlue.x).toDouble(),
+        (leftBottomPointToBlue.x- minX).toDouble(),
         (leftBottomPointToBlue.y).toDouble());
 
-    canvas.drawCircle(rightPoint, 16, blueBorderPaint);
-    canvas.drawCircle(leftOffset, 16, blueBorderPaint);
+    canvas.drawCircle(rightPoint, 16, Paint()
+      ..color = Colors.red);
+    canvas.drawCircle(leftOffset, 16, Paint()
+      ..color = Colors.green);
 
 
     canvas.drawRect(
@@ -171,8 +173,10 @@ class ScreenSaveState extends State<ScreenSave> {
     var leftOffsetBlue =
         ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
 
+    // canvas2.drawImage(
+    //     imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
     canvas2.drawImage(
-        imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
+        imageFirstCanvas, const ui.Offset(0,0), Paint());
 
     final picture1 = recorder2.endRecording();
 
@@ -237,7 +241,7 @@ class ScreenSaveState extends State<ScreenSave> {
             Paint(),
           );
         }catch (e){
-          showSnack(text: 'Произошла ошибка загрузки тайла',  context: context);
+          showSnack(text: 'Произошла ошибка загрузки тайла',  context: context,onPressed: (){});
         }
       } else {
         img = tile.tileImage.imageInfo!.image;

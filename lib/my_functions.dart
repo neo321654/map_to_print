@@ -83,6 +83,7 @@ List<LatLng> calculateApexFromCenter({
 }) {
   const dst = Distance();
 
+
   List<LatLng> listLatLng = [];
 
   if (landscape) {
@@ -90,6 +91,8 @@ List<LatLng> calculateApexFromCenter({
     width = height;
     height = temp;
   }
+
+
 
   LatLng tempLL = dst.offset(latLng, height * meterInCm / 2, 0);
   LatLng tempLL1 = dst.offset(tempLL, width * meterInCm / 2, 270);
@@ -212,7 +215,7 @@ Future<void> saveAndShowSnack(Uint8List pngBytes, BuildContext context) async {
 void showSnack({
   required BuildContext context,
   required String text,
-  onPressed,
+  required onPressed,
   duration = const Duration(seconds: 1),
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
