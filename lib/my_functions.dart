@@ -113,11 +113,12 @@ List<LatLng> getNewApex({
   double width = 21.0,
   double height = 29.7,
   double meterInCm = 100,
+  bool landscape = true,
 }) {
   List<LatLng> listApex = [];
   if (latLng != null) {
     listApex = calculateApexFromCenter(
-        latLng: latLng, width: width, height: height, meterInCm: meterInCm);
+        latLng: latLng, width: width, height: height, meterInCm: meterInCm,landscape: landscape);
 //todo удалить потом
 
     globalListApex = listApex;

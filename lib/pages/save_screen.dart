@@ -202,7 +202,7 @@ class ScreenSaveState extends State<ScreenSave> {
     int finalWidth =((maxX - minX-leftOffsetBlue-leftOffsetBlue2) * scaleToAll).toInt();
 
 
-
+//
 
     int finalHeight =((maxY - minY -topOffsetBlue-topOffsetBlue2) * scaleToAll).toInt();
 
