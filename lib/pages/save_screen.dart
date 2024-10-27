@@ -131,7 +131,6 @@ class ScreenSaveState extends State<ScreenSave> {
 
     //рисую синий прямоугольник
 
-
     // ui.Offset rightPoint = Offset((rightTopPointToBlue.x - minX).toDouble(),
     //     (rightTopPointToBlue.y - minY).toDouble());
 
@@ -139,24 +138,21 @@ class ScreenSaveState extends State<ScreenSave> {
     //     (leftBottomPointToBlue.x- minX).toDouble(),
     //     (leftBottomPointToBlue.y).toDouble());
 
-    ui.Offset rightPoint = mapController.camera.project(globalListApex[0]).toOffset().translate(-minX, -minY);
-    ui.Offset leftOffset = mapController.camera.project(globalListApex[2]).toOffset().translate(-minX, -minY);
-
-
-
-
-
-
-
+    ui.Offset rightPoint = mapController.camera
+        .project(globalListApex[0])
+        .toOffset()
+        .translate(-minX, -minY);
+    ui.Offset leftOffset = mapController.camera
+        .project(globalListApex[2])
+        .toOffset()
+        .translate(-minX, -minY);
 
     canvas.drawRect(
       Rect.fromPoints(rightPoint, leftOffset),
       blueBorderPaint,
     );
-    canvas.drawCircle(rightPoint, 4, Paint()
-      ..color = Colors.red);
-    canvas.drawCircle(leftOffset, 4, Paint()
-      ..color = Colors.green);
+    canvas.drawCircle(rightPoint, 4, Paint()..color = Colors.red);
+    canvas.drawCircle(leftOffset, 4, Paint()..color = Colors.green);
 
     // canvas.scale(0.7);
 
@@ -183,8 +179,7 @@ class ScreenSaveState extends State<ScreenSave> {
 
     // canvas2.drawImage(
     //     imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
-    canvas2.drawImage(
-        imageFirstCanvas, const ui.Offset(0,0), Paint());
+    canvas2.drawImage(imageFirstCanvas, const ui.Offset(0, 0), Paint());
 
     final picture1 = recorder2.endRecording();
 
@@ -233,14 +228,14 @@ class ScreenSaveState extends State<ScreenSave> {
         //     .addListener(ImageStreamListener((imageInfo, b) {
         //
         // }));
-        try{
+        try {
           img = await loadImage(tile.tileImage.imageProvider);
           setState(() {
             addStringToList(tile);
           });
           if (kDebugMode) {
             print(
-              'load image height:${img.height} ${tile.tileImage.imageProvider} ');
+                'load image height:${img.height} ${tile.tileImage.imageProvider} ');
           }
           canvas.drawImage(
             img,
@@ -248,8 +243,11 @@ class ScreenSaveState extends State<ScreenSave> {
                 tile.positionCoordinates.y * height - minY),
             Paint(),
           );
-        }catch (e){
-          showSnack(text: 'Произошла ошибка загрузки тайла',  context: context,onPressed: (){});
+        } catch (e) {
+          showSnack(
+              text: 'Произошла ошибка загрузки тайла',
+              context: context,
+              onPressed: () {});
         }
       } else {
         img = tile.tileImage.imageInfo!.image;
@@ -336,6 +334,17 @@ class ScreenSaveState extends State<ScreenSave> {
         title: const Text('Saving Screen'),
         centerTitle: true,
         actions: [
+          IconButton(onPressed: () {
+
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return ScreenSave(
+                    latLng: widget.latLng,
+                    zoomToPrint: widget.zoomToPrint,
+                  );
+                }));
+
+          }, icon: const Icon(Icons.refresh),),
           if (isCircularProgress)
             const Padding(
               padding: EdgeInsets.all(8.0),
@@ -369,7 +378,6 @@ class ScreenSaveState extends State<ScreenSave> {
               child: Center(
                 child: Column(
                   children: listImagesString.asMap().entries.map((entry) {
-
                     return Container(
                         margin: const EdgeInsets.all(4),
                         padding: const EdgeInsets.symmetric(
