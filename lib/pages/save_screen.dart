@@ -177,9 +177,11 @@ class ScreenSaveState extends State<ScreenSave> {
     var leftOffsetBlue =
         ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
 
-    // canvas2.drawImage(
-    //     imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
-    canvas2.drawImage(imageFirstCanvas, const ui.Offset(0, 0), Paint());
+
+    //сместил img влево и вверх
+    canvas2.drawImage(
+        imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
+    // canvas2.drawImage(imageFirstCanvas, const ui.Offset(0, 0), Paint());
 
     final picture1 = recorder2.endRecording();
 
@@ -188,16 +190,12 @@ class ScreenSaveState extends State<ScreenSave> {
     var rightOffsetBlue =
         ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
 
-    int finalWidth =
-        (widthAllSumTiles * scaleToAll - rightOffsetBlue - leftOffsetBlue)
-            .toInt();
-    int finalHeight =
-        (heightAllSumTiles * scaleToAll - bottomOffsetBlue - topOffsetBlue)
-            .toInt();
+    int finalWidth =((maxX - minX) * scaleToAll).toInt();
+    int finalHeight =((maxY - minY) * scaleToAll).toInt();
 
     // final image2 = await picture1.toImage(finalWidth, finalHeight);
-    final image2 = await picture1.toImage(((maxX - minX) * scaleToAll).toInt(),
-        ((maxY - minY) * scaleToAll).toInt());
+    final image2 = await picture1.toImage(finalWidth,
+    finalHeight);
     // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
