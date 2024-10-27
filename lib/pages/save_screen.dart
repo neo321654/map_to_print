@@ -101,7 +101,7 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final canvas = Canvas(recorder);
 
-    double scaleToAll = 2;
+    double scaleToAll = 1;
     canvas.scale(scaleToAll);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
@@ -139,8 +139,8 @@ class ScreenSaveState extends State<ScreenSave> {
     //     (leftBottomPointToBlue.x- minX).toDouble(),
     //     (leftBottomPointToBlue.y).toDouble());
 
-    ui.Offset rightPoint = mapController.camera.getOffsetFromOrigin(globalListApex[0]).translate(maxX-minX, maxY-minY);
-    ui.Offset leftOffset = mapController.camera.getOffsetFromOrigin(globalListApex[2]);
+    ui.Offset rightPoint = mapController.camera.project(globalListApex[0]).toOffset().translate(-minX, -minY);
+    ui.Offset leftOffset = mapController.camera.project(globalListApex[2]).toOffset().translate(-minX, -minY);
 
 
 
