@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:map_to_print/pages/save_screen.dart';
 import '/pages/animated_map_controller.dart';
 import '/pages/bundled_offline_map.dart';
@@ -66,12 +67,12 @@ class MyApp extends StatelessWidget {
             const AnimatedMapControllerPage(),
         MarkerPage.route: (context) => const MarkerPage(),
         ScaleBarPage.route: (context) => const ScaleBarPage(),
-        PluginZoomButtons.route: (context) => const PluginZoomButtons(),
+        // PluginZoomButtons.route: (context) => const PluginZoomButtons(),
         BundledOfflineMapPage.route: (context) => const BundledOfflineMapPage(),
         ManyCirclesPage.route: (context) => const ManyCirclesPage(),
         CirclePage.route: (context) => const CirclePage(),
         OverlayImagePage.route: (context) => const OverlayImagePage(),
-        ScreenSave.route: (context) => const ScreenSave(),
+        ScreenSave.route: (context) => const ScreenSave(zoomToPrint: 1,latLng: LatLng(55.5, 55.5),),
         PolygonPerfStressPage.route: (context) => const PolygonPerfStressPage(),
         SlidingMapPage.route: (_) => const SlidingMapPage(),
         WMSLayerPage.route: (context) => const WMSLayerPage(),
@@ -81,7 +82,7 @@ class MyApp extends StatelessWidget {
         TileBuilderPage.route: (context) => const TileBuilderPage(),
         InteractiveFlagsPage.route: (context) => const InteractiveFlagsPage(),
         ManyMarkersPage.route: (context) => const ManyMarkersPage(),
-        MapInsideListViewPage.route: (context) => const MapInsideListViewPage(),
+        // MapInsideListViewPage.route: (context) => const MapInsideListViewPage(),
         ResetTileLayerPage.route: (context) => const ResetTileLayerPage(),
         EPSG4326Page.route: (context) => const EPSG4326Page(),
         EPSG3413Page.route: (context) => const EPSG3413Page(),

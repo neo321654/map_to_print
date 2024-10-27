@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -23,7 +24,14 @@ import 'package:url_launcher/url_launcher.dart';
 class ScreenSave extends StatefulWidget {
   static const String route = '/ScreenSave';
 
-  const ScreenSave({super.key});
+  final LatLng latLng;
+  final double zoomToPrint;
+
+  const ScreenSave({
+    super.key,
+    required this.latLng,
+    required this.zoomToPrint,
+  });
 
   @override
   ScreenSaveState createState() => ScreenSaveState();
@@ -33,15 +41,13 @@ class ScreenSaveState extends State<ScreenSave> {
   static const double pointSize = 65;
   static const double pointY = 350;
   bool isFixed = false;
-  bool isFixedCurcularProgress = false;
-
+  bool isCircularProgress = true;
   LatLng? latLngFixed;
-
   final mapController = MapController();
-
   LatLng? latLng;
-
-  Map<String, dynamic> args = {};
+  List<String> listImagesString = [];
+  final ScrollController _scrollController = ScrollController();
+  bool isZoomInstalled = false;
 
   Future<void> _captureAndSave() async {
     //todo refactor
@@ -60,7 +66,6 @@ class ScreenSaveState extends State<ScreenSave> {
       setState(() {});
     }
 
-    List<ui.Image> list = <ui.Image>[];
     var listTiles = <Tile>[];
 
     double height = 256;
@@ -96,7 +101,7 @@ class ScreenSaveState extends State<ScreenSave> {
 
     final canvas = Canvas(recorder);
 
-    double scaleToAll = 2;
+    double scaleToAll = 1;
     canvas.scale(scaleToAll);
 
     //todo отдельный метод для отрисовки тайлов на канвасе
@@ -125,14 +130,31 @@ class ScreenSaveState extends State<ScreenSave> {
       ..strokeWidth = 14;
 
     //рисую синий прямоугольник
+
+    // ui.Offset rightPoint = Offset((rightTopPointToBlue.x - minX).toDouble(),
+    //     (rightTopPointToBlue.y - minY).toDouble());
+
+    // ui.Offset leftOffset = ui.Offset(
+    //     (leftBottomPointToBlue.x- minX).toDouble(),
+    //     (leftBottomPointToBlue.y).toDouble());
+
+    ui.Offset rightPoint = mapController.camera
+        .project(globalListApex[0])
+        .toOffset()
+        .translate(-minX, -minY);
+    ui.Offset leftOffset = mapController.camera
+        .project(globalListApex[2])
+        .toOffset()
+        .translate(-minX, -minY);
+
     canvas.drawRect(
-      Rect.fromPoints(
-          ui.Offset((rightTopPointToBlue.x - minX).toDouble(),
-              (rightTopPointToBlue.y - minY).toDouble()),
-          ui.Offset((leftBottomPointToBlue.x - minX).toDouble(),
-              (leftBottomPointToBlue.y - minY).toDouble())),
+      Rect.fromPoints(rightPoint, leftOffset),
       blueBorderPaint,
     );
+
+
+    canvas.drawCircle(rightPoint, 4, Paint()..color = Colors.red);
+    canvas.drawCircle(leftOffset, 4, Paint()..color = Colors.green);
 
     // canvas.scale(0.7);
 
@@ -157,8 +179,11 @@ class ScreenSaveState extends State<ScreenSave> {
     var leftOffsetBlue =
         ((leftBottomPointToBlue.x - minX) * scaleToAll).toDouble();
 
+
+    //сместил img влево и вверх
     canvas2.drawImage(
         imageFirstCanvas, ui.Offset(-leftOffsetBlue, -topOffsetBlue), Paint());
+    // canvas2.drawImage(imageFirstCanvas, const ui.Offset(0, 0), Paint());
 
     final picture1 = recorder2.endRecording();
 
@@ -167,14 +192,24 @@ class ScreenSaveState extends State<ScreenSave> {
     var rightOffsetBlue =
         ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
 
-    int finalWidth =
-        (widthAllSumTiles * scaleToAll - rightOffsetBlue - leftOffsetBlue)
-            .toInt();
-    int finalHeight =
-        (heightAllSumTiles * scaleToAll - bottomOffsetBlue - topOffsetBlue)
-            .toInt();
 
-    final image2 = await picture1.toImage(finalWidth, finalHeight);
+    var leftOffsetBlue2 =
+    ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
+
+    var topOffsetBlue2 =
+    ((maxY-leftBottomPointToBlue.y) * scaleToAll).toDouble();
+
+    int finalWidth =((maxX - minX-leftOffsetBlue-leftOffsetBlue2) * scaleToAll).toInt();
+
+
+
+
+    int finalHeight =((maxY - minY -topOffsetBlue-topOffsetBlue2) * scaleToAll).toInt();
+
+
+    // final image2 = await picture1.toImage(finalWidth, finalHeight);
+    final image2 = await picture1.toImage(finalWidth,
+    finalHeight);
     // final image2 = await picture1.toImage(4000, 4000);
 
     ByteData? byteData =
@@ -182,7 +217,11 @@ class ScreenSaveState extends State<ScreenSave> {
     // await imageFirstCanvas.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    await saveAndShowSnack(pngBytes);
+    setState(() {
+      isCircularProgress = false;
+    });
+
+    await saveAndShowSnack(pngBytes, context);
   }
 
   Future<void> drawTilesOnCanvas(
@@ -201,20 +240,27 @@ class ScreenSaveState extends State<ScreenSave> {
         //     .addListener(ImageStreamListener((imageInfo, b) {
         //
         // }));
-
-        img = await loadImage(tile.tileImage.imageProvider);
-
-        setState(() {
-          addStringToList(tile);
-        });
-        print(
-            'load image height:${img.height} ${tile.tileImage.imageProvider} ');
-        canvas.drawImage(
-          img,
-          Offset(tile.positionCoordinates.x * height - minX,
-              tile.positionCoordinates.y * height - minY),
-          Paint(),
-        );
+        try {
+          img = await loadImage(tile.tileImage.imageProvider);
+          setState(() {
+            addStringToList(tile);
+          });
+          if (kDebugMode) {
+            print(
+                'load image height:${img.height} ${tile.tileImage.imageProvider} ');
+          }
+          canvas.drawImage(
+            img,
+            Offset(tile.positionCoordinates.x * height - minX,
+                tile.positionCoordinates.y * height - minY),
+            Paint(),
+          );
+        } catch (e) {
+          showSnack(
+              text: 'Произошла ошибка загрузки тайла',
+              context: context,
+              onPressed: () {});
+        }
       } else {
         img = tile.tileImage.imageInfo!.image;
 
@@ -225,10 +271,12 @@ class ScreenSaveState extends State<ScreenSave> {
           Paint(),
         );
         setState(() {
-          addStringToList(tile);
+          addStringToList(tile, true);
         });
-        print(
+        if (kDebugMode) {
+          print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
+        }
       }
 
       // Определяем размеры рамки//
@@ -252,72 +300,40 @@ class ScreenSaveState extends State<ScreenSave> {
       );
     }
   }
-//
-  void addStringToList(Tile tile) {
-    String coordinates =     tile.positionCoordinates.toString();
 
+//start different resolutions
+  void addStringToList(Tile tile, [bool fromCash = false]) {
+    String coordinates = tile.positionCoordinates.toString();
 
-    listImagesString.add('$coordinates');
-    Future.delayed(Duration(milliseconds: 100), () {
-      _scrollController
-          .jumpTo(_scrollController.position.maxScrollExtent);
+    final String str = '$coordinates ${(fromCash) ? 'from cash!' : ''}';
+    listImagesString.add(str);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
-
-  Future<void> saveAndShowSnack(Uint8List pngBytes) async {
-    // Получение пути для сохранения
-    final directory = await getApplicationDocumentsDirectory();
-    final imagePath = File('${directory.path}/canvas_image.png');
-    await imagePath.writeAsBytes(pngBytes);
-
-    // Сохранение в галерею
-    final result = await ImageGallerySaver.saveFile(imagePath.path);
-    print('Image saved to gallery: $result');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        padding: EdgeInsets.all(20),
-        content: Text('Изображение успешно сохранено!'),
-        duration: Duration(seconds: 15),
-        showCloseIcon: true,
-        behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: 'Открыть',
-          onPressed: () async {
-            Future<void> requestStoragePermission() async {
-              var status = await Permission.manageExternalStorage.status;
-              if (!status.isGranted) {
-                await Permission.manageExternalStorage.request();
-              }
-            }
-
-            requestStoragePermission();
-
-            if (true) {
-              launchUrl(Uri.parse(result["filePath"]));
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  List<LatLng> listApex = [];
-  double my_zoom = 16;
-  List<String> listImagesString = [];
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // updatePoint(context);
+    latLng = widget.latLng;
 
-      args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-      latLng = args["center"] ?? LatLng(33, 33);
-      mapController.move(latLng ?? LatLng(33, 33), 18);
-      setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      // latLng = args["center"] ?? const LatLng(33, 33);
+
+      // double meterInCm = args["meterInCm"] ?? 100;
+
+      setState(() {
+        isZoomInstalled = true;
+//todo нужно передать настройки через контсруктор
+//         zoomToPrint = 16;
+        Future.delayed(const Duration(milliseconds: 500), () {
+          setState(() {
+            mapController.move(widget.latLng, widget.zoomToPrint);
+          });
+        });
+      });
 
       Future.delayed(const Duration(milliseconds: 1000), () {
         _captureAndSave();
@@ -331,19 +347,38 @@ class ScreenSaveState extends State<ScreenSave> {
       appBar: AppBar(
         title: const Text('Saving Screen'),
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: () {
+
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return ScreenSave(
+                    latLng: widget.latLng,
+                    zoomToPrint: widget.zoomToPrint,
+                  );
+                }));
+
+          }, icon: const Icon(Icons.refresh),),
+          if (isCircularProgress)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            )
+        ],
       ),
       // drawer: const MenuDrawer(ScreenPointToLatLngPage.route),
       body: Stack(
         children: [
           FlutterMap(
+            // key: UniqueKey(),
             mapController: mapController,
             options: MapOptions(
                 // onPositionChanged: (_, __) => updatePoint(context),
                 // initialCenter: const LatLng(55.386, 39.030),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: my_zoom,
-                minZoom: my_zoom,
-                maxZoom: my_zoom),
+                initialZoom: widget.zoomToPrint,
+                minZoom: widget.zoomToPrint,
+                maxZoom: widget.zoomToPrint),
             children: [
               openStreetMapTileLayerSave,
             ],
@@ -356,70 +391,28 @@ class ScreenSaveState extends State<ScreenSave> {
               padding: const EdgeInsets.only(bottom: 120),
               child: Center(
                 child: Column(
-                  children: listImagesString.map((imgStr) {
+                  children: listImagesString.asMap().entries.map((entry) {
                     return Container(
-                      margin: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(4),
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
                           horizontal: 20,
                         ),
                         color: Colors.white38,
                         child: Text(
-                          imgStr,
+                          '${entry.key} ${entry.value}',
                           textAlign: TextAlign.center,
                         ));
                   }).toList(),
                 ),
               ))
-
-          // Positioned(
-          //   top: pointY - pointSize / 2,
-          //   left: _getPointX(context) - pointSize / 2,
-          //   child: const IgnorePointer(
-          //     child: Icon(
-          //       Icons.center_focus_strong_outlined,
-          //       size: pointSize,
-          //       color: Colors.black,
-          //     ),
-          //   ),
-          // ),
-          // // project
-          // Positioned(
-          //   top: pointY + pointSize / 2 + 6,
-          //   left: 0,
-          //   right: 0,
-          //   child: IgnorePointer(
-          //     child: Text(
-          //       '(${latLng?.latitude.toStringAsFixed(3)},${latLng?.longitude.toStringAsFixed(3)})',
-          //       textAlign: TextAlign.center,
-          //       style: const TextStyle(
-          //         color: Colors.black,
-          //         fontWeight: FontWeight.bold,
-          //         fontSize: 16,
-          //       ),
-          //     ),
-          //   ),
-          // )
         ],
       ),
     );
   }
 
-  double _getPointX(BuildContext context) =>
-      MediaQuery.sizeOf(context).width / 2;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    Future.delayed(Duration(seconds: 0), () {
-      // var ppoint = mapController.camera.project(LatLng(55.386, 39.030));
-
-      // listApex =createRectangle(ppoint,LatLng(51.5, 5.09),10,10).toList();
-
-      for (var apex in listApex) {
-        print(mapController.camera.project(apex));
-      }
-    });
   }
 }

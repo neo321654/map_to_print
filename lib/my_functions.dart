@@ -1,8 +1,17 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:map_to_print/pages/screen_point_to_latlng.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 LatLng getCenterPoint(List<LatLng> points) {
   // Проверяем, что список содержит ровно 4 координаты
@@ -26,32 +35,44 @@ LatLng getCenterPoint(List<LatLng> points) {
   return LatLng(centerLatitude, centerLongitude);
 }
 
-
-
 List<LatLng> createRectangle(LatLng center, double width, double height) {
   // Вычисляем координаты углов прямоугольника
-  LatLng topLeft = LatLng(center.latitude + height / 2, center.longitude - width / 2);
-  LatLng topRight = LatLng(center.latitude + height / 2, center.longitude + width / 2);
-  LatLng bottomRight = LatLng(center.latitude - height / 2, center.longitude + width / 2);
-  LatLng bottomLeft = LatLng(center.latitude - height / 2, center.longitude - width / 2);
+  LatLng topLeft =
+      LatLng(center.latitude + height / 2, center.longitude - width / 2);
+  LatLng topRight =
+      LatLng(center.latitude + height / 2, center.longitude + width / 2);
+  LatLng bottomRight =
+      LatLng(center.latitude - height / 2, center.longitude + width / 2);
+  LatLng bottomLeft =
+      LatLng(center.latitude - height / 2, center.longitude - width / 2);
 
   // Возвращаем список точек в порядке обхода
-  return [topLeft, topRight,bottomRight,  bottomLeft,];
+  return [
+    topLeft,
+    topRight,
+    bottomRight,
+    bottomLeft,
+  ];
   // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
 }
-List<Point> createRectangleNew(Point<double> center, double width, double height) {
+
+List<Point> createRectangleNew(
+    Point<double> center, double width, double height) {
   // Вычисляем координаты углов прямоугольника
   Point topLeft = Point(center.x + height / 2, center.y - width / 2);
   Point topRight = Point(center.x + height / 2, center.y + width / 2);
   Point bottomRight = Point(center.x - height / 2, center.y + width / 2);
-  Point bottomLeft = Point(center.x- height / 2, center.y - width / 2);
+  Point bottomLeft = Point(center.x - height / 2, center.y - width / 2);
 
   // Возвращаем список точек в порядке обхода
-  return [topLeft, topRight,bottomRight,  bottomLeft,];
+  return [
+    topLeft,
+    topRight,
+    bottomRight,
+    bottomLeft,
+  ];
   // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
 }
-
-
 
 List<LatLng> calculateApexFromCenter({
   required LatLng latLng,
@@ -62,6 +83,7 @@ List<LatLng> calculateApexFromCenter({
 }) {
   const dst = Distance();
 
+
   List<LatLng> listLatLng = [];
 
   if (landscape) {
@@ -69,6 +91,8 @@ List<LatLng> calculateApexFromCenter({
     width = height;
     height = temp;
   }
+
+
 
   LatLng tempLL = dst.offset(latLng, height * meterInCm / 2, 0);
   LatLng tempLL1 = dst.offset(tempLL, width * meterInCm / 2, 270);
@@ -90,8 +114,6 @@ List<LatLng> getNewApex({
   double height = 29.7,
   double meterInCm = 100,
 }) {
-
-
   List<LatLng> listApex = [];
   if (latLng != null) {
     listApex = calculateApexFromCenter(
@@ -108,3 +130,105 @@ List<LatLng> getNewApex({
   return listApex;
 }
 //todo удалить потом
+
+Future<ui.Image> loadImage(ImageProvider imageProvider) async {
+  final Completer<ui.Image> completer = Completer();
+
+  final ImageStream stream = imageProvider.resolve(const ImageConfiguration());
+
+  // stream.setCompleter(completer);completer
+  final listener =
+      ImageStreamListener((ImageInfo imageInfo, bool synchronousCall) {
+    completer.complete(imageInfo.image);
+  }, onError: (dynamic error, StackTrace? stackTrace) {
+    completer.completeError(error);
+  });
+
+  stream.addListener(listener);
+
+  // Удаляем слушателя после завершения
+  completer.future.then((image) {
+    stream.removeListener(listener);
+  });
+
+  return completer.future;
+}
+
+Future<void> saveAndShowSnack(Uint8List pngBytes, BuildContext context) async {
+  // Получение пути для сохранения
+  final directory = await getApplicationDocumentsDirectory();
+  final imagePath = File('${directory.path}/canvas_image.png');
+  await imagePath.writeAsBytes(pngBytes);
+
+  // Сохранение в галерею
+  final result = await ImageGallerySaver.saveFile(imagePath.path);
+  print('Image saved to gallery: $result');
+
+  showSnack(
+    context: context,
+    text: 'Изображение сохранено в галерею',
+    duration: const Duration(seconds: 15),
+    onPressed: () async {
+      Future<void> requestStoragePermission() async {
+        var status = await Permission.manageExternalStorage.status;
+        if (!status.isGranted) {
+          await Permission.manageExternalStorage.request();
+        }
+      }
+
+      requestStoragePermission();
+
+      if (true) {
+        launchUrl(Uri.parse(result["filePath"]));
+      }
+    },
+  );
+
+  // ScaffoldMessenger.of(context).showSnackBar(
+  //   SnackBar(
+  //     padding: EdgeInsets.all(20),
+  //     content: Text('Изображение успешно сохранено!'),
+  //     duration: Duration(seconds: 15),
+  //     showCloseIcon: true,
+  //     behavior: SnackBarBehavior.floating,
+  //     action: SnackBarAction(
+  //       label: 'Открыть',
+  //       onPressed: () async {
+  //         Future<void> requestStoragePermission() async {
+  //           var status = await Permission.manageExternalStorage.status;
+  //           if (!status.isGranted) {
+  //             await Permission.manageExternalStorage.request();
+  //           }
+  //         }
+  //
+  //         requestStoragePermission();
+  //
+  //         if (true) {
+  //           launchUrl(Uri.parse(result["filePath"]));
+  //         }
+  //       },
+  //     ),
+  //   ),
+  // );
+}
+
+void showSnack({
+  required BuildContext context,
+  required String text,
+  required onPressed,
+  duration = const Duration(seconds: 1),
+}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      padding: const EdgeInsets.all(20),
+      content: Text(text),
+      duration: const Duration(seconds: 15),
+      showCloseIcon: true,
+      behavior: SnackBarBehavior.floating,
+      action: SnackBarAction(
+        label: 'Открыть',
+        onPressed: onPressed,
+      ),
+    ),
+  );
+}

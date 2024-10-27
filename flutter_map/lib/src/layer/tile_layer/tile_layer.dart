@@ -527,34 +527,43 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       print('isSave');
       // globalListApex.
 
-      double distance(Point p1, Point p2) {
+      double distanceBetweenPoints(Point p1, Point p2) {
         return sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
       }
 
 
-      double indexToZoom = 8;
-      double www = 210 * indexToZoom;
-      double hhh = 297 * indexToZoom;
 
-      Point p1 = map.project(globalListApex[0]);
-      Point p2 = map.project(globalListApex[1]);
+      Point p1 = map.latLngToScreenPoint(globalListApex[0]);
+      Point p2 = map.latLngToScreenPoint(globalListApex[1]);
+      Point p3 = map.latLngToScreenPoint(globalListApex[2]);
 
-      double height = distance(p1, p2);
+       double height = distanceBetweenPoints(p1, p2);
 
 
 
-      Point p3 = map.project(globalListApex[2]);
+      // Point p3 = map.project(globalListApex[2]);
       Point p4 = map.project(globalListApex[3]);
 
-      double width = distance(p2, p3);
+      // map.zoom
+       double width = distanceBetweenPoints(p2, p3);
 
 
-      globalListApex;
+
+
+      const dst = Distance();
+      // map.latLngToScreenPoint(globalListApex[1]);
+      // map.latLngToScreenPoint(globalListApex[2]);
+
+      double width1 =  dst.distance(globalListApex[1], globalListApex[2]);
+      double height2 = dst.distance(globalListApex[0], globalListApex[1]);
+
+
 
       globalHeightWidht = [width,height];
 
 
-      map = map.withNonRotatedSize(Point(width*1.4, height*1.4));
+      map = map.withNonRotatedSize(Point(width*1.6, height*1.6));
+      // map = map.withNonRotatedSize(Point(width*1.4, height*1.4));
       // map = map.withOptions(MapOptions(initialZoom: 18));
 
 

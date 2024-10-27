@@ -169,11 +169,11 @@ class MenuDrawer extends StatelessWidget {
             currentRoute: currentRoute,
           ),
           const Divider(),
-          MenuItemWidget(
-            caption: 'Zoom Buttons Plugin',
-            routeName: PluginZoomButtons.route,
-            currentRoute: currentRoute,
-          ),
+          // MenuItemWidget(
+          //   caption: 'Zoom Buttons Plugin',
+          //   routeName: PluginZoomButtons.route,
+          //   currentRoute: currentRoute,
+          // ),
           const Divider(),
           MenuItemWidget(
             caption: 'Custom CRS',
@@ -196,11 +196,11 @@ class MenuDrawer extends StatelessWidget {
             routeName: SlidingMapPage.route,
             currentRoute: currentRoute,
           ),
-          MenuItemWidget(
-            caption: 'Map Inside Scrollable',
-            routeName: MapInsideListViewPage.route,
-            currentRoute: currentRoute,
-          ),
+          // MenuItemWidget(
+          //   caption: 'Map Inside Scrollable',
+          //   routeName: MapInsideListViewPage.route,
+          //   currentRoute: currentRoute,
+          // ),
           MenuItemWidget(
             caption: 'Secondary Tap',
             routeName: SecondaryTapPage.route,
