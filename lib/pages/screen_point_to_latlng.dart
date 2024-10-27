@@ -126,7 +126,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 listApex = getNewApex(
                     latLng: latLng,
                     camera: mapController.camera,
-                    meterInCm: meterInCm);
+                    meterInCm: meterInCm,landscape: landscape);
               });
             },
             child: Text(isFixed ? 'Unfix' : 'Fix'),
@@ -246,7 +246,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       if (!isFixed) {
         zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
         listApex = getNewApex(
-            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
+            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape: landscape);
       }
     });
   }
@@ -279,7 +279,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
         listApex = getNewApex(
-            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
+            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape: landscape);
       });
     });
   }
@@ -291,7 +291,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
       listApex = getNewApex(
-          latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
+          latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape: landscape);
     });
   }
   void rotatePolygon() {
