@@ -41,6 +41,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
   double meterInCm = 100;
 
+  bool landscape = true;
+
   @override
   void initState() {
     super.initState();
@@ -55,16 +57,32 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     return Scaffold(
       // drawer: const MenuDrawer('/screen_point_to_latlng'),
       floatingActionButton: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           const SizedBox(width: 25),
-          FloatingActionButton(
-            backgroundColor: (meterInCm == 100) ? Colors.greenAccent : null,
-            heroTag: '100',
-            onPressed: () {
-              setPrintScale(100);
-            },
-            child: const Text('100 m'),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              FloatingActionButton(
+                // backgroundColor: (meterInCm == 100) ? Colors.greenAccent : null,
+                heroTag: 'rotate',
+                onPressed: () {
+                  rotatePolygon();
+                },
+                child: const Icon(Icons.screen_rotation_alt),
+              ),
+              const SizedBox(height: 5),
+              FloatingActionButton(
+                backgroundColor: (meterInCm == 100) ? Colors.greenAccent : null,
+                heroTag: '100',
+                onPressed: () {
+                  setPrintScale(100);
+                },
+                child: const Text('100 m'),
+              ),
+            ],
           ),
           const SizedBox(width: 5),
           FloatingActionButton(
@@ -103,7 +121,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                   latLngFixed =
                       LatLng(latLng?.latitude ?? 33, latLng?.longitude ?? 44);
                 }
-                zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+                zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
                 listApex = getNewApex(
                     latLng: latLng,
@@ -226,19 +244,24 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     setState(() {
       latLng = mapController.camera.pointToLatLng(p);
       if (!isFixed) {
-        zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+        zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
         listApex = getNewApex(
             latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
       }
     });
   }
-  double getZoomToPrint({required double meterInCm}){
-   double newZoom = 1;
-    switch(meterInCm){
-      case 100: newZoom = 16;
-      case 250: newZoom = 14;
-      case 500: newZoom = 13;
-      case 1000: newZoom = 12;
+
+  double getZoomToPrint({required double meterInCm}) {
+    double newZoom = 1;
+    switch (meterInCm) {
+      case 100:
+        newZoom = 16;
+      case 250:
+        newZoom = 14;
+      case 500:
+        newZoom = 13;
+      case 1000:
+        newZoom = 12;
     }
 
     return newZoom;
@@ -253,7 +276,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
 
     Future.delayed(const Duration(seconds: 0), () {
       setState(() {
-        zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+        zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
         listApex = getNewApex(
             latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
@@ -265,10 +288,21 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   void setPrintScale(double newMeterInCm) {
     setState(() {
       meterInCm = newMeterInCm;
-      zoomToPrint = getZoomToPrint(meterInCm:meterInCm);
+      zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
       listApex = getNewApex(
           latLng: latLng, camera: mapController.camera, meterInCm: meterInCm);
     });
   }
+  void rotatePolygon() {
+    setState(() {
+      // meterInCm = newMeterInCm;
+      // zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
+
+      landscape=!landscape;
+      listApex = getNewApex(
+          latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape:landscape);
+    });
+  }
+
 }
