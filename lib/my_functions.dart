@@ -115,6 +115,8 @@ List<LatLng> getNewApex({
   double meterInCm = 100,
   bool landscape = true,
 }) {
+
+
   List<LatLng> listApex = [];
   if (latLng != null) {
     listApex = calculateApexFromCenter(
