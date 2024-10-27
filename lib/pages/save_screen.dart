@@ -261,8 +261,10 @@ class ScreenSaveState extends State<ScreenSave> {
         setState(() {
           addStringToList(tile, true);
         });
-        print(
+        if (kDebugMode) {
+          print(
             'draw without download image height:${img.height} ${tile.tileImage.imageProvider} ');
+        }
       }
 
       // Определяем размеры рамки//

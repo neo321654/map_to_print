@@ -151,7 +151,7 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             options: MapOptions(
                 onPositionChanged: (camera, hasGesture) => updatePoint(context),
                 initialCenter: const LatLng(55.386, 39.030),
-                initialZoom: 14,
+                initialZoom: 13,
                 minZoom: 1,
                 maxZoom: 18),
             children: [
