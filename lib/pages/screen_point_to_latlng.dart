@@ -40,10 +40,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   List<LatLng> listApex = [];
   List<LatLng> oldListApex = [];
 
-
   double meterInCm = 100;
 
   bool landscape = true;
+  bool isUpdatePoint = false;
+  int animationDuration = 1300;
 
   @override
   void initState() {
@@ -179,26 +180,31 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
                 TweenAnimationBuilder<List<LatLng>>(
-                  curve: Curves.easeInOutBack,
-                    tween:ListTween<LatLng>(begin: oldListApex, end: listApex),
-                    duration: const Duration(milliseconds: 300),
+                    curve: isUpdatePoint
+                        ? Curves.fastOutSlowIn
+                        : Curves.easeInOutBack,
+                    onEnd: () {
+                      isUpdatePoint = false;
+                      animationDuration = 1300;
+                    },
+                    tween: ListTween<LatLng>(begin: oldListApex, end: listApex),
+                    duration:  Duration(milliseconds: animationDuration),
                     builder: (context, value, child) {
-                    return PolygonLayer(
-                      // hitNotifier: _hitNotifier,
-                      // simplificationTolerance: 0,
-                      // polygons: [..._polygonsRaw, ...?_hoverGons],
-                      polygons: [
-                        Polygon(
-                          rotateLabel: true,
-                          color: Colors.orange.withAlpha(95),
-                          points: value,
-                          borderColor: Colors.orange,
-                          borderStrokeWidth: 1,
-                        ),
-                      ],
-                    );
-                  }
-                ),
+                      return PolygonLayer(
+                        // hitNotifier: _hitNotifier,
+                        // simplificationTolerance: 0,
+                        // polygons: [..._polygonsRaw, ...?_hoverGons],
+                        polygons: [
+                          Polygon(
+                            rotateLabel: true,
+                            color: Colors.orange.withAlpha(95),
+                            points: value,
+                            borderColor: Colors.orange,
+                            borderStrokeWidth: 1,
+                          ),
+                        ],
+                      );
+                    }),
               if (latLng != null)
                 MarkerLayer(
                   markers: [
@@ -253,6 +259,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
     var p = Point(_getPointX(context), pointY);
 
     setState(() {
+      isUpdatePoint = true;
+      animationDuration = 100;
       latLng = mapController.camera.pointToLatLng(p);
       if (!isFixed) {
         zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
@@ -334,9 +342,9 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   }
 }
 
-
 class ListTween<T> extends Tween<List<T>> {
-  ListTween({required List<T> begin, required List<T> end}) : super(begin: begin, end: end);
+  ListTween({required List<T> begin, required List<T> end})
+      : super(begin: begin, end: end);
 
   @override
   List<T> lerp(double t) {
