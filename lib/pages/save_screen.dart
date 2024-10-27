@@ -132,16 +132,23 @@ class ScreenSaveState extends State<ScreenSave> {
     //рисую синий прямоугольник
 
 
-    ui.Offset rightPoint = Offset((rightTopPointToBlue.x - minX).toDouble(),
-        (rightTopPointToBlue.y - minY).toDouble());
+    // ui.Offset rightPoint = Offset((rightTopPointToBlue.x - minX).toDouble(),
+    //     (rightTopPointToBlue.y - minY).toDouble());
 
-    ui.Offset leftOffset = ui.Offset(
-        (leftBottomPointToBlue.x- minX).toDouble(),
-        (leftBottomPointToBlue.y).toDouble());
+    // ui.Offset leftOffset = ui.Offset(
+    //     (leftBottomPointToBlue.x- minX).toDouble(),
+    //     (leftBottomPointToBlue.y).toDouble());
 
-    canvas.drawCircle(rightPoint, 16, Paint()
+    ui.Offset rightPoint = mapController.camera.getOffsetFromOrigin(globalListApex[0]).translate(maxX-minX, maxY-minY);
+    ui.Offset leftOffset = mapController.camera.getOffsetFromOrigin(globalListApex[2]);
+
+
+
+
+
+    canvas.drawCircle(rightPoint, 100, Paint()
       ..color = Colors.red);
-    canvas.drawCircle(leftOffset, 16, Paint()
+    canvas.drawCircle(leftOffset, 100, Paint()
       ..color = Colors.green);
 
 
@@ -360,7 +367,8 @@ class ScreenSaveState extends State<ScreenSave> {
               padding: const EdgeInsets.only(bottom: 120),
               child: Center(
                 child: Column(
-                  children: listImagesString.map((imgStr) {
+                  children: listImagesString.asMap().entries.map((entry) {
+
                     return Container(
                         margin: const EdgeInsets.all(4),
                         padding: const EdgeInsets.symmetric(
@@ -369,7 +377,7 @@ class ScreenSaveState extends State<ScreenSave> {
                         ),
                         color: Colors.white38,
                         child: Text(
-                          imgStr,
+                          '${entry.key} ${entry.value}',
                           textAlign: TextAlign.center,
                         ));
                   }).toList(),
