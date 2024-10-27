@@ -38,6 +38,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
   LatLng? latLng;
 
   List<LatLng> listApex = [];
+  List<LatLng> oldListApex = [];
+
 
   double meterInCm = 100;
 
@@ -126,7 +128,8 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
                 listApex = getNewApex(
                     latLng: latLng,
                     camera: mapController.camera,
-                    meterInCm: meterInCm,landscape: landscape);
+                    meterInCm: meterInCm,
+                    landscape: landscape);
               });
             },
             child: Text(isFixed ? 'Unfix' : 'Fix'),
@@ -175,18 +178,25 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
             children: [
               openStreetMapTileLayer,
               if (listApex.isNotEmpty)
-                PolygonLayer(
-                  // hitNotifier: _hitNotifier,
-                  // simplificationTolerance: 0,
-                  // polygons: [..._polygonsRaw, ...?_hoverGons],
-                  polygons: [
-                    Polygon(
-                      color: Colors.orange.withAlpha(95),
-                      points: listApex,
-                      borderColor: Colors.orange,
-                      borderStrokeWidth: 1,
-                    ),
-                  ],
+                TweenAnimationBuilder<List<LatLng>>(
+                    tween:ListTween<LatLng>(begin: oldListApex, end: listApex),
+                    duration: const Duration(seconds: 1),
+                    builder: (context, value, child) {
+                    return PolygonLayer(
+                      // hitNotifier: _hitNotifier,
+                      // simplificationTolerance: 0,
+                      // polygons: [..._polygonsRaw, ...?_hoverGons],
+                      polygons: [
+                        Polygon(
+                          rotateLabel: true,
+                          color: Colors.orange.withAlpha(95),
+                          points: value,
+                          borderColor: Colors.orange,
+                          borderStrokeWidth: 1,
+                        ),
+                      ],
+                    );
+                  }
                 ),
               if (latLng != null)
                 MarkerLayer(
@@ -245,8 +255,12 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       latLng = mapController.camera.pointToLatLng(p);
       if (!isFixed) {
         zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
+
         listApex = getNewApex(
-            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape: landscape);
+            latLng: latLng,
+            camera: mapController.camera,
+            meterInCm: meterInCm,
+            landscape: landscape);
       }
     });
   }
@@ -279,7 +293,11 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
         zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
         listApex = getNewApex(
-            latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape: landscape);
+            latLng: latLng,
+            camera: mapController.camera,
+            meterInCm: meterInCm,
+            landscape: landscape);
+        oldListApex = listApex;
       });
     });
   }
@@ -291,18 +309,51 @@ class PointToLatlngPage extends State<ScreenPointToLatLngPage> {
       zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
       listApex = getNewApex(
-          latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape: landscape);
+          latLng: latLng,
+          camera: mapController.camera,
+          meterInCm: meterInCm,
+          landscape: landscape);
     });
   }
+
   void rotatePolygon() {
     setState(() {
       // meterInCm = newMeterInCm;
       // zoomToPrint = getZoomToPrint(meterInCm: meterInCm);
 
-      landscape=!landscape;
+      oldListApex = listApex;
+
+      landscape = !landscape;
       listApex = getNewApex(
-          latLng: latLng, camera: mapController.camera, meterInCm: meterInCm,landscape:landscape);
+          latLng: latLng,
+          camera: mapController.camera,
+          meterInCm: meterInCm,
+          landscape: landscape);
     });
   }
+}
 
+
+class ListTween<T> extends Tween<List<T>> {
+  ListTween({required List<T> begin, required List<T> end}) : super(begin: begin, end: end);
+
+  @override
+  List<T> lerp(double t) {
+    final List<T> result = [];
+    for (int i = 0; i < begin!.length; i++) {
+      final T interpolatedValue = lerpLatLng(begin![i], end![i], t);
+      result.add(interpolatedValue);
+    }
+    return result;
+  }
+
+  T lerpLatLng(T begin, T end, double t) {
+    if (begin is LatLng && end is LatLng) {
+      return LatLng(
+        begin.latitude + (end.latitude - begin.latitude) * t,
+        begin.longitude + (end.longitude - begin.longitude) * t,
+      ) as T;
+    }
+    throw Exception('Unsupported type');
+  }
 }
