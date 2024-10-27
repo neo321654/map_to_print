@@ -35,32 +35,44 @@ LatLng getCenterPoint(List<LatLng> points) {
   return LatLng(centerLatitude, centerLongitude);
 }
 
-
-
 List<LatLng> createRectangle(LatLng center, double width, double height) {
   // Вычисляем координаты углов прямоугольника
-  LatLng topLeft = LatLng(center.latitude + height / 2, center.longitude - width / 2);
-  LatLng topRight = LatLng(center.latitude + height / 2, center.longitude + width / 2);
-  LatLng bottomRight = LatLng(center.latitude - height / 2, center.longitude + width / 2);
-  LatLng bottomLeft = LatLng(center.latitude - height / 2, center.longitude - width / 2);
+  LatLng topLeft =
+      LatLng(center.latitude + height / 2, center.longitude - width / 2);
+  LatLng topRight =
+      LatLng(center.latitude + height / 2, center.longitude + width / 2);
+  LatLng bottomRight =
+      LatLng(center.latitude - height / 2, center.longitude + width / 2);
+  LatLng bottomLeft =
+      LatLng(center.latitude - height / 2, center.longitude - width / 2);
 
   // Возвращаем список точек в порядке обхода
-  return [topLeft, topRight,bottomRight,  bottomLeft,];
+  return [
+    topLeft,
+    topRight,
+    bottomRight,
+    bottomLeft,
+  ];
   // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
 }
-List<Point> createRectangleNew(Point<double> center, double width, double height) {
+
+List<Point> createRectangleNew(
+    Point<double> center, double width, double height) {
   // Вычисляем координаты углов прямоугольника
   Point topLeft = Point(center.x + height / 2, center.y - width / 2);
   Point topRight = Point(center.x + height / 2, center.y + width / 2);
   Point bottomRight = Point(center.x - height / 2, center.y + width / 2);
-  Point bottomLeft = Point(center.x- height / 2, center.y - width / 2);
+  Point bottomLeft = Point(center.x - height / 2, center.y - width / 2);
 
   // Возвращаем список точек в порядке обхода
-  return [topLeft, topRight,bottomRight,  bottomLeft,];
+  return [
+    topLeft,
+    topRight,
+    bottomRight,
+    bottomLeft,
+  ];
   // return [topLeft, topRight,  bottomLeft,bottomRight,topRight, topLeft,bottomRight,bottomLeft,topLeft];
 }
-
-
 
 List<LatLng> calculateApexFromCenter({
   required LatLng latLng,
@@ -99,8 +111,6 @@ List<LatLng> getNewApex({
   double height = 29.7,
   double meterInCm = 100,
 }) {
-
-
   List<LatLng> listApex = [];
   if (latLng != null) {
     listApex = calculateApexFromCenter(
@@ -118,16 +128,14 @@ List<LatLng> getNewApex({
 }
 //todo удалить потом
 
-
-
 Future<ui.Image> loadImage(ImageProvider imageProvider) async {
   final Completer<ui.Image> completer = Completer();
 
   final ImageStream stream = imageProvider.resolve(const ImageConfiguration());
 
   // stream.setCompleter(completer);completer
-  final listener = ImageStreamListener((ImageInfo imageInfo,
-      bool synchronousCall) {
+  final listener =
+      ImageStreamListener((ImageInfo imageInfo, bool synchronousCall) {
     completer.complete(imageInfo.image);
   }, onError: (dynamic error, StackTrace? stackTrace) {
     completer.completeError(error);
@@ -137,9 +145,7 @@ Future<ui.Image> loadImage(ImageProvider imageProvider) async {
 
   // Удаляем слушателя после завершения
   completer.future.then((image) {
-
     stream.removeListener(listener);
-
   });
 
   return completer.future;
@@ -155,29 +161,70 @@ Future<void> saveAndShowSnack(Uint8List pngBytes, BuildContext context) async {
   final result = await ImageGallerySaver.saveFile(imagePath.path);
   print('Image saved to gallery: $result');
 
+  showSnack(
+    context: context,
+    text: 'Изображение сохранено в галерею',
+    duration: const Duration(seconds: 15),
+    onPressed: () async {
+      Future<void> requestStoragePermission() async {
+        var status = await Permission.manageExternalStorage.status;
+        if (!status.isGranted) {
+          await Permission.manageExternalStorage.request();
+        }
+      }
+
+      requestStoragePermission();
+
+      if (true) {
+        launchUrl(Uri.parse(result["filePath"]));
+      }
+    },
+  );
+
+  // ScaffoldMessenger.of(context).showSnackBar(
+  //   SnackBar(
+  //     padding: EdgeInsets.all(20),
+  //     content: Text('Изображение успешно сохранено!'),
+  //     duration: Duration(seconds: 15),
+  //     showCloseIcon: true,
+  //     behavior: SnackBarBehavior.floating,
+  //     action: SnackBarAction(
+  //       label: 'Открыть',
+  //       onPressed: () async {
+  //         Future<void> requestStoragePermission() async {
+  //           var status = await Permission.manageExternalStorage.status;
+  //           if (!status.isGranted) {
+  //             await Permission.manageExternalStorage.request();
+  //           }
+  //         }
+  //
+  //         requestStoragePermission();
+  //
+  //         if (true) {
+  //           launchUrl(Uri.parse(result["filePath"]));
+  //         }
+  //       },
+  //     ),
+  //   ),
+  // );
+}
+
+void showSnack({
+  required BuildContext context,
+  required String text,
+  onPressed,
+  duration = const Duration(seconds: 1),
+}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      padding: EdgeInsets.all(20),
-      content: Text('Изображение успешно сохранено!'),
-      duration: Duration(seconds: 15),
+      padding: const EdgeInsets.all(20),
+      content: Text(text),
+      duration: const Duration(seconds: 15),
       showCloseIcon: true,
       behavior: SnackBarBehavior.floating,
       action: SnackBarAction(
         label: 'Открыть',
-        onPressed: () async {
-          Future<void> requestStoragePermission() async {
-            var status = await Permission.manageExternalStorage.status;
-            if (!status.isGranted) {
-              await Permission.manageExternalStorage.request();
-            }
-          }
-
-          requestStoragePermission();
-
-          if (true) {
-            launchUrl(Uri.parse(result["filePath"]));
-          }
-        },
+        onPressed: onPressed,
       ),
     ),
   );

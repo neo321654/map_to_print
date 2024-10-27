@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -220,20 +221,24 @@ class ScreenSaveState extends State<ScreenSave> {
         //     .addListener(ImageStreamListener((imageInfo, b) {
         //
         // }));
-
-        img = await loadImage(tile.tileImage.imageProvider);
-
-        setState(() {
-          addStringToList(tile);
-        });
-        print(
-            'load image height:${img.height} ${tile.tileImage.imageProvider} ');
-        canvas.drawImage(
-          img,
-          Offset(tile.positionCoordinates.x * height - minX,
-              tile.positionCoordinates.y * height - minY),
-          Paint(),
-        );
+        try{
+          img = await loadImage(tile.tileImage.imageProvider);
+          setState(() {
+            addStringToList(tile);
+          });
+          if (kDebugMode) {
+            print(
+              'load image height:${img.height} ${tile.tileImage.imageProvider} ');
+          }
+          canvas.drawImage(
+            img,
+            Offset(tile.positionCoordinates.x * height - minX,
+                tile.positionCoordinates.y * height - minY),
+            Paint(),
+          );
+        }catch (e){
+          showSnack(text: 'Произошла ошибка загрузки тайла',  context: context);
+        }
       } else {
         img = tile.tileImage.imageInfo!.image;
 
