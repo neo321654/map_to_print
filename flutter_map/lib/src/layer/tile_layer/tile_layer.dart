@@ -562,7 +562,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
       globalHeightWidht = [width,height];
 
 
-      map = map.withNonRotatedSize(Point(width*1.1, height*1.1));
+      map = map.withNonRotatedSize(Point(width*1.6, height*1.6));
       // map = map.withNonRotatedSize(Point(width*1.4, height*1.4));
       // map = map.withOptions(MapOptions(initialZoom: 18));
 

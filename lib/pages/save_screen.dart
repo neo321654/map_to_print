@@ -146,16 +146,17 @@ class ScreenSaveState extends State<ScreenSave> {
 
 
 
-    canvas.drawCircle(rightPoint, 100, Paint()
-      ..color = Colors.red);
-    canvas.drawCircle(leftOffset, 100, Paint()
-      ..color = Colors.green);
+
 
 
     canvas.drawRect(
       Rect.fromPoints(rightPoint, leftOffset),
       blueBorderPaint,
     );
+    canvas.drawCircle(rightPoint, 4, Paint()
+      ..color = Colors.red);
+    canvas.drawCircle(leftOffset, 4, Paint()
+      ..color = Colors.green);
 
     // canvas.scale(0.7);
 
