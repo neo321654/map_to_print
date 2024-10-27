@@ -151,6 +151,8 @@ class ScreenSaveState extends State<ScreenSave> {
       Rect.fromPoints(rightPoint, leftOffset),
       blueBorderPaint,
     );
+
+
     canvas.drawCircle(rightPoint, 4, Paint()..color = Colors.red);
     canvas.drawCircle(leftOffset, 4, Paint()..color = Colors.green);
 
@@ -190,7 +192,15 @@ class ScreenSaveState extends State<ScreenSave> {
     var rightOffsetBlue =
         ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
 
-    int finalWidth =((maxX - minX) * scaleToAll).toInt();
+
+    var leftOffsetBlue2 =
+    ((maxX - rightTopPointToBlue.x) * scaleToAll).toDouble();
+
+    int finalWidth =((maxX - minX-leftOffsetBlue-leftOffsetBlue2) * scaleToAll).toInt();
+
+
+
+
     int finalHeight =((maxY - minY) * scaleToAll).toInt();
 
     // final image2 = await picture1.toImage(finalWidth, finalHeight);
