@@ -533,30 +533,36 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
 
 
 
-      Point p1 = map.project(globalListApex[0]);
-      Point p2 = map.project(globalListApex[1]);
+      Point p1 = map.latLngToScreenPoint(globalListApex[0]);
+      Point p2 = map.latLngToScreenPoint(globalListApex[1]);
+      Point p3 = map.latLngToScreenPoint(globalListApex[2]);
 
-      // double height = distanceBetweenPoints(p1, p2);
+       double height = distanceBetweenPoints(p1, p2);
 
 
 
-      Point p3 = map.project(globalListApex[2]);
+      // Point p3 = map.project(globalListApex[2]);
       Point p4 = map.project(globalListApex[3]);
 
       // map.zoom
-      // double width = distanceBetweenPoints(p2, p3);
+       double width = distanceBetweenPoints(p2, p3);
+
+
 
 
       const dst = Distance();
-      double width =  dst.distance(globalListApex[1], globalListApex[2]);
-      double height = dst.distance(globalListApex[0], globalListApex[1]);
+      // map.latLngToScreenPoint(globalListApex[1]);
+      // map.latLngToScreenPoint(globalListApex[2]);
+
+      double width1 =  dst.distance(globalListApex[1], globalListApex[2]);
+      double height2 = dst.distance(globalListApex[0], globalListApex[1]);
 
 
 
       globalHeightWidht = [width,height];
 
 
-      map = map.withNonRotatedSize(Point(width*1.2, height*1.2));
+      map = map.withNonRotatedSize(Point(width*1.1, height*1.1));
       // map = map.withNonRotatedSize(Point(width*1.4, height*1.4));
       // map = map.withOptions(MapOptions(initialZoom: 18));
 
